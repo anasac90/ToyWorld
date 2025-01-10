@@ -1,0 +1,236 @@
+<%- include ('../partials/admin-header.ejs') %>
+
+    <main class="mt-3" style="height: auto;"">
+    <div class=" content-head">
+        <div class="content-head-rect col-5 bg-dark-grn">
+            <div>
+                <h2 class="content-head-txt">SALES REPORT</h2>
+            </div>
+            <div class="content-head-tri ms-auto"></div>
+        </div>
+        </div>
+        <div class="content-body side-margin text-center mt-3">
+            <div class="sidebar align-items-center">
+                <a href="/admin/home">DASHBOARD</a>
+                <a href="/admin/products">PRODUCTS</a>
+                <a href="/admin/users">USERS</a>
+                <a href="/admin/categories">CATEGORIES</a>
+                <a href="/admin/orders">ORDERS</a>
+                <a href="/admin/brands">BRANDS</a>
+                <a href="/admin/coupons">COUPONS</a>
+                <a href="/admin/offers">OFFERS</a>
+                <a class="active" href="/admin/report">REPORT</a>
+            </div>
+
+            <div class="w-100 ms-3 d-flex justify-content-center">
+                <div class="w-auto">
+                    <!-- Filter Section -->
+                    <div class="filter-section bg-light p-4 rounded shadow-sm">
+                        <form id="salesReportFilter" class="row g-3 align-items-center">
+                            <!-- Date Range -->
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" id="startDate" required>
+                            </div>
+                               <div class="col-md-6">
+                                <label for="endDate" class="form-label">End Date</label>
+                                <input type="date" class="form-control" id="endDate" required>
+                            </div>
+
+                            <!-- Period Filter -->
+                            <div class="d-flex justify-content-center mb-3">
+                                <div class="col-md-6">
+                                    <p>OR</p>
+                                    <label for="period" class="form-label">Select a Period</label>
+                                    <select id="period" class="form-select">
+                                        <option selected >Choose</option>
+                                        <option value="1-day">1 Day</option>
+                                        <option value="1-week">1 Week</option>
+                                        <option value="1-month">1 Month</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Generate Button -->
+                            <div class="d-flex justify-content-center">
+                                <div class="col-md-6 d-flex align-items-end">
+                                    <button type="submit" id="generateReport" class="btn bg-dark-grn text-white w-100">Generate Report</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Sales Summary -->
+                    <div class="sales-summary bg-dark-grn text-white mt-4 p-4 rounded shadow-sm">
+                        <h4>Sales Summary</h4>
+                        <div class="table-responsive rounded">
+                            <table class="table table-bordered bg-dark-grn text-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th><p>Total Order Amount</p></th>
+                                        <th><p>Total Offer Discount</p></th>
+                                        <th><p>Total Coupon Discount</p></th>
+                                        <th><p>Total Sales Count</p></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="salesReportTable">
+                                    <tr>
+                                        <td><p id="totalOrderAmount">₹ 0</p></td>
+                                        <td><p id="totalDiscounts">₹ 0</p></td>
+                                        <td><p id="couponDeductions">₹ 0</p></td>
+                                        <td><p id="totalSalesCount">0</p></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Sales Report Table -->
+                    <div class="sales-report mt-4">
+                        <div class="table-responsive rounded">
+                            <table class="table table-bordered text-center mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Order ID</th>
+                                        <th>Sales Amount</th>
+                                        <th>Discounts</th>
+                                        <th>Coupons</th>
+                                        <th>Net Sales</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="individualSalesReportTable">
+                                    <tr>
+                                        <td colspan="6">No data available</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Download Buttons -->
+                    <div class="text-end mt-3">
+                        <button class="btn btn-danger" id="downloadPdf">Download PDF</button>
+                        <button class="btn btn-success" id="downloadExcel">Download Excel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        let startDate = document.getElementById('startDate');
+        let endDate = document.getElementById('endDate');
+        let period = document.getElementById('period');
+        let today = new Date();
+
+        let overallReport;
+        let individualReport;
+
+        let oneWeekAgo = new Date(today);
+        oneWeekAgo.setDate(today.getDate()-6)
+
+        let oneMonthAgo = new Date(today);
+        oneMonthAgo.setDate(today.getDate()-29);
+
+        period.addEventListener('input',()=>{
+            if(period.value === '1-day'){
+                startDate.value = today.toISOString().split('T')[0];
+                endDate.value = today.toISOString().split('T')[0];
+            } else if(period.value === '1-week'){
+                startDate.value = oneWeekAgo.toISOString().split('T')[0];
+                endDate.value = today.toISOString().split('T')[0];
+            } else if(period.value === '1-month'){
+                startDate.value = oneMonthAgo.toISOString().split('T')[0];
+                endDate.value = today.toISOString().split('T')[0];
+            }
+        });
+
+        const generateReport = document.getElementById('generateReport');
+        generateReport.addEventListener('click',async (e)=>{
+            e.preventDefault();
+
+            if(!startDate.value ||!endDate.value){
+                toastr.warning('Fill start date and end date to generate report')
+            } else {
+                await fetch('/admin/report/generate',{
+                method: 'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({startDate:startDate.value, endDate:endDate.value})
+            })
+            .then(response=>response.json())
+            .then(data=>{
+                overallReport = data.overallReport[0];
+                individualReport = data.individualReport;
+
+                document.getElementById('totalOrderAmount').innerText = `₹ ${overallReport.totalOrderAmount}`;
+                document.getElementById('totalDiscounts').innerText = `₹ ${overallReport.totalOfferDiscount}`;
+                document.getElementById('couponDeductions').innerText = `₹ ${overallReport.totalCouponDiscount}`;
+                document.getElementById('totalSalesCount').innerText = `${overallReport.totalSales}`;
+
+
+                document.getElementById('individualSalesReportTable').innerHTML = 
+                individualReport.map(order => {
+                    return `<tr>
+                        <td>${order.date}</td>
+                        <td>${order._id}</td>
+                        <td>${order.amount}</td>
+                        <td>${order.discount}</td>
+                        <td>${order.coupon}</td>
+                        <td>${order.salesCount}</td>
+                    </tr>`
+                }).join('');
+
+                toastr.info('Report generated successfully')
+            })
+            }
+        })
+
+        document.getElementById('downloadPdf').addEventListener('click', async (e)=>{
+            e.preventDefault();
+
+            if(!overallReport){
+                toastr.warning('First generate report')
+            } else {
+                await fetch('/admin/report/generatePdf',{
+                    method: 'POST',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({startDate:startDate.value,endDate:endDate.value,overallReport,individualReport})
+                }).then(response=>response.json())
+                .then(data=>{
+                    if(data.success){
+                        toastr.info('Success, PDF will download now');
+                        setTimeout(() => {
+                            window.location.href = '/admin/reprt/downloadPdf';
+                        }, 1000);
+                    } else toastr.error("Error, can't generate pdf file")
+                })
+            }
+        })
+
+        document.getElementById('downloadExcel').addEventListener('click', async (e)=>{
+            e.preventDefault();
+
+            if(!overallReport){
+                toastr.warning('First generate report')
+            } else {
+                await fetch('/admin/report/generateExcel',{
+                    method: 'POST',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({startDate:startDate.value,endDate:endDate.value,overallReport,individualReport})
+                }).then(response=>response.json())
+                .then(data=>{
+                    if(data.success){
+                        toastr.info('Success, Excel file will download now');
+                        setTimeout(() => {
+                            window.location.href = '/admin/reprt/downloadExcel';
+                        }, 1000);
+                    } else toastr.error("Error, Can't generate the excel file")
+                })
+            }
+        })
+
+    </script>
+
+    <%- include ('../partials/admin-footer.ejs') %>

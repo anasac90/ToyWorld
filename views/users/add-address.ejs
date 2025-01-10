@@ -1,0 +1,135 @@
+<%- include ('../partials/user-header.ejs') %>
+
+    <main class="mt-5" style="height: auto;">
+        <div class=" content-head">
+            <div class="content-head-rect col-5 bg-dark-grn">
+                <div>
+                    <h2 class="content-head-txt">ADD ADDRESS</h2>
+                </div>
+                <div class="content-head-tri ms-auto"></div>
+            </div>
+        </div>
+        <div class="content-body side-margin text-start mt-3" style="justify-content: center;">
+            <form autocomplete="off" action="/address/submit" method="POST" class="col-4">
+                <% if(warning) { %>
+                    <p style="text-align: center; color: red; font-weight:700;">
+                        <%= warning %>
+                    </p>
+                    <% } %>
+                        <% if(!addressData) { %>
+                            <div class="col mb-3">
+                                <label>House Name/No:</label>
+                                <input class="form-control" placeholder="Enter the house name/no" name="house"
+                                    type="text">
+                            </div>
+                            <div class="col mb-3">
+                                <label>Street Name:</label>
+                                <input class="form-control" placeholder="Enter the street name" name="street"
+                                    type="text">
+                            </div>
+                            <div class="col mb-3">
+                                <label>Post:</label>
+                                <input class="form-control" placeholder="Enter the post office name" name="post"
+                                    type="text">
+                            </div>
+                            <div class="col mb-3">
+                                <label>City:</label>
+                                <input class="form-control" placeholder="Enter the city name" name="city" type="text">
+                            </div>
+                            <div class="col mb-3">
+                                <label>District:</label>
+                                <input class="form-control" placeholder="Enter the district name" name="district"
+                                    type="text">
+                            </div>
+                            <div class="col mb-3">
+                                <label>State:</label>
+                                <input class="form-control" placeholder="Enter the state" name="state" type="text">
+                            </div>
+                            <div class="mb-3">
+                                <label>Pincode:</label>
+                                <input class="form-control" type="number" name="pincode"
+                                    placeholder="Enter the pincode" />
+                            </div>
+                            <div class="mb-3">
+                                <label>Mobile: (Eg:-9809112233)</label>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <input class="form-control w-75" type="tel" id="mobile" pattern="[0-9]{10}"
+                                        name="mobile"  data-user-mobile="<%= user[0].mobile %>" placeholder="Mobile number" />
+                                    <button class="btn btn-secondary" id="defaultMobile" type="button">Use
+                                        default</button>
+                                </div>
+                            </div>
+                            <div>
+                                <button type="submit" class="btn" style="color: white; background-color: #66A5AD;">
+                                    Submit
+                                </button>
+                            </div>
+                            <% } else { %>
+                                <div class="col mb-3">
+                                    <label>House Name/No:</label>
+                                    <input class="form-control" value="<%= addressData.house %>"
+                                        placeholder="Enter the house name/no" name="house" type="text">
+                                </div>
+                                <div class="col mb-3">
+                                    <label>Street Name:</label>
+                                    <input class="form-control" value="<%= addressData.street %>"
+                                        placeholder="Enter the street name" name="street" type="text">
+                                </div>
+                                <div class="col mb-3">
+                                    <label>Post:</label>
+                                    <input class="form-control" value="<%= addressData.post %>"
+                                        placeholder="Enter the post office name" name="post" type="text">
+                                </div>
+                                <div class="col mb-3">
+                                    <label>City:</label>
+                                    <input class="form-control" value="<%= addressData.city %>"
+                                        placeholder="Enter the city name" name="city" type="text">
+                                </div>
+                                <div class="col mb-3">
+                                    <label>District:</label>
+                                    <input class="form-control" value="<%= addressData.district %>"
+                                        placeholder="Enter the district name" name="district" type="text">
+                                </div>
+                                <div class="col mb-3">
+                                    <label>State:</label>
+                                    <input class="form-control" value="<%= addressData.state %>"
+                                        placeholder="Enter the state" name="state" type="text">
+                                </div>
+                                <div class="mb-3">
+                                    <label>Pincode:</label>
+                                    <input class="form-control" value="<%= addressData.pincode %>" type="number"
+                                        name="pincode" placeholder="Enter the pincode" />
+                                </div>
+                                <div class="mb-3">
+                                    <label>Mobile: (Eg:-9809112233)</label>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <input class="form-control w-75" id="mobile" value="<%= addressData.mobile %>" type="tel"
+                                            pattern="[0-9]{10}" data-user-mobile="<%= user[0].mobile %>" name="mobile" placeholder="Mobile number" />
+                                        <button class="btn btn-secondary" id="defaultMobile" type="button">Use
+                                            default</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button type="submit" class="btn" style="color: white; background-color: #66A5AD;">
+                                        Update
+                                    </button>
+                                </div>
+                                <% } %>
+            </form>
+        </div>
+    </main>
+
+
+    <script>
+        let defaultButton = document.getElementById('defaultMobile');
+        let mobileInput = document.getElementById('mobile');
+
+        defaultButton.addEventListener('click',()=>{
+            let defaultMobile = mobileInput.getAttribute('data-user-mobile');
+
+            mobileInput.value = defaultButton.innerText == 'Use default'?defaultMobile:null;
+            defaultButton.innerText = defaultButton.innerText == 'Use default'?'Clear default':'Use default';
+        })
+    </script>
+
+    <%- include ('../partials/user-footer.ejs') %>

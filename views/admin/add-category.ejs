@@ -1,0 +1,44 @@
+<%- include ('../partials/admin-header.ejs') %>
+
+
+    <main class="mt-3" style="height: auto;"">
+        <div class=" content-head">
+        <div class="content-head-rect col-5 bg-dark-grn">
+            <div>
+                <h2 class="content-head-txt">ADD CATEGORY</h2>
+            </div>
+            <div class="content-head-tri ms-auto"></div>
+        </div>
+        </div>
+        <div class="content-body side-margin text-start mt-3" style="justify-content: center;">
+            <form autocomplete="off" action="/admin/categories/submit" enctype="multipart/form-data" method="POST" class="col-4">
+                <p style="text-align: center; color: green; font-weight:700;">
+                    <%= status %>
+                </p>
+                <p style="text-align: center; color: red; font-weight:700;">
+                    <%= warning %>
+                </p>
+                <div class="col mb-3">
+                    <label>Category Name:</label>
+                    <input class="form-control" placeholder="Enter the category name" name="categoryName" required
+                        type="text">
+                </div>
+                <div class="col mb-3">
+                    <label>Description:</label>
+                    <textarea class="form-control" placeholder="Enter the description" name="categoryDescription" required
+                        type="text"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label>Image:</label>
+                    <input class="form-control mb-1" type="file" accept="image/*" name="categoryImage" required/>
+                </div>
+                <div>
+                    <button type="submit" class="btn" style="color: white; background-color: #66A5AD;">
+                        Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <%- include ('../partials/admin-footer.ejs') %>

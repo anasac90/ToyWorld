@@ -1,0 +1,287 @@
+<%- include ('../partials/user-header.ejs') %>
+
+    <section class="h-100 gradient-custom mt-5">
+        <div class="container py-5">
+            <div class="row d-flex justify-content-center my-4">
+                <% if (cartProducts.length==0) { %>
+                    <div class="col-md-12 text-md-center" style="min-height: 472px; align-content: center;">
+                        <h5 class="mb-0" style="font-weight: 700;">No items in cart</h5>
+                    </div>
+                    <% } else { %>
+                        <div class="col-md-8">
+                            <div class="card mb-4">
+                                <div class="card-header py-3">
+                                    <h5 class="mb-0" style="font-weight: 700;">Cart - <%= cartProducts.length %> items
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <% for(let i=0;i < cartProducts.length;i++) { %>
+                                        <div class="row">
+                                            <p class="warning"
+                                                style="color: red;font-weight: 600; display: flex; justify-content: center;">
+                                            </p>
+                                            <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                                                <!-- Image -->
+                                                <div class="bg-image hover-overlay hover-zoom ripple rounded"
+                                                    data-mdb-ripple-color="light">
+                                                    <img src="/images/<%= cartProducts[i].productImages[0] %>"
+                                                        class="w-100" alt="<%= cartProducts[i].productName %>" />
+                                                    <a href="#!">
+                                                        <div class="mask"
+                                                            style="background-color: rgba(251, 251, 251, 0.2)"></div>
+                                                    </a>
+                                                </div>
+                                                <!-- Image -->
+                                            </div>
+
+                                            <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                                                <!-- Data -->
+                                                <p><strong>
+                                                        <%= cartProducts[i].productName %>
+                                                    </strong></p>
+                                                <p class="productCode"
+                                                    data-productCode="<%= cartProducts[i].productCode %>">Product Code:
+                                                    <%= cartProducts[i].productCode %>
+                                                </p>
+                                                <p>Minimum Age: <%= cartProducts[i].minimumAge %>
+                                                </p>
+                                                <form method="post"
+                                                    action="/cart/delete/<%= cartProducts[i].productCode %>?_method=DELETE"
+                                                    style="float: left;">
+                                                    <button type="submit" style="color: white;" data-mdb-button-init
+                                                        data-mdb-ripple-init class="btn bg-dark-grn btn-sm me-1 mb-2"
+                                                        data-mdb-tooltip-init title="Remove item">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                                <form action="/wish-list/add/<%= cartProducts[i].productCode %>"
+                                                    style="text-decoration: none;">
+                                                    <button type="submit" style="color: white;" data-mdb-button-init
+                                                        data-mdb-ripple-init class="btn bg-dark-grn btn-sm mb-2"
+                                                        data-mdb-tooltip-init title="Move to the wish list">
+                                                        <i class="fas fa-heart"></i>
+                                                    </button>
+                                                </form>
+                                                <!-- Data -->
+                                            </div>
+
+                                            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                                                <!-- Quantity -->
+                                                <div class="d-flex mb-4" style="max-width: 300px">
+                                                    <button data-mdb-button-init data-mdb-ripple-init
+                                                        class="btn bg-dark-grn px-3 me-2 quantityButtonDown"
+                                                        onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
+                                                        <i style="color: white;" class="fas fa-minus"></i>
+                                                    </button>
+
+                                                    <div data-mdb-input-init class="form-outline">
+                                                        <input min="1" max="<%= cartProducts[i].stockQuantity %>"
+                                                            name="quantity" value="<%= cartProducts[i].quantity %>"
+                                                            type="number" id="quantity" class="form-control quantity" />
+                                                        <label class="form-label" for="form1">Quantity</label>
+                                                    </div>
+
+                                                    <button data-mdb-button-init data-mdb-ripple-init
+                                                        class="btn bg-dark-grn px-3 ms-2 quantityButtonUp"
+                                                        onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                                                        <i style="color: white;" class="fas fa-plus"></i>
+                                                    </button>
+                                                </div>
+                                                <!-- Quantity -->
+
+                                                <!-- Price -->
+                                                <p class="text-start text-md-center price" id="price"
+                                                    data-price="<%= cartProducts[i].price %>">
+                                                    <strong>
+                                                        ₹ <%= Number(cartProducts[i].price).toFixed(2) %>
+                                                    </strong>
+                                                </p>
+                                                <!-- Price -->
+                                            </div>
+                                        </div>
+                                        <% if (i < cartProducts.length-1) { %>
+                                            <hr class="my-4" />
+                                            <% } %>
+                                                <% } %>
+                                </div>
+                            </div>
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <p style="font-weight: 700;" class="mb-0"><strong>Expected shipping:</strong></p>
+                                    <p>
+                                        <%= shipping.getDate() %>/<%= shipping.getMonth() %>/<%= shipping.getFullYear()
+                                                    %>
+                                    </p>
+                                    <p style="font-weight: 700;" class="mb-0"><strong>Expected delivery:</strong></p>
+                                    <p class="mb-0">
+                                        <%= delivery.getDate() %>/<%= delivery.getMonth() %>/<%= delivery.getFullYear()
+                                                    %>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="card mb-4 mb-lg-0">
+                                <div class="card-body">
+                                    <span style="font-weight: 700;"><strong>We accept:</strong>
+                                        <img class="me-2" width="45px"
+                                            src="https://upload.wikimedia.org/wikipedia/commons/c/cb/Rupay-Logo.png"
+                                            alt="Rupay card">
+                                        <img class="me-2" width="45px"
+                                            src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/visa.svg"
+                                            alt="Visa" />
+                                        <img class="me-2" width="45px"
+                                            src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/mastercard.svg"
+                                            alt="Mastercard" />
+                                        <img class="me-2" width="45px"
+                                            src="https://www.ecommerce-nation.com/wp-content/uploads/2019/02/razorpay.webp"
+                                            alt="RazorPay acceptance mark" /></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card mb-4">
+                                <div class="card-header py-3">
+                                    <h5 class="mb-0" style="font-weight: 700;">Summary</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        <li
+                                            class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                            Total product cost
+                                            <span id="totalProductCost"><strong>₹ 0.00</strong></span>
+                                        </li>
+                                        <li
+                                            class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                            Shipping
+                                            <span id="deliveryCharge">0.00</span>
+                                        </li>
+                                        <li
+                                            class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                                            <div>
+                                                <strong>Total amount to Pay</strong>
+                                                <strong>
+                                                    <p class="mb-0">(including GST)</p>
+                                                </strong>
+                                            </div>
+                                            <span id="totalToPay" style="font-weight: 700;"><strong>₹
+                                                    0.00</strong></span>
+                                        </li>
+                                    </ul>
+
+                                    <a href="/checkout">
+                                        <button type="button" style="color: white;" data-mdb-button-init
+                                            data-mdb-ripple-init class="btn bg-dark-grn btn-lg btn-block">
+                                            Go to checkout
+                                        </button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Get all the quantity controls and price elements
+
+        document.querySelectorAll('.quantityButtonDown').forEach((btn, index) => {
+            btn.addEventListener('click', () => updatePrice(index));
+        });
+
+        document.querySelectorAll('.quantityButtonUp').forEach((btn, index) => {
+            btn.addEventListener('click', () => updatePrice(index));
+        });
+
+        document.querySelectorAll('.quantity').forEach((e, index) => {
+            e.addEventListener('change', () => updatePrice(index));
+        });
+
+        function updatePrice(index) {
+            const quantityInput = document.querySelectorAll('.quantity')[index];
+            const currentQuantity = parseInt(quantityInput.value);
+            const priceElement = document.querySelectorAll('.price')[index];
+            const unitPrice = parseFloat(priceElement.getAttribute('data-price'));
+            const productCode = document.querySelectorAll('.productCode')[index].getAttribute('data-productCode');
+            const maxLimit = parseInt(quantityInput.getAttribute('max'));
+            const warning = document.querySelectorAll('.warning')[index]
+
+            // Send AJAX request to update quantity in the database
+            updateQuantityInDatabase(productCode, currentQuantity);
+
+            // Calculate the new price based on updated quantity
+            const subTotal = currentQuantity * unitPrice;
+
+            // Update the displayed price
+            priceElement.innerHTML = `<strong>₹ ${subTotal.toFixed(2)}</strong>`;
+
+            // updating to total price
+            totalPriceCalculator();
+
+            // max limit/stock limit message
+            maxLimitMessage(currentQuantity, maxLimit, warning);
+        }
+
+
+        function maxLimitMessage(currentQuantity, maxLimit, warning) {
+            if (currentQuantity === maxLimit) {
+                warning.innerText = "Max quantity reached";
+            } else {
+                warning.innerText = null;
+            }
+        }
+
+        function updateQuantityInDatabase(productCode, quantity) {
+            fetch('/cart/update-quantity', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productCode, quantity })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Quantity updated successfully');
+                    } else {
+                        console.error('Failed to update quantity');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function totalPriceCalculator() {
+            let totalPrice = 0;
+            const quantityInputs = document.querySelectorAll('.quantity');
+            const priceElements = document.querySelectorAll('.price');
+
+            quantityInputs.forEach((input, index) => {
+                const currentQuantity = parseInt(input.value);
+                const unitPrice = parseFloat(priceElements[index].getAttribute('data-price'));
+
+                totalPrice = totalPrice + (currentQuantity * unitPrice);
+
+                document.getElementById('totalProductCost').innerHTML = `<strong>₹ ${totalPrice.toFixed(2)}</strong>`
+
+            })
+            let deliveryCharge = totalPrice >= 1000 ? 0 : 100;
+
+            document.getElementById('deliveryCharge').innerText = `₹ ${deliveryCharge}`
+            document.getElementById('totalToPay').innerHTML = `<strong>₹ ${(totalPrice + deliveryCharge).toFixed(2)}</strong>`
+        }
+
+        // Function to update all prices on page load
+        function updateAllPricesOnPageLoad() {
+            document.querySelectorAll('.quantity').forEach((_, index) => {
+                updatePrice(index);  // Call updatePrice for each product
+            });
+        }
+
+        // Run the function to update all prices after the page has loaded
+        window.onload = function () {
+            updateAllPricesOnPageLoad();  // Update all prices on page load
+            totalPriceCalculator();  // Ensure total price is also calculated
+        };
+
+    </script>
+
+    <%- include ('../partials/user-footer.ejs') %>

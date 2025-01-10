@@ -1,0 +1,58 @@
+<%- include ('../partials/user-header.ejs') %>
+
+        <main class="mt-5" style="height: auto;">
+            <div class=" content-head">
+                <div class="content-head-rect col-5 bg-dark-grn">
+                    <div>
+                        <h2 class="content-head-txt">LOGIN</h2>
+                    </div>
+                    <div class="content-head-tri ms-auto"></div>
+                </div>
+            </div>
+            <div class="content-body side-margin text-start mt-3"
+                style="justify-content: center; flex-direction: column;">
+                <p class="text-success">
+                    <%= status %>
+                </p>
+                <div>
+                    <form action="/home" method="post">
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-bold">Email</label>
+                            <input type="email" placeholder="Email address" class="form-control" id="exampleInputEmail1"
+                                aria-describedby="emailHelp" name="email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleInputPassword1" class="form-label fw-bold">Password</label>
+                            <input type="password" placeholder="Password" class="form-control"
+                                id="exampleInputPassword1" name="password">
+                        </div>
+                        <p class="text-danger">
+                            <%= message %>
+                        </p>
+                        <button type="submit" class="btn" style="color: white; background-color: #66A5AD;">
+                            Login
+                        </button>
+                        <span class="text-start" style="font-size: 14px; font-weight: 700 ; align-content: center; margin-left: 10px;">
+                            OR LOGIN USING 
+                            <a href="/auth/google" class="ms-2" style="text-decoration: none;">
+                                <img src="/images/others/google.png" alt="google" style="width: 20px; height: auto;">
+                            </a>
+                            <!-- <a href="/facebookSignup" class="ms-2" style="text-decoration: none;">
+                                <img src="/images/others/facebook.png" alt="facebook"  style="width: 20px; height: auto;">
+                            </a> -->
+                        </span>
+                    </form>
+                </div>
+                <div class="mt-5">
+                    <p style="font-size: 14px; font-weight: 700" class="text-start">
+                        New here?
+                        <a href="/signup" class="col-dark-grn">
+                            Register Here...
+                        </a>
+                    </p>
+                </div>
+            </div>
+
+        </main>
+
+        <%- include ('../partials/user-footer.ejs') %>

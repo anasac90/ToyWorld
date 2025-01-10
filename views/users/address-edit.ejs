@@ -1,0 +1,69 @@
+<%- include ('../partials/user-header.ejs') %>
+
+    <main class="mt-5" style="height: auto;">
+        <div class=" content-head">
+            <div class="content-head-rect col-5 bg-dark-grn">
+                <div>
+                    <h2 class="content-head-txt">EDIT ADDRESS</h2>
+                </div>
+                <div class="content-head-tri ms-auto"></div>
+            </div>
+        </div>
+        <div class="content-body side-margin text-start mt-3" style="justify-content: center;">
+            <form autocomplete="off" action="/address/update?_method=PUT" method="POST" class="col-4">
+                <% if(warning) { %>
+                    <p style="text-align: center; color: red; font-weight:700;">
+                        <%= warning %>
+                    </p>
+                    <% } %>
+                        <div class="col mb-3">
+                            <label>House Name/No:</label>
+                            <input class="form-control" value="<%= addressData[0].house %>"
+                                placeholder="Enter the house name/no" name="house" type="text">
+                        </div>
+                        <div class="col mb-3">
+                            <label>Street Name:</label>
+                            <input class="form-control" value="<%= addressData[0].street %>"
+                                placeholder="Enter the street name" name="street" type="text">
+                        </div>
+                        <div class="col mb-3">
+                            <label>Post:</label>
+                            <input class="form-control" value="<%= addressData[0].post %>"
+                                placeholder="Enter the post office name" name="post" type="text">
+                        </div>
+                        <div class="col mb-3">
+                            <label>City:</label>
+                            <input class="form-control" value="<%= addressData[0].city %>"
+                                placeholder="Enter the city name" name="city" type="text">
+                        </div>
+                        <div class="col mb-3">
+                            <label>District:</label>
+                            <input class="form-control" value="<%= addressData[0].district %>"
+                                placeholder="Enter the district name" name="district" type="text">
+                        </div>
+                        <div class="col mb-3">
+                            <label>State:</label>
+                            <input class="form-control" value="<%= addressData[0].state %>"
+                                placeholder="Enter the state" name="state" type="text">
+                        </div>
+                        <div class="mb-3">
+                            <label>Pincode:</label>
+                            <input class="form-control" value="<%= addressData[0].pincode %>" type="number"
+                                name="pincode" placeholder="Enter the pincode" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Mobile: (Eg:-9809112233)</label>
+                            <input class="form-control" id="mobile" value="<%= addressData[0].mobile %>" type="tel"
+                                pattern="[0-9]{10}" data-user-mobile="<%= user[0].mobile %>" name="mobile"
+                                placeholder="Mobile number" />
+                        </div>
+                        <div>
+                            <button type="submit" class="btn" style="color: white; background-color: #66A5AD;">
+                                Update
+                            </button>
+                        </div>
+            </form>
+        </div>
+    </main>
+
+    <%- include ('../partials/user-footer.ejs') %>

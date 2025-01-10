@@ -1,0 +1,33 @@
+<%- include ('../partials/user-header.ejs') %>
+
+
+    <main class="mt-5" style="height: auto;">
+        <div class=" content-head">
+            <div class="content-head-rect col-5 bg-dark-grn">
+                <div>
+                    <h2 class="content-head-txt">VERIFICATION</h2>
+                </div>
+                <div class="content-head-tri ms-auto"></div>
+            </div>
+        </div>
+        <div class="content-body side-margin text-start mt-3" style="justify-content: center; flex-direction: column;">
+            <div class="w-25">
+
+                <p class="text-danger mb-3" id="status" style="text-align: center;">
+                    <%= status %>
+                </p>
+                <form autocomplete="off" id="otpForm" action="/sendOTP" method="post">
+                    <div class="mb-2">
+                        <label>Email:</label>
+                        <input class="form-control" readonly required type="email" value="<%= email %>" name="email" />
+                    </div>
+                    <p>Change Email address? <a class="col-dark-grn" href="/edit">Edit Here</a></p>
+                    <button type="submit" id="sendOTP" class="btn bg-dark-grn"
+                        style="color: white;">Send
+                        OTP</button>
+                </form>
+            </div>
+    </main>
+
+
+    <%- include ('../partials/user-footer.ejs') %>

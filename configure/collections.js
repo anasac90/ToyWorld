@@ -1,0 +1,14 @@
+module.exports={
+    PRODUCT_COLLECTION:"products",
+    CATEGORY_COLLECTION:"categories",
+    USER_COLLECTION:"users",
+    ADDRESS_COLLECTION:"addresses",
+    CART_COLLECTION:'cart',
+    WISHLIST_COLLECTION:'wishList',
+    WALLET_COLLECTION:'wallet',
+    OFFER_COLLECTION:'offer',
+    COUPON_COLLECTION:'coupons',
+    ORDER_COLLECTION:'orders',
+    GOOGLE_CLIENT_ID:"307474165748-hhpon4dalt8u888qf8ofvb5f1mq5gkvf.apps.googleusercontent.com",
+    GOOGLE_CLIENT_SECRET:"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",
+}

@@ -1,0 +1,259 @@
+<%- include ('../partials/admin-header.ejs') %>
+
+
+    <main class="mt-3" style="height: auto;"">
+        <div class=" content-head">
+        <div class="content-head-rect col-5 bg-dark-grn">
+            <div>
+                <h2 class="content-head-txt">ADD PRODUCT</h2>
+            </div>
+            <div class="content-head-tri ms-auto"></div>
+        </div>
+        </div>
+        <div class="content-body side-margin text-start mt-3" style="justify-content: center;">
+            <form autocomplete="off" action="/admin/products/submit" enctype="multipart/form-data" method="POST"
+                class="col-4">
+                <% if(status) { %>
+                    <p style="text-align: center; color: green; font-weight:700;">
+                        <%= status %>
+                    </p>
+                    <% } %>
+                        <% if(warning) { %>
+                            <p style="text-align: center; color: red; font-weight:700;">
+                                <%= warning %>
+                            </p>
+                            <% } %>
+                                <% if(!productData) { %>
+                                    <div class="col mb-3">
+                                        <label>Product Name:</label>
+                                        <input class="form-control" placeholder="Enter the product name"
+                                            name="productName" type="text">
+                                    </div>
+                                    <div class="col mb-3">
+                                        <label>Price:</label>
+                                        <input class="form-control" placeholder="Price of the product" name="price"
+                                            type="number">
+                                    </div>
+                                    <div class="col mb-3">
+                                        <label>Stock Quantity:</label>
+                                        <input class="form-control" placeholder="Stock quantity" name="stockQuantity"
+                                            type="number">
+                                    </div>
+                                    <div class="col mb-3">
+                                        <label>Product Code:</label>
+                                        <input class="form-control" placeholder="Product code" name="productCode"
+                                            type="text">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Minimum Age:</label>
+                                        <input class="form-control" type="number" name="minimumAge"
+                                            placeholder="Minimum age" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Category:</label>
+                                        <div class="input-group mb-3">
+                                            <select class="form-select" id="category" name="category">
+                                                <option selected>Choose...</option>
+                                                <% for(let j=0; j < categories.length;j++) { %>
+                                                    <option value="<%=categories[j] %>">
+                                                        <%= categories[j] %>
+                                                    </option>
+                                                    <% } %>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Brand:</label>
+                                        <div class="input-group mb-3">
+                                            <select class="form-select" id="brand" name="brand">
+                                                <option selected>Choose...</option>
+                                                <% for(let k=0; k < brands.length; k++) { %>
+                                                    <option value=<%=brands[k] %>><%= brands[k] %>
+                                                    </option>
+                                                    <% } %>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col mb-3">
+                                        <label>Description:</label>
+                                        <textarea class="form-control" placeholder="Enter the description"
+                                            name="productDescription" type="text"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Images:</label>
+                                        <div class="mb-2" id="img-preview"></div>
+                                        <input class="form-control mb-1" type="file" accept="image/*"
+                                            name="productImages" id="imageInput" multiple />
+                                        <div style="display: flex;">
+                                            <div id="crop-container" style="width: 50%; height: 50%; display:none;">
+                                            </div>
+                                            <button id="cropButton" class="ms-3" style="align-items: center;">Crop
+                                                Images</button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button type="submit" class="btn"
+                                            style="color: white; background-color: #66A5AD;">
+                                            Submit
+                                        </button>
+                                    </div>
+                                    <% } else { %>
+                                        <div class="col mb-3">
+                                            <label>Product Name:</label>
+                                            <input class="form-control" value="<%= productData.productName %>"
+                                                placeholder="Enter the product name" name="productName" type="text">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label>Price:</label>
+                                            <input class="form-control" value="<%= productData.price %>"
+                                                placeholder="Price of the product" name="price" type="number">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label>Stock Quantity:</label>
+                                            <input class="form-control" value="<%= productData.stockQuantity %>"
+                                                placeholder="Stock quantity" name="stockQuantity" type="number">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label>Product Code:</label>
+                                            <input class="form-control" value="<%= productData.productCode %>"
+                                                placeholder="Product code" name="productCode" type="text">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Minimum Age:</label>
+                                            <input class="form-control" value="<%= productData.minimumAge %>"
+                                                type="number" name="minimumAge" placeholder="Minimum age" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Category:</label>
+                                            <div class="input-group mb-3">
+                                                <select class="form-select" id="category" name="category">
+                                                    <option selected>
+                                                        <%= productData.category %>
+                                                    </option>
+                                                    <% for(let j=0; j < categories.length;j++) { %>
+                                                        <option value="<%= categories[j] %>">
+                                                            <%= categories[j] %>
+                                                        </option>
+                                                        <% } %>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Brand:</label>
+                                            <div class="input-group mb-3">
+                                                <select class="form-select" id="brand" required name="brand">
+                                                    <option selected>
+                                                        <%= productData.brand %>
+                                                    </option>
+                                                    <% for(let k=0; k < brands.length; k++) { %>
+                                                        <option value="<%= brands[k] %>">
+                                                            <%= brands[k] %>
+                                                        </option>
+                                                        <% } %>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label>Description:</label>
+                                            <textarea class="form-control" name="productDescription" required
+                                                type="text"><%= productData.productDescription %> </textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Images:</label>
+                                            <div class="mb-2" id="img-preview">
+                                                <% for ( let x=0; x < productImage?.length; x++ ) { %>
+                                                    <img src="/images/<%= productImage[x]?.filename %>"
+                                                        style="width: 70px; height: 70px;" alt="">
+                                                    <% } %>
+                                            </div>
+                                            <input class="form-control mb-1" type="file" accept="image/*"
+                                                name="productImages" id="imageInput" multiple required/>
+                                            <div style="display: flex;">
+                                                <div id="crop-container" style="width: 50%; height: 50%; display:none;">
+                                                </div>
+                                                <button id="cropButton" class="ms-3" style="align-items: center;">Crop
+                                                    Images</button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <button type="Edit" class="btn"
+                                                style="color: white; background-color: #66A5AD;">
+                                                Update
+                                            </button>
+                                        </div>
+                                        <% } %>
+            </form>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script>
+        let cropperInstances = [];
+
+        // Handle file selection for multiple images
+        document.getElementById('imageInput').addEventListener('change', function (event) {
+            const files = event.target.files;
+            const cropContainer = document.getElementById('crop-container');
+            
+            cropContainer.style = "display:block";
+            document.getElementById('cropButton').style = 'display:block;'
+
+            cropContainer.innerHTML = ''; // Clear any previous images
+            cropperInstances = []; // Clear previous cropper instances
+
+            // Loop through each file and create a Cropper instance
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                const imageElement = document.createElement('img');
+                const imageWrapper = document.createElement('div');
+                imageWrapper.style.marginBottom = '20px';
+
+                reader.onload = function (e) {
+                    imageElement.src = e.target.result;
+                    imageWrapper.appendChild(imageElement);
+                    cropContainer.appendChild(imageWrapper);
+
+                    // Initialize Cropper.js for each image
+                    const cropper = new Cropper(imageElement, {
+                        aspectRatio: 1 / 1,
+                        viewMode: 1,
+                    });
+
+                    cropperInstances.push(cropper); // Store each cropper instance
+                };
+
+                reader.readAsDataURL(file);
+            });
+        });
+        document.getElementById('cropButton').addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const imagePreviewContainer = document.getElementById('img-preview');
+            imagePreviewContainer.innerHTML = ''; // Clear previous cropped images
+
+            // Create a DataTransfer object to hold the cropped images
+            const dataTransfer = new DataTransfer();
+
+            // Loop through each cropper instance and get the cropped image
+            cropperInstances.forEach((cropper, index) => {
+                cropper.getCroppedCanvas().toBlob((blob) => {
+                    const file = new File([blob], `cropped_${index}.jpg`, { type: 'image/jpeg' });
+                    dataTransfer.items.add(file); // Add cropped image to the DataTransfer object
+
+                    // Create an img element for the preview and append it to the result container
+                    const previewImage = document.createElement('img');
+                    const url = URL.createObjectURL(blob); // Create a temporary URL for the image blob
+                    previewImage.src = url;
+                    previewImage.style = 'width:70px; margin-right:10px;' // Add some margin between images
+                    imagePreviewContainer.appendChild(previewImage);
+
+                    // Once all images are added, set the files to the input
+                    if (index === cropperInstances.length - 1) {
+                        document.getElementById('imageInput').files = dataTransfer.files; // Update the input's file list
+                    }
+                });
+            });
+        });
+    </script>
+
+    <%- include ('../partials/admin-footer.ejs') %>

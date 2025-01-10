@@ -1,0 +1,149 @@
+<%- include ('../partials/user-header.ejs') %>
+
+
+    <main class="mt-5" style="height: auto;">
+        <div class=" content-head">
+            <div class="content-head-rect col-5 bg-dark-grn">
+                <div>
+                    <h2 class="content-head-txt">SIGN UP</h2>
+                </div>
+                <div class="content-head-tri ms-auto"></div>
+            </div>
+        </div>
+        <div class="content-body side-margin text-start mt-3" style="justify-content: center; flex-direction: column;">
+            <div>
+                <form autocomplete="off" action="/verify" method="post">
+                    <% if (newUser) { %>
+                        <div class="row">
+                            <div class="col mb-3">
+                                <label>First name:</label>
+                                <input class="form-control" placeholder="First name" name="fname"
+                                    value="<%= newUser.fname %>" required type="text">
+                            </div>
+                            <div class="col mb-3">
+                                <label>Last name:</label>
+                                <input class="form-control" placeholder="Last name" name="lname"
+                                    value="<%= newUser.lname %>" required type="text">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label>Email:</label>
+                            <input class="form-control" required type="email" name="email" value="<%= newUser.email %>"
+                                placeholder="Email" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Mobile: (Eg:-9809112233)</label>
+                            <input class="form-control" required type="tel" pattern="[0-9]{10}" name="mobile"
+                                value="<%= newUser.mobile %>" placeholder="Mobile number" />
+                        </div>
+                        <div class="mb-3">
+                            <div>
+                                <label>Password:</label>
+                                <div class="row">
+                                    <div class="" style="width: 70%">
+                                        <input class="form-control" id="password" required type="password"
+                                            name="password" value="<%= newUser.password %>" placeholder="Password" />
+                                    </div>
+                                    <div class="col text-end" style="margin-right: 0;">
+                                        <button type="button" id="togglePassword" class="btn btn-outline-secondary">
+                                            Show
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label>Re-enter password:</label>
+                            <input class="form-control" required type="password" name="password2"
+                                value="<%= newUser.password2 %>" placeholder="Re-enter password" />
+                        </div>
+                        <% } else { %>
+                            <div class="row">
+                                <div class="col mb-3">
+                                    <label>First name:</label>
+                                    <input class="form-control" placeholder="First name" name="fname" required
+                                        type="text">
+                                </div>
+                                <div class="col mb-3">
+                                    <label>Last name:</label>
+                                    <input class="form-control" placeholder="Last name" name="lname" required
+                                        type="text">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label>Email:</label>
+                                <input class="form-control" required type="email" name="email" placeholder="Email" />
+                            </div>
+                            <div class="mb-3">
+                                <label>Mobile: (Eg:-9809112233)</label>
+                                <input class="form-control" required type="tel" pattern="[0-9]{10}" name="mobile"
+                                    placeholder="Mobile number" />
+                            </div>
+                            <div class="mb-3">
+                                <div>
+                                    <label>Password:</label>
+                                    <div class="row">
+                                        <div class="" style="width: 70%">
+                                            <input class="form-control" id="password" required type="password"
+                                                name="password" placeholder="Password" />
+                                        </div>
+                                        <div class="col text-end" style="margin-right: 0;">
+                                            <button type="button" id="togglePassword" class="btn btn-outline-secondary">
+                                                Show
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label>Re-enter password:</label>
+                                <input class="form-control" required type="password" name="password2"
+                                    placeholder="Re-enter password" />
+                            </div>
+                            <% } %>
+                                <p class="text-danger">
+                                    <%= warning %>
+                                </p>
+                                <div style="display: flex;">
+                                    <button type="submit" class="btn bg-dark-grn" style="color: white;">Signup</button>
+                                    <span class="text-start"
+                                        style="font-size: 14px; font-weight: 700 ; align-content: center; margin-left: 10px;">
+                                        OR LOGIN USING
+                                        <a href="/auth/google" class="ms-2" style="text-decoration: none;">
+                                            <img src="/images/others/google.png" alt="google"
+                                                style="width: 20px; height: auto;">
+                                        </a>
+                                        <!-- <a href="/facebookSignup" class="ms-2" style="text-decoration: none;">
+                                <img src="/images/others/facebook.png" alt="facebook"  style="width: 20px; height: auto;">
+                            </a> -->
+                                    </span>
+                                </div>
+
+                </form>
+            </div>
+            <div class="mt-5">
+                <p style="font-size: 14px; font-weight: 700" class="text-start">
+                    Already a user?
+                    <a href="/login" class="col-dark-grn">
+                        Login Here...
+                    </a>
+                </p>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click',()=>{
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type',type);
+
+            togglePassword.textContent = type === 'password' ? 'Show' : 'Hide';
+        });
+    </script>
+
+
+    <%- include ('../partials/user-footer.ejs') %>

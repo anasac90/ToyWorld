@@ -1,0 +1,36 @@
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script>
+    const options = {
+      "key": "<%= razorpayKey %>", 
+      "amount": "<%= totalAmount * 100 %>", // amount in the smallest currency unit
+      "currency": "INR",
+      "name": "Your Store Name",
+      "description": "Order Payment",
+      "order_id": "<%= razorpayOrderId %>",
+      "handler": function (response){
+        
+        // After successful payment, send details to the server
+        fetch("/checkout/verify-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(response),
+        }).then(res => res.json()).then(data => {
+          if (data.status === "success") {
+            window.location.href = "/order-success";
+          } else {
+            alert("Payment verification failed.");
+          }
+        });
+      },
+      "prefill": {
+        "name": "<%= user[0].fname %>",
+        "email": "<%= user[0].email %>"
+      },
+      "theme": {
+        "color": "#3399cc"
+      }
+    };
+    const rzp1 = new Razorpay(options);
+    rzp1.open();
+  </script>

@@ -1,0 +1,35 @@
+<%- include ('../partials/user-header.ejs') %>
+
+    <main class="mt-3" style="height: auto;"">
+        <div class=" content-head">
+            <div class="content-head-rect col-5 bg-dark-grn">
+                <div>
+                    <h2 class="content-head-txt">ALL CATEGORIES</h2>
+                </div>
+                <div class="content-head-tri ms-auto"></div>
+            </div>
+        </div>
+        <div class="content-body side-margin text-start mt-3 card-container product-container" style="min-height: auto;">
+            <% for( let i=0;i<categories.length;i++ ) { %>
+            <div class="card cards product-card">
+                <div class="card-content">
+                    <img src="/images/<%= categories[i].categoryImage %>" class="card-img-top" alt="...">
+                    <div class="card-body p-3 text-center col-dark-grn">
+                        <h4 class="card-title"><%= categories[i].categoryName %></h4>
+                        <p class="card-text category-text"><%= categories[i].categoryDescription %></p>
+                        <div class="col-dark-grn" style="display: flex; justify-content: center;">
+                            <a href="/categories/<%= categories[i].categoryName %>">
+                                <button style="color: white;"
+                                    class="btn bg-dark-grn" type="submit">VIEW</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+        </div>
+    </main>
+
+
+
+    <%- include ('../partials/user-footer.ejs') %>

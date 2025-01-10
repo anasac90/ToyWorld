@@ -1,0 +1,245 @@
+<%- include ('../partials/user-header.ejs') %>
+
+  <section class="h-100 gradient-custom">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-lg-10 col-xl-8">
+          <div class="card" style="border-radius: 10px;">
+            <div class="card-header px-4 py-5">
+              <h5 class="text-muted mb-0">Thanks for your Order, <span style="font-weight: 600;">
+                  <%= user[0].fname %>
+                    <%= user[0].lname %>
+                </span>!</h5>
+            </div>
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <p class="lead fw-normal mb-0" style="color: black; font-weight: 700;">Receipt</p>
+                <p class="small text-muted mb-0">Invoice Number: <%= orderData.receipt %>
+                </p>
+              </div>
+              <% for(let i=0;i < products.length;i++) { %>
+                <div class="card shadow-0 border mb-4">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-2">
+                        <img src="/images/<%= products[i].productImages[0] %>" class="img-fluid" alt="Phone">
+                      </div>
+                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                        <p class="text-muted mb-0">
+                          <%= products[i].productName %>
+                        </p>
+                      </div>
+                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                        <p class="text-muted mb-0 small">Type: <%= products[i].category %>
+                        </p>
+                      </div>
+                      <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
+                        <p class="text-muted mb-0 small">Min Age: <%= products[i].minimumAge %>
+                        </p>
+                      </div>
+                      <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
+                        <p class="text-muted mb-0 small">Qty: <%= orderData.products[i].quantity %>
+                        </p>
+                      </div>
+                      <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
+                        <p class="text-muted mb-0 small">Price: <%= Number(products[i].price *
+                            orderData.products[i].quantity).toFixed(2) %>
+                        </p>
+                      </div>
+                      <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
+                        <p class="text-muted mb-0 small">Payment Status: <%= orderData.paymentStatus %>
+                        </p>
+                      </div>
+                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                        <% if (orderData.products[i].returnStatus) { %>
+                          <p class="text-muted mb-0 small">Return Status: <%= orderData.products[i].returnStatus %>
+                          <% } else { %>
+                            <p class="text-muted mb-0 small">Current Status: <%= orderData.products[i].status %>
+                            <% } %>
+                        </p>
+                      </div>
+                    </div>
+                    <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
+                    <% if(!(orderData.products[i].status==="Cancelled" ) && !(orderData.products[i].status==="Return")) { %>
+                      <div class="row d-flex align-items-center">
+                        <div class="col-md-2">
+                          <p class="text-muted mb-0 small" style="font-weight: 600;">Track Order</p>
+                        </div>
+                        <div class="col-md-10">
+                          <div class="progress" style="height: 6px; border-radius: 16px;">
+                            <% if (productDeliveryStatus) { %>
+                              <div class="progress-bar" role="progressbar"
+                                style="width: <%= parseInt(productDeliveryStatus[i]) %>% ; border-radius: 16px; background-color: #66a5ad;"
+                                aria-valuenow="<%= parseInt(productDeliveryStatus[i]) %>" aria-valuemin="0"
+                                aria-valuemax="100"></div>
+                              <% } else { %>
+                                <div class="progress-bar" role="progressbar"
+                                  style="width: 25%; border-radius: 16px; background-color: #66a5ad;" aria-valuenow="25"
+                                  aria-valuemin="0" aria-valuemax="100"></div>
+                                <% } %>
+                          </div>
+                          <div class="d-flex justify-content-around mb-1">
+                            <p class="text-muted mt-1 mb-0 small ms-xl-5">Order Placed</p>
+                            <p class="text-muted mt-1 mb-0 small ms-xl-5">Packed</p>
+                            <p class="text-muted mt-1 mb-0 small ms-xl-5">Shipped</p>
+                            <p class="text-muted mt-1 mb-0 small ms-xl-5">Out for delivary</p>
+                            <p class="text-muted mt-1 mb-0 small ms-xl-5">Delivered</p>
+                          </div>
+                        </div>
+                      </div>
+                      <% } else if (orderData.products[i].returnStatus && !(orderData.products[i].returnStatus==='Rejected')) { %>
+                        <div class="row d-flex align-items-center">
+                          <div class="col-md-2">
+                            <p class="text-muted mb-0 small" style="font-weight: 600;">Track Return</p>
+                          </div>
+                          <div class="col-md-10">
+                            <div class="progress" style="height: 6px; border-radius: 16px;">
+                              <% if (productReturnStatus) { %>
+                                <div class="progress-bar" role="progressbar"
+                                  style="width: <%= parseInt(productReturnStatus) %>% ; border-radius: 16px; background-color: #66a5ad;"
+                                  aria-valuenow="<%= parseInt(productReturnStatus[i]) %>" aria-valuemin="0"
+                                  aria-valuemax="100"></div>
+                                <% } else { %>
+                                  <div class="eturn-progress-bar" role="progressbar"
+                                    style="width: 25%; border-radius: 16px; background-color: #66a5ad;"
+                                    aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                  <% } %>
+                            </div>
+                            <div class="d-flex justify-content-around mb-1">
+                              <p class="text-muted mt-1 mb-0 small ms-xl-5">Return Accepted</p>
+                              <p class="text-muted mt-1 mb-0 small ms-xl-5">Picked up</p>
+                              <p class="text-muted mt-1 mb-0 small ms-xl-5">Return Received</p>
+                              <p class="text-muted mt-1 mb-0 small ms-xl-5">Refunded</p>
+                            </div>
+                          </div>
+                        </div>
+                        <% } %>
+                          <div class="mt-3" style="display: flex; justify-content: center;">
+                            <div class="mt-3" style="display: flex; justify-content: center;">
+                              <% if(orderData.products[i].status==="Delivered" ) { %>
+                                <form class="returnOrderForm" data-product-code="<%= products[i].productCode %>"
+                                  data-order-id="<%= orderData._id %>">
+                                  <% if(!returnStatus[i]) { %>
+                                    <button style="margin-left: 1rem; width: 7rem; color: white; background-color: red;"
+                                      class="btn returnButton" type="button">Return</button>
+                                      <% } %>
+                                        <p class="returnStatus"></p>
+                                </form>
+                                <% } else { %>
+                                  <form class="cancelOrderForm" data-product-code="<%= products[i].productCode %>"
+                                    data-order-id="<%= orderData._id %>">
+                                    <% if(!cancelStatus[i] && !returnStatus[i]) { %>
+                                      <button
+                                        style="margin-left: 1rem; width: 7rem; color: white; background-color: red;"
+                                        class="btn cancelButton" type="button">Cancel Order</button>
+                                      <% } else if (cancelStatus[i] && !returnStatus[i]){ %>
+                                        <!-- <button
+                                          style="margin-left: 1rem; width: 7rem; color: white; background-color: red;"
+                                          class="btn cancelButton" type="button" hidden>Cancel Order</button> -->
+                                        <p style="color: green; font-weight: 600;">Cancellation <%= cancelStatus[i] %>
+                                        </p>
+                                        <% } %>
+                                          <p class="cancelStatus"></p>
+                                  </form>
+                                  <% } %>
+                            </div>
+                          </div>
+                  </div>
+                </div>
+                <% } %>
+                  <div class="d-flex justify-content-between pt-2">
+                    <p class="fw-bold mb-0">Order Details</p>
+                    <p class="text-muted mb-0"><span class="fw-bold me-4">Total:</span> ₹ <%= orderData.productPrice %>
+                    </p>
+                  </div>
+
+                  <div class="d-flex justify-content-between pt-2">
+                    <p class="text-muted mb-0">Invoice Number: <%= orderData.receipt %>
+                    </p>
+                    <p class="text-muted mb-0"><span class="fw-bold me-4">Discount:</span> ₹ <%= orderData.discount %>
+                    </p>
+                  </div>
+
+                  <div class="d-flex justify-content-between">
+                    <p class="text-muted mb-0">Order ID: <%= orderData._id %>
+                    </p>
+                    <p class="text-muted mb-0"><span class="fw-bold me-4">Delivery Charges:</span> ₹ <%=
+                        orderData.deliveryCharge %>
+                    </p>
+                  </div>
+            </div>
+            <div class="card-footer border-0 px-4 py-5"
+              style="background-color: #66a5ad; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+              <h5 class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0">Total
+                paid:<span class="h2 mb-0 ms-2">₹ <%= orderData.orderValue %></span></h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const buttons = document.querySelectorAll('.cancelButton');
+      const form = document.querySelectorAll('.cancelOrderForm');
+      const cancelStatus = document.querySelectorAll('.cancelStatus')
+
+      buttons.forEach((button, index) => {
+        button.addEventListener('click', (event) => {
+          event.preventDefault();
+
+          productCode = form[index].getAttribute('data-product-code');
+          orderId = form[index].getAttribute('data-order-id');
+
+          fetch(`/orderCancel?productCode=${productCode}&orderId=${orderId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' }
+          }).then(response => {
+            if (response.ok) {
+              button.style = 'display:none';
+              cancelStatus[index].textContent = 'Cancellation requested';
+              cancelStatus[index].style = 'color:green;font-weight:600';
+            } else {
+              throw new Error('Failed to cancel the order')
+            }
+          }).catch(error => {
+            cancelStatus[index].textContent = 'Cancellation request failed';
+            cancelStatus[index].style = 'color:red;font-weight:600';
+          });
+        });
+      });
+
+
+      const returnButtons = document.querySelectorAll('.returnButton');
+      const returnForm = document.querySelectorAll('.returnOrderForm');
+      const returnStatus = document.querySelectorAll('.returnStatus')
+
+      returnButtons.forEach((button, index) => {
+        button.addEventListener('click', (event) => {
+          event.preventDefault();
+
+          productCode = returnForm[index].getAttribute('data-product-code');
+          orderId = returnForm[index].getAttribute('data-order-id');
+
+          fetch(`/orderReturn?productCode=${productCode}&orderId=${orderId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' }
+          }).then(response => {
+            if (response.ok) {
+              button.style = 'display:none';
+              returnStatus[index].textContent = 'Return requested';
+              returnStatus[index].style = 'color:green;font-weight:600';
+            } else {
+              throw new Error('Failed to return the order')
+            }
+          }).catch(error => {
+            returnStatus[index].textContent = 'Return request failed';
+            returnStatus[index].style = 'color:red;font-weight:600';
+          });
+        });
+      });
+    });
+  </script>
+
+  <%- include ('../partials/user-footer.ejs') %>

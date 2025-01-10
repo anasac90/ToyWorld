@@ -1,0 +1,96 @@
+<%- include ('../partials/admin-header.ejs') %>
+
+    <main class="mt-3" style="height: auto;">
+        <div class=" content-head">
+            <div class="content-head-rect col-5 bg-dark-grn">
+                <div>
+                    <h2 class="content-head-txt">COUPONS</h2>
+                </div>
+                <div class="content-head-tri ms-auto"></div>
+            </div>
+        </div>
+        <div class="content-body side-margin text-center mt-3">
+            <div class="sidebar align-items-center">
+                <a href="/admin/home">DASHBOARD</a>
+                <a href="/admin/products">PRODUCTS</a>
+                <a href="/admin/users">USERS</a>
+                <a href="/admin/categories">CATEGORIES</a>
+                <a href="/admin/orders">ORDERS</a>
+                <a href="/admin/brands">BRANDS</a>
+                <a class="active" href="/admin/coupons">COUPONS</a>
+                <a href="/admin/offers/productOffer">OFFERS</a>
+                <a href="/admin/report">REPORT</a>
+            </div>
+
+            <!-- Coupon Management Container -->
+            <div class="w-100" style="display: flex; justify-content: center;">
+                
+                <div class="coupon-management">
+                    <div class="coupon-header d-flex justify-content-between align-items-center">
+                        <h3>Manage Coupons</h3>
+                        <a href="/admin/coupons/add">
+                            <button class="btn bg-dark-grn" style="color: white;" id="addCouponBtn">Add New
+                                Coupon</button>
+                        </a>
+                    </div>
+
+                    <!-- Coupons Table -->
+                    <div class="table-responsive mt-4">
+                        <% if (coupons.length === 0) { %>
+                        <h4>No coupon available. Please add new coupon...</h4>
+                        <% } else { %>
+                        <table class="table table-bordered text-center">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>Sl No</th>
+                                    <th>ID</th>
+                                    <th>Code</th>
+                                    <th>Discount (%)</th>
+                                    <th>Maximum Discount</th>
+                                    <th>Expiry Date</th>
+                                    <th>Usage Limit</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for (let i=0;i < coupons.length; i++) { %>
+                                <tr>
+                                    <td><%= i+1 %></td>
+                                    <td><%= coupons[i]._id %></td>
+                                    <td><%= coupons[i].couponCode %></td>
+                                    <td><%= coupons[i].discountPercentage %></td>
+                                    <td><%= coupons[i].maxDiscount %></td>
+                                    <td><%= coupons[i].expiryDate.toLocaleDateString() %></td>
+                                    <td><%= coupons[i].usageLimit %></td>
+                                    <td><%= coupons[i].status %></td>
+                                    <td>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <a href="/admin/coupons/edit/<%= coupons[i]._id %>" class="me-1">
+                                                <button class="btn btn-sm btn-warning">Edit</button>
+                                                </a>
+                                            <form action="/admin/coupons/delete/<%= coupons[i]._id %>?_method=DELETE" method="post">
+                                                <button class="btn btn-sm btn-danger">Delete</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        if('<%= success %>' === 'false'){
+            toastr.warning('<%= message %>');
+        } else if ('<%= success %>' === 'true'){
+            toastr.info('<%= message %>');
+        }
+    </script>
+
+    <%- include ('../partials/admin-footer.ejs') %>

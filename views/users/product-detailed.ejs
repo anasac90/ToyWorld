@@ -1,0 +1,273 @@
+<%- include ('../partials/user-header.ejs') %>
+
+    <main class="mt-3" style="height: auto;">
+        <div class=" content-head">
+            <div class="content-head-rect col-5 bg-dark-grn">
+                <div>
+                    <h2 class="content-head-txt">
+                        <%= product[0].productName %>
+                    </h2>
+                </div>
+                <div class="content-head-tri ms-auto"></div>
+            </div>
+        </div>
+        <div class="content-body side-margin text-start mt-3">
+            <div class="w-100" style="display: flex;">
+                <div class="product-image w-50 p-3 text-start" style="display: flex; justify-content: center;">
+                    <div class="w-75">
+                        <div class="zoomed-images w-100" style="border-radius: 5px; overflow: hidden;">
+                            <img src="/images/<%= product[0].productImages[0] %>" alt="" style="width: 100%;"
+                                class="zoomed-image" id="zoomed-image">
+                            <div class="zoom-circle">
+                                <img src="/images/<%= product[0].productImages[0] %>" alt="" class="zoomed-preview"
+                                    id="zoomed-preview-img">
+                            </div>
+                        </div>
+                        <div class="thump-images w-100 mt-3">
+                            <% for(let i=0;i < product[0].productImages.length;i++) { %>
+                                <img src="/images/<%= product[0].productImages[i] %>"
+                                    data-large-src="/images/<%= product[0].productImages[i] %>" alt=""
+                                    class="thump-image" id="thump-image">
+                                <% } %>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-details p-3 w-50">
+                    <h6 class="mb-4"><a href="/">Home</a><span> > </span><a
+                            href="/categories/<%= product[0].category %>">
+                            <%= product[0].category %>
+                        </a><span> > </span><a href="/products/<%= product[0].productCode %>">
+                            <%= product[0].productName %>
+                        </a></h6>
+                    <div class="w-100" style="display: flex;">
+                        <h3 style="width: 35%;">Product Name:</h3>
+                        <h3 style="width: 65%;">
+                            <%= product[0].productName %>
+                        </h3>
+                    </div>
+                    <div class="w-100" style="display: flex;">
+                        <h3 style="width: 35%;">Price:</h3>
+                        <% let finalPrice=Number (product[0].price); let actualPrice=Math.round
+                            (finalPrice+(finalPrice*0.1111));%>
+                            <div style="width: 65%;">
+                                <h3>
+                                    <%= finalPrice %>
+                                        <span class="actualPrice ms-3">
+                                            <%= actualPrice %>
+                                        </span>
+                                        <span class="ms-3 text-success" style="font-size: 1.5rem;">
+                                            10% Off
+                                        </span>
+                                </h3>
+                            </div>
+                    </div>
+                    <div class="w-100" style="display: flex;">
+                        <h3 style="width: 35%;">Minimum Age:</h3>
+                        <h3 style="width: 65%;">
+                            <%= product[0].minimumAge %>
+                        </h3>
+                    </div>
+                    <div class="w-100" style="display: flex;">
+                        <h3 style="width: 35%;">Category:</h3>
+                        <h3 style="width: 65%;">
+                            <%= product[0].category %>
+                        </h3>
+                    </div>
+                    <div class="w-100" style="display: flex;">
+                        <h3 style="width: 35%;">Brand:</h3>
+                        <h3 style="width: 65%;">
+                            <%= product[0].brand %>
+                        </h3>
+                    </div>
+                    <div class="w-100" style="display: flex;">
+                        <h3 style="width: 35%;">Description:</h3>
+                        <h3 style="width: 65%; font-size: 1.3rem;">
+                            <%= product[0].productDescription %>
+                        </h3>
+                    </div>
+                    <div class="w-100" style="display: flex;">
+                        <h3 style="width: 35%;">Product Code:</h3>
+                        <h3 style="width: 65%;">
+                            <%= product[0].productCode %>
+                        </h3>
+                    </div>
+                    <div class="w-100" style="display: flex;">
+                        <h3 style="width: 35%;">Stock status:</h3>
+                        <% if(product[0].stockQuantity> 0) { %>
+                            <h3 style="width: 65%;" class="text-success">In stock</h3>
+                            <% } else { %>
+                                <h3 style="width: 65%;" class="text-danger">Out of stock</h3>
+                                <% } %>
+                    </div>
+                    <div class="w-100" style="display: flex;">
+                        <h3 style="width: 35%;">Offer:</h3>
+                        <h3 style="width: 65%; font-size: 1.1rem;">
+                            Extra 10% off up to ₹1000 on purchase above ₹4,000
+                        </h3>
+                    </div>
+                    <div class="w-100" style="display: flex;">
+                        <h3 style="width: 35%;">Rating:</h3>
+                        <h3 style="width: 65%; font-size: 1.3rem;">
+                            4.1 <i class="fas fa-star"></i> (8 Ratings)
+                        </h3>
+                    </div>
+                    <div class="col-dark-grn mt-5">
+                        <a href="#">
+                            <button style="color: white; z-index: 3;" class="btn bg-dark-grn buy-now-btn w-25"
+                                type="button">BUY
+                                NOW</button>
+                        </a>
+                        <a href="" style="text-decoration: none;">
+                            <!-- <i class="fa-solid fa-cart-shopping col-dark-grn"></i> -->
+                            <button style="color: white; z-index: 3;" class="btn bg-dark-grn buy-now-btn w-25 ms-3"
+                                type="button">ADD TO CART</button>
+                        </a>
+                        <a href="" style="text-decoration: none;">
+                            <!-- <i class="fa-regular fa-heart col-dark-grn"></i> -->
+                            <button style="color: white; z-index: 3;" class="btn bg-dark-grn buy-now-btn w-25 ms-3"
+                                type="button">ADD TO WISHLIST</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="mt-5">
+                <div class="side-margin">
+                    <div class="col-5 bg-dark-grn w-100 rounded"
+                        style="display: flex; justify-content: center; align-items: center; height: 50px;">
+                        <div>
+                            <h2 class="content-head-txt">PRODUCT REVIEW</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="side-margin w-100" style="display: flex; justify-content: center;">
+                    <div class="w-50 mt-3 p-2" style="border: 1px solid #66A5AD; border-radius: 5px;">
+                        <h6 style="text-decoration: underline;">Review By: Anas A C</h6>
+                        <div class="ps-3 pe-3">
+                            <span>Review: nice product</span>
+                            <br>
+                            <span>Rating: 5<i class="fas fa-star"></i> </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="mt-5">
+                <div class="side-margin">
+                    <div class="col-5 bg-dark-grn w-100 rounded"
+                        style="display: flex; justify-content: center; align-items: center; height: 50px;">
+                        <div>
+                            <h2 class="content-head-txt">RELATED PRODUCTS</h2>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex;">
+                    <div class="content-body side-margin text-start mt-3 card-container product-container">
+                        <% for( let i=0;i<products.length && i < 5;i++ ) { %>
+                            <a href="/products/<%= products[i].productCode %>" style="text-decoration: none;"
+                                class="col-dark-grn">
+                                <div class="card cards product-card">
+                                    <div class="card-content">
+                                        <img src="/images/<%= products[i].productImages[0] %>"
+                                            class="card-img-top p-3 border" alt="...">
+                                        <div class="card-body p-3 text-center col-dark-grn">
+                                            <h4 class="card-title">
+                                                <%= products[i].productName %>
+                                            </h4>
+                                            <h6 class="card-text">Price: <%= products[i].price %>
+                                            </h6>
+                                            <span class="card-text">Minimum Age: <%= products[i].minimumAge %></span>
+                                            <span class="card-text">
+                                                <%= products[i].productDescription %>
+                                            </span>
+                                            <div class="col-dark-grn ps-3 pe-3 mt-3"
+                                                style="display: flex; justify-content: space-between; align-items: center;">
+                                                <!-- <a href="#"> -->
+                                                <button style="color: white; z-index: 3;"
+                                                    class="btn bg-dark-grn buy-now-btn" type="button">BUY
+                                                    NOW</button>
+                                                <!-- </a> -->
+                                                <!-- <a href="" style="text-decoration: none;"> -->
+                                                <i class="fa-solid fa-cart-shopping col-dark-grn"></i>
+                                                <!-- </a> -->
+                                                <!-- <a href="" style="text-decoration: none;"> -->
+                                                <i class="fa-regular fa-heart col-dark-grn"></i>
+                                                <!-- </a> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <script>
+        const thumbnails = document.querySelectorAll('.thump-image');
+        const zoomedImage = document.getElementById('zoomed-image');
+        const zoomedPreviewImg = document.getElementById('zoomed-preview-img');
+
+        let zoomLevel;
+
+        const zoomLevelCalc = (image) => {
+            const naturalWidth = image.naturalWidth;
+            const displayWidth = image.clientWidth;
+
+            zoomLevel = naturalWidth / displayWidth;
+            if (zoomLevel<1){
+                zoomLevel=1;
+            }
+
+            console.log(zoomLevel);
+        }
+
+        zoomedImage.onload = () => zoomLevelCalc(zoomedImage);
+
+        thumbnails.forEach(thumbnail => {
+            thumbnail.addEventListener('click', () => {
+                const ZoomedSrc = thumbnail.getAttribute('data-large-src');
+                zoomedImage.src = ZoomedSrc;
+                zoomedPreviewImg.src = ZoomedSrc;
+
+                zoomedImage.onload = () => zoomLevelCalc(zoomedImage);
+            });
+        });
+
+        const zoomedImages = document.querySelector('.zoomed-images');
+        const zoomCircle = zoomedImages.querySelector('.zoom-circle');
+        const zoomImage = zoomCircle.querySelector('img');
+
+        zoomedImages.addEventListener('mousemove', function (e) {
+            const rect = zoomedImages.getBoundingClientRect();
+            const x = e.clientX - rect.left; // X coordinate relative to the image
+            const y = e.clientY - rect.top;  // Y coordinate relative to the image
+
+            // Move the zoom circle with the mouse
+            zoomCircle.style.left = `${x - zoomCircle.offsetWidth / 2}px`;
+            zoomCircle.style.top = `${y - zoomCircle.offsetHeight / 2}px`;
+
+            // Move the zoomed image inside the zoom circle
+            zoomImage.style.left = `${-x * zoomLevel + zoomCircle.offsetWidth / 2}px`;
+            zoomImage.style.top = `${-y * zoomLevel + zoomCircle.offsetHeight / 2}px`;
+        });
+
+        // Show the zoom circle on hover
+        zoomedImages.addEventListener('mouseenter', function () {
+            zoomCircle.style.display = 'block';
+        });
+
+        // Hide the zoom circle when not hovering
+        zoomedImages.addEventListener('mouseleave', function () {
+            zoomCircle.style.display = 'none';
+        });
+
+    </script>
+
+
+    <%- include ('../partials/user-footer.ejs') %>

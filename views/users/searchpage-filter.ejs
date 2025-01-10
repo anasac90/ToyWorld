@@ -1,0 +1,153 @@
+<%- include ('../partials/user-header.ejs') %>
+
+
+    <main class="mt-5" style="height: auto;">
+        <div class=" content-head">
+            <div class="content-head-rect col-5 bg-dark-grn">
+                <div>
+                    <% if (searchQuery) { %>
+                        <h2 class="content-head-txt">SEARCH RESULT FOR '<%= searchQuery.toUpperCase() %>'</h2>
+                        <% } else { %>
+                            <h2 class="content-head-txt">ALL PRODUCTS</h2>
+                            <% } %>
+                </div>
+                <div class="content-head-tri ms-auto"></div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end me-5 mt-3">
+
+            <!-- Category filter -->
+            <div class="dropdown ms-3">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="sortDropdown"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    Choose Categories
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                    <% for (let i=0;i < categories.length;i++) { %>
+                    <li><a href="/search/<%= searchQuery %>/<%= categories[i].categoryName %>"
+                        class="dropdown-item sort-option"><%= categories[i].categoryName %></a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+        
+        <div>
+            <div class="content-body side-margin text-start mt-3 card-container product-container">
+                <% if (products.length===0) { %>
+                    <h3 class="text-center" style="display: flex; justify-content: center;">NO PRODUCT FOUND</h3>
+                    <% } else { %>
+                        <% for( let i=0;i<products.length;i++ ) { %>
+                            <a href="/products/<%= products[i].productCode %>" style="text-decoration: none;"
+                            class="col-dark-grn">
+                            <div class="card cards product-card">
+                                <div class="card-content">
+                                    <img src="/images/<%= products[i].productImages[0] %>" class="card-img-top p-3 border"
+                                        alt="...">
+                                    <div class="card-body p-3 text-center col-dark-grn">
+                                        <h4 class="card-title">
+                                            <%= products[i].productName %>
+                                        </h4>
+                                        <h6 class="card-text">Price: <%= products[i].price %>
+                                        </h6>
+                                        <span class="card-text">Minimum Age: <%= products[i].minimumAge %></span>
+                                        <span class="card-text">
+                                            <%= products[i].productDescription %>
+                                        </span>
+                                        <div class="col-dark-grn ps-3 pe-3 mt-3"
+                                            style="display: flex; justify-content: space-between; align-items: center;">
+                                            <button style="color: white; z-index: 3;" class="btn bg-dark-grn buyNow"
+                                                type="submit" data-product-code="<%= products[i].productCode %>">BUY
+                                                NOW</button>
+                                            <button style="color: white; z-index: 3;"
+                                                class="btn bg-dark-grn add-to-cart-btn" type="button"
+                                                data-product-code="<%= products[i].productCode %>"><i
+                                                    class="fa-solid fa-cart-shopping"></i></button>
+                                            <button style="color: white; z-index: 3;" class="btn bg-dark-grn wish-list-btn"
+                                                type="button" data-product-code="<%= products[i].productCode %>"><i
+                                                    class="fa-regular fa-heart"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <% } %>
+                    <% } %>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        window.onload = ()=>{
+            document.getElementById('searchInput').value = "<%= searchQuery %>"; 
+        }
+
+        let buyNow = document.querySelectorAll('.buyNow');
+        buyNow.forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                const productCode = button.getAttribute('data-product-code');
+                window.location.href = `/add-to-cart/${productCode}`;
+            });
+        });
+
+        let addToCart = document.querySelectorAll('.add-to-cart-btn');
+        addToCart.forEach(button => {
+            button.addEventListener('click', event => {
+                event.preventDefault();
+                event.stopPropagation();
+                const productCode = button.getAttribute('data-product-code');
+                window.location.href = `/add-to-cart/${productCode}`;
+            });
+
+        });
+
+        document.getElementById('searchInput').addEventListener('input',(e)=>{
+            if (e.target.value === '')  document.getElementById('searchButton').click();
+        })
+
+        let wishList = document.querySelectorAll('.wish-list-btn');
+        wishList.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const productCode = button.getAttribute('data-product-code');
+                const user_id = '<%= user %>';
+                if (user_id.length > 0) {
+
+                    fetch(`/addToWishList`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ productCode })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                toastr.info('Added to wishlist!');
+                            } else {
+                                toastr.warning(data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+                        });
+
+                } else {
+
+                    fetch(`/addToWishList`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/html' },
+                    }).then(response => response.text())
+                        .then(html => {
+                            document.documentElement.innerHTML = html;
+                        })
+                        .catch(error => console.log('Error loading page:', error));
+
+                }
+            })
+        })
+    </script>
+
+    <%- include ('../partials/user-footer.ejs') %>

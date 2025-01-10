@@ -1,0 +1,154 @@
+const categoryDB = require("../models/categoryDB");
+const productDB = require("../models/productDB");
+
+// category listing page
+exports.categoryList = async (req, res) => {
+  let categories = await categoryDB.getCategories();
+  if (req.session.categoryAssigned) {
+    req.session.categoryAssigned = false;
+    res.render("admin/categories", {
+      categories,
+      warning: "Category already assigned",
+    });
+  } else {
+    res.render("admin/categories", { categories, warning: "" });
+  }
+};
+
+let status = "";
+
+//add category page
+exports.addCategory = (req, res) => {
+  if (req.session.categoryExist) {
+    req.session.categoryExist = false;
+    res.render("admin/add-category", {
+      status,
+      warning: "Category already exist",
+    });
+  } else {
+    res.render("admin/add-category", { status, warning: "" });
+  }
+};
+
+// submit new category details to db
+exports.submitCategory = async (req, res) => {
+  let categories = await categoryDB.getCategories({
+    categoryName: req.categoryName,
+  });
+  if (categories) {
+    req.session.categoryExist = true;
+    res.redirect("/admin/categories/add");
+  } else {
+    let result = await categoryDB.insertCategory(req.body, req.file);
+    status = "Successfully Submitted";
+    res.redirect("/admin/categories");
+  }
+};
+
+// edit category page
+let categoryId;
+let queriedCategory;
+exports.findCategory = async (req, res) => {
+  categoryId = req.params.id;
+  queriedCategory = await categoryDB.findCategory(categoryId);
+  res.render("admin/edit-category", { queriedCategory });
+};
+
+// update category
+exports.updateCategory = async (req, res) => {
+  let oldCategory = queriedCategory[0].categoryName;
+  let newcategory = req.body.categoryName;
+  await productDB.renameCategory(
+    { category: oldCategory },
+    { category: newcategory }
+  );
+  let result = await categoryDB.updateCategory(categoryId, req.body, req.file);
+  res.redirect("/admin/categories");
+};
+
+// soft delete
+exports.deleteCategory = async (req, res) => {
+  categoryId = req.params.id;
+  let categoryDoc = await categoryDB.findCategory(categoryId);
+  let category = categoryDoc[0].categoryName;
+  let productList = await productDB.getProducts({ category: category });
+  if (productList.length > 0) {
+    req.session.categoryAssigned = true;
+    res.redirect("/admin/categories");
+  } else {
+    await categoryDB.updateCategory(
+      categoryId,
+      { isDeleted: true },
+      (req.file = [])
+    );
+    res.redirect("/admin/categories");
+  }
+};
+
+// unDelete
+exports.unDeleteCategory = async (req, res) => {
+  categoryId = req.params.id;
+  await categoryDB.updateCategory(
+    categoryId,
+    { isDeleted: false },
+    (req.file = [])
+  );
+  res.redirect("/admin/categories");
+};
+
+// list products in a category
+exports.categryProducts = async (req, res) => {
+  let categoryName = req.params.id;
+
+  let products = await productDB.getProducts({ category: categoryName });
+  let user = req.session.user ? req.session.user : [];
+
+  res.render("users/category-products", { products, categoryName, user: user });
+};
+
+// filter searched product based on category
+exports.categoryFilter = async (req, res) => {
+  const { searchWord, category } = req.params;
+
+  let searchedProducts = await productDB.search(searchWord)
+  let categories = await categoryDB.getCategories();
+
+  let filteredProducts = [];
+  let i = 0;
+  searchedProducts.forEach((product) => {
+    if (product.category === category){
+      filteredProducts[i] = product;
+      i++;
+    }
+  });
+  res.render("users/searchpage-filter", {
+    user: req.session.user ? req.session.user : [],
+    products: filteredProducts,
+    categories,
+    searchQuery:searchWord,
+  });
+};
+
+// filter category in products page
+exports.productsCategoryFilter =  async (req, res) => {
+  const { category } = req.params;
+
+  let products = await productDB.getProducts();
+  let categories = await categoryDB.getCategories();
+
+  let filteredProducts = [];
+  let i = 0;
+  products.forEach((product) => {
+    if (product.category === category){
+      filteredProducts[i] = product;
+      i++;
+    }
+  });
+  res.render("users/products", {
+    user: req.session.user ? req.session.user : [],
+    products: filteredProducts,
+    categories,
+    sortOption:null,
+    categoryOption:category,
+  });
+};

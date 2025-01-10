@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cropper JS with Multer (Multiple Images)</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+</head>
+<body>
+    <input type="file" id="imageInput" multiple>
+    <div id="crop-container"></div>
+
+    <button id="cropButton">Crop and Upload All</button>
+    <div id="croppedResult"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script>
+        let cropperInstances = [];
+
+        // Handle file selection for multiple images
+        document.getElementById('imageInput').addEventListener('change', function(event) {
+            const files = event.target.files;
+            const cropContainer = document.getElementById('crop-container');
+            cropContainer.innerHTML = ''; // Clear any previous images
+            cropperInstances = []; // Clear previous cropper instances
+
+            // Loop through each file and create a Cropper instance
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                const imageElement = document.createElement('img');
+                const imageWrapper = document.createElement('div');
+                imageWrapper.style.marginBottom = '20px';
+
+                reader.onload = function(e) {
+                    imageElement.src = e.target.result;
+                    imageWrapper.appendChild(imageElement);
+                    cropContainer.appendChild(imageWrapper);
+                    
+                    // Initialize Cropper.js for each image
+                    const cropper = new Cropper(imageElement, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                    });
+
+                    cropperInstances.push(cropper); // Store each cropper instance
+                };
+
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // Handle crop and upload for all images
+        document.getElementById('cropButton').addEventListener('click', function() {
+            const formData = new FormData();
+
+            // Loop through each cropper instance, crop the image and append it to FormData
+            cropperInstances.forEach((cropper, index) => {
+                cropper.getCroppedCanvas().toBlob((blob) => {
+                    formData.append(`croppedImages[]`, blob, `cropped_${index}.jpg`);
+
+                    // After all images are appended, upload them to the server
+                    if (index === cropperInstances.length - 1) {
+                        // Send the cropped images to the server using Fetch API
+                        fetch('/upload', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Upload success:', data);
+
+                            // Optionally display the uploaded images
+                            data.filenames.forEach(filename => {
+                                const croppedImageElement = document.createElement('img');
+                                croppedImageElement.src = `/uploads/${filename}`;
+                                document.getElementById('croppedResult').appendChild(croppedImageElement);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error uploading the images:', error);
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

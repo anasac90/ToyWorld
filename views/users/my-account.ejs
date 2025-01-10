@@ -1,0 +1,244 @@
+<%- include ('../partials/user-header.ejs') %>
+
+    <main class="mt-5" style="height: auto;">
+        <div class=" content-head">
+            <div class="content-head-rect col-5 bg-dark-grn">
+                <div>
+                    <h2 class="content-head-txt">MY ACCOUNT</h2>
+                </div>
+                <div class="content-head-tri ms-auto"></div>
+            </div>
+        </div>
+        <div>
+            <div class="content-body side-margin mt-3" style="justify-content: center;">
+                <div class="profile-content">
+                    <ul class="nav nav-tabs" id="profileTabs" role="tablist" style="justify-content: center;">
+                        <li class="nav-item me-2" role="presentation">
+                            <button class="nav-link btn-tab bg-dark-grn active" id="details-tab" data-bs-toggle="tab"
+                                data-bs-target="#details" role="tab" aria-controls="details"
+                                aria-selected="true">Details</button>
+                        </li>
+                        <li class="nav-item me-2" role="presentation">
+                            <button class="nav-link btn-tab bg-dark-grn" id="address-tab" data-bs-toggle="tab"
+                                data-bs-target="#address" role="tab" aria-controls="address"
+                                aria-selected="false">Address</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link btn-tab bg-dark-grn" id="orders-tab" data-bs-toggle="tab"
+                                data-bs-target="#orders" role="tab" aria-controls="orders"
+                                aria-selected="false">Orders</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content mt-5" id="profileTabsContent">
+                        <div class="text-center mt-3 mb-3" id="message">
+                            <% if(status) { %>
+                                <p class="text-success">
+                                    <%= status %>
+                                </p>
+                                <% } else if (warning) { %>
+                                    <p class="text-danger">
+                                        <%= warning %>
+                                    </p>
+                                    <% } %>
+                        </div>
+                        <div class="tab-pane fade show active" id="details" role="tabpanel"
+                            aria-labelledby="details-tab">
+                            <h5 class="mb-0 text-center">USER DETAILS</h5>
+                            <div class="row mt-3">
+                                <div class="col mb-3">
+                                    <label>First name:</label>
+                                    <input class="form-control" placeholder="First name" name="fname"
+                                        value="<%= user[0].fname %>" required disabled type="text">
+                                </div>
+                                <div class="col mb-3">
+                                    <label>Last name:</label>
+                                    <input class="form-control" placeholder="Last name" name="lname"
+                                        value="<%= user[0].lname %>" required disabled type="text">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label>
+                                    Email<% if (!user[0].isEmailVerified) {%>
+                                        <span class="text-danger">(not verified)</span>
+                                        <%} else {%>
+                                            <span class="text-success">(verified)</span>
+                                            <%}%>:
+                                </label>
+                                <input class="form-control" required type="email" name="email" disabled
+                                    value="<%= user[0].email %>" placeholder="Email" />
+                            </div>
+                            <div class="mb-3">
+                                <label>Mobile: (Eg:-9809112233)</label>
+                                <input class="form-control" required type="tel" pattern="[0-9]{10}" disabled
+                                    name="mobile" value="<%= user[0].mobile %>" placeholder="Mobile number" />
+                            </div>
+                            <a href="/my-account/edit-profile" style="text-decoration: none;">
+                                <button class="btn btn-custom mt-2 bg-dark-grn">Edit Profile</button>
+                            </a>
+                            <a href="/my-account/change-password" style="text-decoration: none;">
+                                <button class="btn btn-custom mt-2 bg-dark-grn">Change Password</button>
+                            </a>
+                            <% if (!user[0].isEmailVerified) {%>
+                                <a href="/my-account/verify-email" style="text-decoration: none;">
+                                    <button class="btn btn-custom mt-2 bg-dark-grn">Verify Email</button>
+                                </a>
+                                <% } %>
+                        </div>
+                        <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
+                            <div class="content-main mt-3">
+                                <div style="width: 100%; display: flex; justify-content: center;">
+                                    <button type="submit" class="btn" style="color: white; background-color: #66A5AD;">
+                                        <a href="/address/add" style="text-decoration: none; color: white;">Add
+                                            Address</a>
+                                    </button>
+                                </div>
+                                <div style="width: 100%;">
+                                    <table class="table table-hover text-center w-100 mt-3">
+                                        <thead>
+                                            <tr>
+                                                <th class="fw-bold bg-dark-grn" scope="col">No</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">House</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">Street</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">Post</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">City</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">District</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">State</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">Pincode</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col"></th>
+                                                <th class="fw-bold bg-dark-grn" scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% for(var i=0; i < addresses.length ; i++) { %>
+                                                <tr>
+                                                    <td scope="row" style="color: black;">
+                                                        <%= i+1 %>
+                                                    </td>
+                                                    <td style="color: black;">
+                                                        <%= addresses[i].house %>
+                                                    </td>
+                                                    <td style="color: black;">
+                                                        <%= addresses[i].street %>
+                                                    </td>
+                                                    <td style="color: black;">
+                                                        <%= addresses[i].post %>
+                                                    </td>
+                                                    <td style="color: black;">
+                                                        <%= addresses[i].city %>
+                                                    </td>
+                                                    <td style="color: black;">
+                                                        <%= addresses[i].district %>
+                                                    </td>
+                                                    <td style="color: black;">
+                                                        <%= addresses[i].state %>
+                                                    </td>
+                                                    <td style="color: black;">
+                                                        <%= addresses[i].pincode %>
+                                                    </td>
+                                                    <td style="color: black;">
+                                                        <form action="/address/edit/<%= addresses[i]._id %>">
+                                                            <button
+                                                                style="margin-left: 1rem; width: 5rem; color: white;"
+                                                                class="btn bg-dark-grn" type="submit">Edit</button>
+                                                        </form>
+                                                    </td>
+                                                    <td style="color: black;">
+                                                        <form
+                                                            action="/address/delete/<%= addresses[i]._id %>?_method=DELETE"
+                                                            method="post">
+                                                            <button
+                                                                style="margin-left: 1rem; width: 5rem; color: white; background-color: red;"
+                                                                class="btn" type="submit">Remove</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                <% } %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+                            <div class="content-main mt-3">
+                                <h5 class="mb-0 text-center">ORDERS</h5>
+                                <div style="width: 100%;">
+                                    <table class="table table-hover text-center w-100 mt-3">
+                                        <thead>
+                                            <tr>
+                                                <th class="fw-bold bg-dark-grn" scope="col">Sl No</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">Order Id</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">Order Date</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">Amount</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">Payment Method</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">Order Status</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col"></th>
+                                        </thead>
+                                        <tbody>
+                                            <% for(var i=0; i < orders.length ; i++) { %>
+                                                <tr>
+                                                    <td scope="row" style="color: black;">
+                                                        <%= i+1 %>
+                                                    </td>
+                                                    <td style="color: black;">
+                                                        <%= orders[i]._id %>
+                                                    </td>
+                                                    <td style="color: black;">
+                                                        <%=orders[i].orderDate%>
+                                                    </td>
+                                                    <td style="color: black;">
+                                                        <%= orders[i].orderValue %>
+                                                    </td>
+                                                    <td style="color: black;">
+                                                        <%= orders[i].paymentMethod %>
+                                                    </td>
+                                                    <td style="color: black;">
+                                                        <%= orders[i].orderStatus %>
+                                                    </td>
+                                                    <td style="color: black;">
+                                                        <form action="/orderDetails/<%= orders[i]._id %>">
+                                                            <button
+                                                                style="margin-left: 1rem; width: 7rem; color: white;"
+                                                                class="btn bg-dark-grn" type="submit">Know More</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                <% } %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="redirect" value="<%= redirectTo %>">
+    </main>
+
+    <script>
+
+        window.addEventListener('DOMContentLoaded', () => {
+            let addressTab = document.getElementById('address-tab');
+            let orderTab = document.getElementById('orders-tab');
+
+            let redirect = document.getElementById('redirect').getAttribute('value');
+
+            if (redirect === 'address') {
+                addressTab.click()
+            } else if (redirect === 'order') {
+                orderTab.click();
+            }
+
+
+            const navButtons = document.querySelectorAll('.nav-link');
+
+            navButtons.forEach((navButton) => {
+                navButton.addEventListener('click', () => {
+                    document.getElementById('message').style = 'display:none;'
+                })
+            });
+        })
+
+    </script>
+
+    <%- include ('../partials/user-footer.ejs') %>

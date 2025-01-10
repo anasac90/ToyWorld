@@ -1,0 +1,55 @@
+<%- include ('../partials/user-header.ejs') %>
+
+    <main class="mt-5" style="height: auto;">
+        <div class=" content-head">
+            <div class="content-head-rect col-5 bg-dark-grn">
+                <div>
+                    <h2 class="content-head-txt">EDIT PROFILE</h2>
+                </div>
+                <div class="content-head-tri ms-auto"></div>
+            </div>
+        </div>
+        <div>
+            <div class="content-body side-margin mt-3" style="justify-content: center;">
+                <div class="profile-content">
+                    <% if (warning) {%>
+                        <p class="text-danger">
+                            <%= warning %>
+                        </p>
+                        <% } %>
+                            <div class="tab-content mt-5" id="profileTabsContent">
+                                <div class="tab-pane fade show active" id="details" role="tabpanel"
+                                    aria-labelledby="details-tab">
+                                    <form action="/my-account/update-profile" method="post">
+                                        <div class="row">
+                                            <div class="col mb-3">
+                                                <label>First name:</label>
+                                                <input class="form-control" placeholder="First name" name="fname"
+                                                    value="<%= user[0].fname %>" required type="text">
+                                            </div>
+                                            <div class="col mb-3">
+                                                <label>Last name:</label>
+                                                <input class="form-control" placeholder="Last name" name="lname"
+                                                    value="<%= user[0].lname %>" required type="text">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Email:</label>
+                                            <input class="form-control" required type="email" name="email"
+                                                value="<%= user[0].email %>" placeholder="Email" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Mobile: (Eg:-9809112233)</label>
+                                            <input class="form-control" required type="tel" pattern="[0-9]{10}"
+                                                name="mobile" value="<%= user[0].mobile %>"
+                                                placeholder="Mobile number" />
+                                        </div>
+                                        <button type="submit" class="btn btn-custom mt-2 bg-dark-grn">Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <%- include ('../partials/user-footer.ejs') %>

@@ -1,0 +1,503 @@
+<%- include ('../partials/admin-header.ejs') %>
+
+    <main class="mt-3" style="height: auto;">
+        <div class=" content-head">
+            <div class="content-head-rect col-5 bg-dark-grn">
+                <div>
+                    <h2 class="content-head-txt">OFFERS</h2>
+                </div>
+                <div class="content-head-tri ms-auto"></div>
+            </div>
+        </div>
+        <div class="content-body side-margin text-center mt-3">
+            <div class="sidebar align-items-center">
+                <a href="/admin/home">DASHBOARD</a>
+                <a href="/admin/products">PRODUCTS</a>
+                <a href="/admin/users">USERS</a>
+                <a href="/admin/categories">CATEGORIES</a>
+                <a href="/admin/orders">ORDERS</a>
+                <a href="/admin/brands">BRANDS</a>
+                <a href="/admin/coupons">COUPONS</a>
+                <a class="active" href="/admin/offers">OFFERS</a>
+                <a href="/admin/report">REPORT</a>
+            </div>
+            <div class="container mt-5 w-75">
+
+                <!-- Tabs for Offer Types -->
+                <ul class="nav nav-tabs" style="justify-content: center;" id="offerTabs" role="tablist">
+                    <li class="nav-item me-1" role="presentation">
+                        <button class="nav-link active bg-dark-grn" id="product-offer-tab" data-bs-toggle="tab"
+                            data-bs-target="#product-offer" type="button" role="tab" aria-controls="product-offer"
+                            aria-selected="true">Product Offer</button>
+                    </li>
+                    <li class="nav-item me-1" role="presentation">
+                        <button class="nav-link bg-dark-grn" id="category-offer-tab" data-bs-toggle="tab"
+                            data-bs-target="#category-offer" type="button" role="tab" aria-controls="category-offer"
+                            aria-selected="false">Category Offer</button>
+                    </li>
+                    <li class="nav-item me-1" role="presentation">
+                        <button class="nav-link bg-dark-grn" id="referral-offer-tab" data-bs-toggle="tab"
+                            data-bs-target="#referral-offer" type="button" role="tab" aria-controls="referral-offer"
+                            aria-selected="false">Referral Offer</button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content mt-4" id="offerTabContent">
+                    <!-- Product Offer -->
+                    <div class="tab-pane fade show active" id="product-offer" role="tabpanel"
+                        aria-labelledby="product-offer-tab">
+                        <h3>Product Offer</h3>
+                        <form>
+                            <div class="mb-3 text-start">
+                                <label for="product" class="form-label">Select Product</label>
+                                <select id="product" required name="product" class="form-select">
+                                    <option selected disabled>Choose a product</option>
+                                    <% for(let i=0;i < products.length;i++){ %>
+                                        <option value="<%= products[i].productName %>"
+                                            data-product-code="<%= products[i].productCode %>">
+                                            <%= products[i].productName %>
+                                        </option>
+                                        <% } %>
+                                </select>
+                            </div>
+                            <div class="mb-3 text-start">
+                                <label for="product-discount" class="form-label">Discount Percentage (%)</label>
+                                <input required type="number" name="discount" id="product-discount" class="form-control"
+                                    placeholder="Enter discount percentage">
+                            </div>
+                            <div class="mb-3 text-start">
+                                <label for="product-max-limit" class="form-label">Maximum Limit</label>
+                                <input required type="number" name="maxLimit" id="product-max-limit"
+                                    class="form-control" placeholder="Enter maximum discount limit">
+                            </div>
+                            <div class="mb-3 text-start">
+                                <label for="product-expiry" class="form-label">Expiry Date</label>
+                                <input required type="date" name="expiryDate" id="product-expiry" class="form-control">
+                            </div>
+                            <button type="submit" class="btn bg-dark-grn addProductOffer" style="color: white;"
+                                id="addProductOffer">Add Product Offer</button>
+                        </form>
+                        <br>
+                        <br>
+                        <h3>Existing Product Offers</h3>
+                        <div style="width: 100%;">
+                            <table class="table table-hover text-center w-auto mx-auto mt-3">
+                                <thead>
+                                    <tr>
+                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">No</th>
+                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Product</th>
+                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Product Code
+                                        </th>
+                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Dicount %</th>
+                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Max Limit</th>
+                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Expiry Date
+                                        </th>
+                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;"></th>
+                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for(var i=0; i < productOffer.length ; i++) { %>
+                                        <tr>
+                                            <td scope="row">
+                                                <%= i+1 %>
+                                            </td>
+                                            <td>
+                                                <%= productOffer[i].productName %>
+                                            </td>
+                                            <td>
+                                                <%= productOffer[i].productCode %>
+                                            </td>
+                                            <td>
+                                                <%= productOffer[i].discountPrecentage %>
+                                            </td>
+                                            <td>
+                                                <%= productOffer[i].maxDiscount %>
+                                            </td>
+                                            <td>
+                                                <%= productOffer[i].expiryDate.toLocaleDateString() %>
+                                            </td>
+                                            <td>
+                                                <form action="/admin/productOffer/edit/<%= productOffer[i]._id %>">
+                                                    <button style="margin-left: 1rem; width: 5rem; color: white;"
+                                                        class="btn bg-dark-grn productOfferEdit"
+                                                        type="submit">Edit</button>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <form
+                                                    action="/admin/deleteOffer/<%= productOffer[i].offerType %>/<%= productOffer[i]._id %>?_method=DELETE"
+                                                    method="post">
+                                                    <button
+                                                        style="margin-left: 1rem; width: 5rem; color: white; background-color: red;"
+                                                        class="btn productOfferDelete deleteOffer"
+                                                        data-id="<%= productOffer[i]._id %>"
+                                                        type="submit">Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Category Offer -->
+                    <div class="tab-pane fade" id="category-offer" role="tabpanel" aria-labelledby="category-offer-tab">
+                        <h3>Category Offer</h3>
+                        <form>
+                            <div class="mb-3 text-start">
+                                <label for="category" class="form-label">Select Category</label>
+                                <select required id="category" class="form-select">
+                                    <option selected disabled>Choose a category</option>
+                                    <% for(let i=0;i < products.length;i++){ %>
+                                        <option value="<%= categories[i].categoryName %>"
+                                            data-category-id="<%= categories[i]._id %>">
+                                            <%= categories[i].categoryName %>
+                                        </option>
+                                        <% } %>
+                                </select>
+                            </div>
+                            <div class="mb-3 text-start">
+                                <label for="category-discount" class="form-label">Discount Percentage (%)</label>
+                                <input required type="number" id="category-discount" class="form-control"
+                                    placeholder="Enter discount percentage">
+                            </div>
+                            <div class="mb-3 text-start">
+                                <label for="category-max-limit" class="form-label">Maximum Limit</label>
+                                <input required type="number" id="category-max-limit" class="form-control"
+                                    placeholder="Enter maximum discount limit">
+                            </div>
+                            <div class="mb-3 text-start">
+                                <label for="category-expiry" class="form-label">Expiry Date</label>
+                                <input required type="date" id="category-expiry" class="form-control">
+                            </div>
+                            <button type="submit" class="btn bg-dark-grn addCategoryOffer" style="color: white;"
+                                id="addCategoryOffer">Add Category Offer</button>
+                        </form>
+                        <br>
+                        <br>
+                        <h3>Existing Category Offers</h3>
+                        <div style="width: 100%;">
+                            <table class="table table-hover text-center w-auto mx-auto mt-3">
+                                <thead>
+                                    <tr>
+                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">No</th>
+                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Category</th>
+                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Category ID
+                                        </th>
+                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Dicount %</th>
+                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Max Limit</th>
+                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Expiry Date
+                                        </th>
+                                        <th class="fw-bold bg-dark-grn" scope="col"></th>
+                                        <th class="fw-bold bg-dark-grn" scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for(var i=0; i < categoryOffer.length ; i++) { %>
+                                        <tr>
+                                            <td scope="row">
+                                                <%= i+1 %>
+                                            </td>
+                                            <td>
+                                                <%= categoryOffer[i].categoryName %>
+                                            </td>
+                                            <td>
+                                                <%= categoryOffer[i].categoryID %>
+                                            </td>
+                                            <td>
+                                                <%= categoryOffer[i].discountPrecentage %>
+                                            </td>
+                                            <td>
+                                                <%= categoryOffer[i].maxDiscount %>
+                                            </td>
+                                            <td>
+                                                <%= categoryOffer[i].expiryDate.toLocaleDateString() %>
+                                            </td>
+                                            <td>
+                                                <form action="/admin/categoryOffer/edit/<%= categoryOffer[i]._id %>">
+                                                    <button style="margin-left: 1rem; width: 5rem; color: white;"
+                                                        class="btn bg-dark-grn categoryOfferEdit"
+                                                        type="submit">Edit</button>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <form
+                                                    action="/admin/deleteOffer/<%= categoryOffer[i].offerType %>/<%= categoryOffer[i]._id %>?_method=DELETE"
+                                                    method="post">
+                                                    <button
+                                                        style="margin-left: 1rem; width: 5rem; color: white; background-color: red;"
+                                                        class="btn categoryOfferDelete deleteOffer"
+                                                        data-id="<%= categoryOffer[i]._id %>"
+                                                        type="submit">Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Referral Offer -->
+                    <div class="tab-pane fade" id="referral-offer" role="tabpanel" aria-labelledby="referral-offer-tab">
+                        <h3>Referral Offer</h3>
+                        <form method="post" action="/admin/offer/update/<%= referralOffer[0]?._id %>?_method=PUT">
+                            <input type="text" name="offerType" value="<%= referralOffer[0]?.offerType %>"
+                                id="offerType" class="form-control" hidden>
+                            <div class="mb-3">
+                                <label for="referral-amount" class="form-label">Referral Amount</label>
+                                <input type="number" name="referralAmount"
+                                    value="<%= referralOffer[0]?.referralAmount %>" id="referral-amount"
+                                    class="form-control" placeholder="Enter referral amount">
+                            </div>
+                            <div class="mb-3">
+                                <label for="referral-expiry" class="form-label">Expiry Date</label>
+                                <input type="date"
+                                    value="<%= referralOffer[0]?.expiryDate.toISOString().split('T')[0] %>"
+                                    name="expiryDate" id="referral-expiry" class="form-control">
+                            </div>
+                            <% if(referralOffer.length> 0){ %>
+                                <button type="submit" class="btn bg-dark-grn addReferralOffer" style="color: white;"
+                                    id="updateReferralOffer">Update Referral Offer</button>
+                                <button style="margin-left: 1rem; color: white; background-color: red;"
+                                    class="btn referralOfferDelete deleteOffer" id="referralOfferDelete"
+                                    data-id="<%= referralOffer[0]?._id %>">Delete Referral Offer</button>
+                                <% } else { %>
+                                    <button type="submit" class="btn bg-dark-grn addReferralOffer" style="color: white;"
+                                        id="addReferralOffer">Add Referral Offer</button>
+                                    <% } %>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // redirect to specific tab
+        document.addEventListener('DOMContentLoaded', () => {
+            if ("<%= activeTab %>" === 'categoryOffer') {
+                document.getElementById('category-offer-tab').click();
+            } else if ("<%= activeTab %>" === 'referralOffer') {
+                document.getElementById('referral-offer-tab').click();
+            }
+        });
+
+        // toastr notification for referral offer
+        if ('<%= success %>' === 'false') {
+            toastr.warning('<%= message %>');
+        } else if ('<%= success %>' === 'true') {
+            toastr.info('<%= message %>');
+        }
+
+        // add product offer
+        const addProductOffer = document.getElementById('addProductOffer');
+        addProductOffer.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const productSelect = document.getElementById('product');
+            const productName = productSelect.value;
+            const productCode = productSelect.options[productSelect.selectedIndex]?.getAttribute('data-product-code');
+            const discountPrecentage = document.getElementById('product-discount').value;
+            const maxDiscount = document.getElementById('product-max-limit').value;
+            const expiryDate = document.getElementById('product-expiry').value;
+
+            // Frontend validation
+            if (!productName || !productCode || !discountPrecentage || !maxDiscount || !expiryDate) {
+                toastr.error('All fields are required. Please fill them out.');
+                return;
+            }
+
+            fetch('/admin/productOffer/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productName, productCode, discountPrecentage, maxDiscount, expiryDate })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        toastr.info('Product offer added successfully!');
+                        setTimeout(() => {
+                            window.location.href = '/admin/offers';
+                        }, 2000);
+                    } else {
+                        toastr.warning(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    toastr.error('An error occurred while adding the product offer.');
+                });
+        })
+
+        // add category offer
+        const addCategoryOffer = document.getElementById('addCategoryOffer');
+        addCategoryOffer.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const categorySelect = document.getElementById('category');
+            const categoryName = categorySelect.value;
+            const categoryID = categorySelect.options[categorySelect.selectedIndex]?.getAttribute('data-category-id');
+            const discountPrecentage = document.getElementById('category-discount').value;
+            const maxDiscount = document.getElementById('category-max-limit').value;
+            const expiryDate = document.getElementById('category-expiry').value;
+
+            // Frontend validation
+            if (!categoryName || !categoryID || !discountPrecentage || !maxDiscount || !expiryDate) {
+                toastr.error('All fields are required. Please fill them out.');
+                return;
+            }
+
+            fetch('/admin/categoryOffer/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ categoryName, categoryID, discountPrecentage, maxDiscount, expiryDate })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        toastr.info('category offer added successfully!');
+                        setTimeout(() => {
+                            window.location.href = '/admin/offers/categoryOffer';
+                        }, 2000);
+                    } else {
+                        toastr.warning(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    toastr.error('An error occurred while adding the category offer.');
+                });
+        })
+
+        // add referral offer
+        const addReferralOffer = document.getElementById('addReferralOffer');
+        addReferralOffer?.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const referralAmount = document.getElementById('referral-amount').value;
+            const expiryDate = document.getElementById('referral-expiry').value;
+
+            // Frontend validation
+            if (!referralAmount || !expiryDate) {
+                toastr.error('All fields are required. Please fill them out.');
+                return;
+            }
+
+            fetch('/admin/referralOffer/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ referralAmount, expiryDate })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        toastr.info('Referral offer added successfully!');
+                        setTimeout(() => {
+                            window.location.href = '/admin/offers/referralOffer';
+                        }, 2000);
+                    } else {
+                        toastr.warning(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    toastr.error('An error occurred while adding the referral offer');
+                });
+        })
+
+        // delete product offer
+        document.querySelectorAll('.productOfferDelete').forEach((button, index) => {
+            button.addEventListener('click', (e, index) => {
+                e.preventDefault();
+
+                const offerID = button.getAttribute('data-id');
+                fetch('/admin/deleteOffer', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ offerID, offerType: 'product' })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            toastr.info('Offer deleted successfully');
+                            setTimeout(() => {
+                                window.location.href = '/admin/offers'
+                            }, 2000);
+                        } else {
+                            toastr.warning("Can't delete the offer, error in backend")
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error: ', err);
+                        toastr.error('Error in deleting the offer at front end')
+                    })
+            })
+        });
+
+        // delete category offer
+        document.querySelectorAll('.categoryOfferDelete').forEach((button, index) => {
+            button.addEventListener('click', (e, index) => {
+                e.preventDefault();
+
+                const offerID = button.getAttribute('data-id');
+                fetch('/admin/deleteOffer', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ offerID, offerType: 'product' })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            toastr.info('Offer deleted successfully');
+                            setTimeout(() => {
+                                window.location.href = '/admin/offers/categoryOffer'
+                            }, 2000);
+                        } else {
+                            toastr.warning("Can't delete the offer, error in backend")
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error: ', err);
+                        toastr.error('Error in deleting the offer at front end')
+                    })
+            })
+        });
+
+        // delete referral offer
+        document.getElementById('referralOfferDelete')?.addEventListener('click',e => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const offerID = document.getElementById('referralOfferDelete').getAttribute('data-id');
+            fetch('/admin/deleteOffer', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ offerID, offerType: 'referral' })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        toastr.info('Offer deleted successfully');
+                        setTimeout(() => {
+                            window.location.href = '/admin/offers/referralOffer'
+                        }, 2000);
+                    } else {
+                        toastr.warning("Can't delete the offer, error in backend")
+                    }
+                })
+                .catch(err => {
+                    console.error('Error: ', err);
+                    toastr.error('Error in deleting the offer at front end')
+                })
+        });
+
+    </script>
+
+    <%- include ('../partials/admin-footer.ejs') %>

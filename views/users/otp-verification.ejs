@@ -1,0 +1,75 @@
+<%- include ('../partials/user-header.ejs') %>
+
+
+    <main class="mt-5" style="height: auto;">
+        <div class=" content-head">
+            <div class="content-head-rect col-5 bg-dark-grn">
+                <div>
+                    <h2 class="content-head-txt">VERIFICATION</h2>
+                </div>
+                <div class="content-head-tri ms-auto"></div>
+            </div>
+        </div>
+        <div class="content-body side-margin text-start mt-3" style="justify-content: center; flex-direction: column;">
+            <div class="w-25">
+
+                <p class="text-success mb-3" id="status" style="text-align: center;">
+                    <%= status %>
+                </p>
+                <p class="text-danger mb-3" id="status" style="text-align: center;">
+                    <%= warning %>
+                </p>
+                <form autocomplete="off" id="otpForm" action="/sendOTP" method="post">
+                    <div class="mb-2">
+                        <label>Email:</label>
+                        <input class="form-control" readonly required type="email" value="<%= email %>" name="email" />
+                    </div>
+                    <p>Change Email address? <a class="col-dark-grn" href="/edit">Edit Here</a></p>
+                    <button type="submit" id="resendOTP" onclick="resendOTP()" disabled class="btn bg-dark-grn"
+                        style="color: white;">Resend
+                        OTP</button>
+                    <p class="mt-2" id="resendOTPtxt">Resend OTP in <span id="timer">60</span>s
+                    </p>
+                </form>
+                <form autocomplete="off" action="/verifyOTP" method="post" class="mt-4 w-50">
+                    <div class="mb-2" style="display: none;">
+                        <label>Email:</label>
+                        <input class="form-control" readonly type="email" value="<%= email %>" name="email" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Enter the OTP:</label>
+                        <input class="form-control" id="otp" required type="otp" name="otp" placeholder="6 Digit OTP"
+                            pattern="[0-9]{6}" />
+                    </div>
+                    <button type="submit" id="submitOTP" class="btn bg-dark-grn" style="color: white;">Verify
+                        OTP</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        window.onload = function () {
+            resendOTP(); // Call the function after page load
+        };
+        const resendOTP = () => {
+            let timer = 60;
+            const timerElement = document.getElementById('timer');
+            const resendButton = document.getElementById('resendOTP');
+
+            // timer and enable the otp send button after resend time exceed
+            const countdown = setInterval(() => {
+                if (timer > 0) {
+                    timer--;
+                    timerElement.textContent = timer;
+                } else {
+                    clearInterval(countdown);
+                    document.getElementById('resendOTPtxt').style = "display:none"
+                    resendButton.disabled = false;
+                }
+            }, 1000);
+        }
+    </script>
+
+
+    <%- include ('../partials/user-footer.ejs') %>

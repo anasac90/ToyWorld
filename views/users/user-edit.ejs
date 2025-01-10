@@ -1,0 +1,56 @@
+<%- include ('../partials/user-header.ejs') %>
+
+
+    <main class="mt-5" style="height: auto;">
+        <div class=" content-head">
+            <div class="content-head-rect col-5 bg-dark-grn">
+                <div>
+                    <h2 class="content-head-txt">SIGN UP</h2>
+                </div>
+                <div class="content-head-tri ms-auto"></div>
+            </div>
+        </div>
+        <div class="content-body side-margin text-start mt-3" style="justify-content: center; flex-direction: column;">
+            <div>
+                <form autocomplete="off" action="/update" method="post">
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label>First name:</label>
+                            <input class="form-control" placeholder="First name" value="<%= userData[0].fname %>" name="fname" required type="text">
+                        </div>
+                        <div class="col mb-3">
+                            <label>Last name:</label>
+                            <input class="form-control" placeholder="Last name" value="<%= userData[0].lname %>" name="lname" required type="text">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label>Email:</label>
+                        <input class="form-control" required type="email" value="<%= userData[0].email %>" name="email" placeholder="Email" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Mobile: (Eg:-9809112233)</label>
+                        <input class="form-control" required type="tel" pattern="[0-9]{10}" value="<%= userData[0].mobile %>" name="mobile" placeholder="Mobile number" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Password:</label>
+                        <input class="form-control" required type="password" value="<%= password %>" name="password" placeholder="Password" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Re-enter password:</label>
+                        <input class="form-control" required type="password" value="<%= password %>" name="password2"
+                            placeholder="Re-enter password" />
+                    </div>
+                    <p class="text-danger">
+                        <%= status %>
+                    </p>
+                    <div style="display: flex;">
+                        <button type="submit" class="btn bg-dark-grn" style="color: white;">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+
+    <%- include ('../partials/user-footer.ejs') %>
