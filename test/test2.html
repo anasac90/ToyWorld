@@ -7,11 +7,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
         $(document).ready(function(){
-            $('#hide').click(function(){
-                $('p').hide();
-            })
             $('#show').click(function(){
                 $('p').show();
+            })
+
+            $('#hide').click(function(){
+                $('p').hide();
             })
         })
     </script>
@@ -21,5 +22,19 @@
     <p>This is a sample page</p>
     <button id="hide">Hide</button>
     <button id="show">Show</button>
+
+    <button onclick="create()" id="create">Create</button>
+    <button onclick="remove()" id="remove">Remove</button>
+
+    <script>
+        let heading = document.createElement('h1');
+        function create() {
+            document.body.appendChild(heading).innerHTML = 'I am heading';
+        }
+
+        function remove(){
+            document.body.removeChild(heading);
+        }
+    </script>
 </body>
 </html>
