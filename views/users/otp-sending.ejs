@@ -19,7 +19,12 @@
                 <form autocomplete="off" id="otpForm" action="/sendOTP" method="post">
                     <div class="mb-2">
                         <label>Email:</label>
-                        <input class="form-control" readonly required type="email" value="<%= email %>" name="email" />
+                        <% if (email) { %>
+                            <input class="form-control" readonly required type="email" value="<%= email %>" name="email" />
+                            <% } else { %>
+                                <input class="form-control" required type="email" name="email" />
+                                <input class="form-control" hidden type="text" name="forgetPassword" value="yes" />
+                                <% } %>
                     </div>
                     <p>Change Email address? <a class="col-dark-grn" href="/edit">Edit Here</a></p>
                     <button type="submit" id="sendOTP" class="btn bg-dark-grn"
@@ -28,6 +33,12 @@
                 </form>
             </div>
     </main>
+    <!-- <script>
+        document.getElementById('otpForm').addEventListener('click',(e)=>{
+            e.preventDefault();
 
+            if()
+        })
+    </script> -->
 
     <%- include ('../partials/user-footer.ejs') %>

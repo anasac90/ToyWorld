@@ -31,6 +31,10 @@ exports.login = (req, res) => {
   }
 };
 
+exports.forgetPassword = async (req, res) => {
+  res.render("users/otp-sending", { user: [], email: '', status: "" });
+}
+
 exports.userHome = async (req, res, next) => {
   let products = await productDB.getProducts({ isDeleted: false });
   let categories = await categoryDB.getCategories({ isDeleted: false });
@@ -61,36 +65,51 @@ generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
 exports.sendOTP = async (req, res) => {
   const Email = req.body;
-  const otp = generateOTP();
-  const hashedOTP = await bcrypt.hash(otp, 10);
-  const newData = {
-    otp: hashedOTP,
-    otpExpiresAt: Date.now() + 300000,
-  };
-  await usersDB.updateUser(Email, newData);
-  const mailOptions = {
-    from: "the.toyworld.com@gmail.com",
-    to: Email.email,
-    subject: "Your OTP Code",
-    text: `Your OTP code is ${otp}. It will expire in 5 minutes.`,
-  };
+  let isEmailExist = await usersDB.findUser({ email: Email.email });
+  if (isEmailExist.length == 0) {
+    res.render("users/otp-sending", { user: [], email: null, status: "Entered email does not exist" });
+  } else {
+    const otp = generateOTP();
+    const hashedOTP = await bcrypt.hash(otp, 10);
+    const newData = {
+      otp: hashedOTP,
+      otpExpiresAt: Date.now() + 300000,
+    };
+    await usersDB.updateUser(Email, newData);
+    const mailOptions = {
+      from: "the.toyworld.com@gmail.com",
+      to: Email.email,
+      subject: "Your OTP Code",
+      text: `Your OTP code is ${otp}. It will expire in 5 minutes.`,
+    };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).render("users/otp-sending", {
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).render("users/otp-sending", {
+          user: req.session.user ? req.session.user : [],
+          email: Email.email,
+          status: "Error sending OTP",
+        });
+      }
+    });
+    if (req.body.forgetPassword) {
+      res.render("users/otp-verification", {
         user: req.session.user ? req.session.user : [],
         email: Email.email,
-        status: "Error sending OTP",
+        status: "OTP sent successfully, Please enter the OTP",
+        warning: "",
+        forgetPassword:true,
+      });
+    } else {
+      res.render("users/otp-verification", {
+        user: req.session.user ? req.session.user : [],
+        email: Email.email,
+        status: "OTP sent successfully, Please enter the OTP",
+        warning: "",
       });
     }
-  });
-  res.render("users/otp-verification", {
-    user: req.session.user ? req.session.user : [],
-    email: Email.email,
-    status: "OTP sent successfully, Please enter the OTP",
-    warning: "",
-  });
+  }
 };
 
 exports.verifyOTP = async (req, res) => {
@@ -170,9 +189,9 @@ exports.userProducts = async (req, res) => {
   let categories = await categoryDB.getCategories();
 
   if (req.session.user) {
-    res.render("users/products", { user: req.session.user, products, sortOption:null,categories,categoryOption:null });
+    res.render("users/products", { user: req.session.user, products, sortOption: null, categories, categoryOption: null });
   } else {
-    res.render("users/products", { user: [], products, sortOption:null,categories,categoryOption:null });
+    res.render("users/products", { user: [], products, sortOption: null, categories, categoryOption: null });
   }
 };
 
@@ -244,7 +263,7 @@ exports.userAccount = async (req, res) => {
     orders: req.session.orders ? req.session.orders.reverse() : [],
     status: null,
     warning: null,
-    redirectTo:''
+    redirectTo: ''
   });
 };
 
@@ -281,7 +300,7 @@ exports.updateProfile = async (req, res) => {
     orders: req.session.orders ? req.session.orders.reverse() : [],
     status: "Profile updated successfully",
     warning: null,
-    redirectTo:''
+    redirectTo: ''
   });
 };
 
@@ -312,7 +331,7 @@ exports.updatePassword = async (req, res) => {
         orders: req.session.orders ? req.session.orders.reverse() : [],
         status: "Password changed successfully",
         warning: null,
-        redirectTo:''
+        redirectTo: ''
       });
     } else {
       res.render("users/change-password", {

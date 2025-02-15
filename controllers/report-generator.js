@@ -83,10 +83,10 @@ const generateExcel = async (req, res) => {
         // sheet.getCell('A2').alignment = {vertical:'middle',horizontal:'center'}
 
         sheet.columns = [
-            {header:"Total Order Amount", key:"totalOrderAmount", width:10},
-            {header:"Total offer discount", key:"totalOfferDiscount", width:10},
-            {header:"Total coupon discount", key:'totalCouponDiscount', width:10},
-            {header:"Total sales count", key:'totalSales',width:10}
+            {header:"Total Order Amount", key:"totalOrderAmount", width:20},
+            {header:"Total offer discount", key:"totalOfferDiscount", width:20},
+            {header:"Total coupon discount", key:'totalCouponDiscount', width:20},
+            {header:"Total sales count", key:'totalSales',width:20}
         ]
 
         sheet.addRow(overallReport);
@@ -100,7 +100,7 @@ const generateExcel = async (req, res) => {
         
     } catch (error) {
         console.error('Error: '+error);
-        res.json({success:false});
+        res.json({success:false}); 
     }
 
 }

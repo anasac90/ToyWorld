@@ -38,6 +38,8 @@ router.get("/", conditions.isBlocked, userController.userHome);
 
 router.get("/login", conditions.isBlocked, userController.login);
 
+router.get("/forgetPassword",conditions.isBlocked, userController.forgetPassword)
+
 // User login validation
 router.post("/home", conditions.isBlocked, userController.validation);
 

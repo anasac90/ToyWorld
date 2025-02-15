@@ -30,7 +30,7 @@ const addNewCoupon = async (req,res)=>{
     let {couponCode, discountPercentage, maxDiscount, expiryDate, usageLimit, status} = req.body;
     let couponData = req.body;
     couponData = couponData?couponData:null;
-    let couponExist = await couponDB.getCoupons({couponCode:couponCode});
+    let couponExist = await couponDB.getCoupons({couponCode:{$regex:couponCode,$options:'i'}});
     let date = new Date(expiryDate);
     let today = new Date();
 
