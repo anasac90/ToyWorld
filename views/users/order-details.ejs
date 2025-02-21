@@ -14,7 +14,9 @@
             <div class="card-body p-4">
               <div class="d-flex justify-content-between align-items-center mb-4">
                 <p class="lead fw-normal mb-0" style="color: black; font-weight: 700;">Receipt</p>
-                <p class="small text-muted mb-0">Invoice Number: <%= orderData.receipt %>
+                <p class="small text-muted mb-0"><button style="margin-left: 1rem; width: 9rem; color: white;
+                background-color: #66a5ad;" class="btn cancelButton" type="button" data-order-id="<%= orderData._id %>"
+                    data-invoice-id="<%= orderData.receipt %>" id="downloadInvoice">Download Invoice</button>
                 </p>
               </div>
               <% for(let i=0;i < products.length;i++) { %>
@@ -53,14 +55,15 @@
                       <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                         <% if (orderData.products[i].returnStatus) { %>
                           <p class="text-muted mb-0 small">Return Status: <%= orderData.products[i].returnStatus %>
-                          <% } else { %>
-                            <p class="text-muted mb-0 small">Current Status: <%= orderData.products[i].status %>
-                            <% } %>
-                        </p>
+                              <% } else { %>
+                                <p class="text-muted mb-0 small">Current Status: <%= orderData.products[i].status %>
+                                    <% } %>
+                                </p>
                       </div>
                     </div>
                     <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
-                    <% if(!(orderData.products[i].status==="Cancelled" ) && !(orderData.products[i].status==="Return")) { %>
+                    <% if(!(orderData.products[i].status==="Cancelled" ) && !(orderData.products[i].status==="Return" ))
+                      { %>
                       <div class="row d-flex align-items-center">
                         <div class="col-md-2">
                           <p class="text-muted mb-0 small" style="font-weight: 600;">Track Order</p>
@@ -87,7 +90,8 @@
                           </div>
                         </div>
                       </div>
-                      <% } else if (orderData.products[i].returnStatus && !(orderData.products[i].returnStatus==='Rejected')) { %>
+                      <% } else if (orderData.products[i].returnStatus &&
+                        !(orderData.products[i].returnStatus==='Rejected' )) { %>
                         <div class="row d-flex align-items-center">
                           <div class="col-md-2">
                             <p class="text-muted mb-0 small" style="font-weight: 600;">Track Return</p>
@@ -122,8 +126,8 @@
                                   <% if(!returnStatus[i]) { %>
                                     <button style="margin-left: 1rem; width: 7rem; color: white; background-color: red;"
                                       class="btn returnButton" type="button">Return</button>
-                                      <% } %>
-                                        <p class="returnStatus"></p>
+                                    <% } %>
+                                      <p class="returnStatus"></p>
                                 </form>
                                 <% } else { %>
                                   <form class="cancelOrderForm" data-product-code="<%= products[i].productCode %>"
@@ -188,9 +192,10 @@
       buttons.forEach((button, index) => {
         button.addEventListener('click', (event) => {
           event.preventDefault();
+          event.stopPropagation();
 
-          productCode = form[index].getAttribute('data-product-code');
-          orderId = form[index].getAttribute('data-order-id');
+          const productCode = form[index].getAttribute('data-product-code');
+          const orderId = form[index].getAttribute('data-order-id');
 
           fetch(`/orderCancel?productCode=${productCode}&orderId=${orderId}`, {
             method: 'PUT',
@@ -240,6 +245,29 @@
         });
       });
     });
+
+    const downloadInvoice = document.getElementById('downloadInvoice');
+    const orderId = downloadInvoice.getAttribute('data-order-id');
+    const invoiceId = downloadInvoice.getAttribute('data-invoice-id');
+
+    downloadInvoice.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      fetch('/orderDetails/generateInvoice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId: orderId, invoiceId: invoiceId })
+      }).then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            toastr.info('Invoice generated and will download shortly')
+            setTimeout(() => {
+              window.location.href = '/orderDetails/downloadInvoice'
+            }, 1000)
+          } else toastr.error("Error, Can't generate the invoice file")
+        })
+    })
+
   </script>
 
   <%- include ('../partials/user-footer.ejs') %>

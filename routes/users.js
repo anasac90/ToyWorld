@@ -15,6 +15,7 @@ const walletController = require("../controllers/walletController");
 const multer = require("multer");
 const passport = require("passport");
 const { warning } = require("toastr");
+const reportGenerator = require('../controllers/report-generator');
 
 
 
@@ -162,6 +163,9 @@ router.get('/orders',conditions.isBlocked,validUser,orderController.orders);
 
 // order details
 router.get('/orderDetails/:id',conditions.isBlocked,validUser,orderController.orderDetails)
+
+// invoice generate
+router.post('/orderDetails/generateInvoice',conditions.isBlocked, validUser,reportGenerator.generateInvoice)
 
 // cancel order
 router.put('/orderCancel',conditions.isBlocked,validUser,orderController.cancelOrder);
