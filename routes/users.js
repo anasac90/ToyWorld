@@ -14,8 +14,8 @@ const wishListController = require("../controllers/wishListController");
 const walletController = require("../controllers/walletController");
 const multer = require("multer");
 const passport = require("passport");
-const { warning } = require("toastr");
 const reportGenerator = require('../controllers/report-generator');
+const path = require("path");
 
 
 
@@ -165,7 +165,13 @@ router.get('/orders',conditions.isBlocked,validUser,orderController.orders);
 router.get('/orderDetails/:id',conditions.isBlocked,validUser,orderController.orderDetails)
 
 // invoice generate
-router.post('/orderDetails/generateInvoice',conditions.isBlocked, validUser,reportGenerator.generateInvoice)
+router.post('/orderDetails/generateInvoice',conditions.isBlocked, validUser,reportGenerator.generateInvoice);
+
+// download invoice
+router.get('/orderDetails/downloadInvoice/:invoice',conditions.isBlocked,validUser,(req,res)=>{
+  const invoice = req.params.invoice;
+  res.download(path.join(__dirname,`../downloads/invoice ${invoice}.pdf`))
+})
 
 // cancel order
 router.put('/orderCancel',conditions.isBlocked,validUser,orderController.cancelOrder);

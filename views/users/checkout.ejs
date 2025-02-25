@@ -27,7 +27,7 @@
                                 <div class="row">
 
                                     <!-- wallet Option -->
-                                    <div class="col-md-6 mt-3" style="display: flex;">
+                                    <div class="col-md-6 mt-3">
                                         <div class="card">
                                             <div class="card-header mt-3"
                                                 style="display: flex; justify-content: center;">
@@ -80,7 +80,7 @@
                                                 </div>
                                             </div>
                                             <div class="card-body text-center px-3 pb-0">
-                                                <p>Pay when your order arrives at your doorstep.</p>
+                                                <p id="codText">Pay when your order arrives at your doorstep.</p>
                                                 <!-- <button class="btn btn-dark w-100 rounded">COD</button> -->
                                             </div>
                                         </div>
@@ -282,6 +282,12 @@
             if(total > '<%= wallet.balanceAmount %>'){
                 document.getElementById('walletOption').setAttribute('disabled',true);
                 document.getElementById('walletBalance').style = "color:red;"
+            }
+
+            if(total > 1000) {
+                document.getElementById('codOption').setAttribute('disabled',true);
+                document.getElementById('codText').style = 'color:red'
+                document.getElementById('codText').textContent = 'COD not available if the amount is above 1000'
             }
                 
             // Set hidden inputs to submit to the server
