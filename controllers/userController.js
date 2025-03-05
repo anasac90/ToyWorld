@@ -37,6 +37,7 @@ exports.forgetPassword = async (req, res) => {
 
 exports.userHome = async (req, res, next) => {
   let products = await productDB.getProducts({ isDeleted: false });
+  
   let categories = await categoryDB.getCategories({ isDeleted: false });
   if (req.session.user) {
     res.render("users/home", { user: req.session.user, products, categories });
@@ -99,7 +100,7 @@ exports.sendOTP = async (req, res) => {
         email: Email.email,
         status: "OTP sent successfully, Please enter the OTP",
         warning: "",
-        forgetPassword:true,
+        forgetPassword: true,
       });
     } else {
       res.render("users/otp-verification", {
@@ -185,13 +186,23 @@ exports.validation = async (req, res) => {
 };
 
 exports.userProducts = async (req, res) => {
-  let products = await productDB.getProducts({ isDeleted: false });
+  let page = parseInt(req.query.page) || 1;
+  let limit = 5; // Product count in each page
+  let skip = (page - 1) * limit;
+
+  // Get total product count
+  let totalProducts = await productDB.getProducts({ isDeleted: false });
+  totalProducts = totalProducts.length;
+
+  let totalPages = Math.ceil(totalProducts / limit);
+
+  let products = await productDB.getProducts({ isDeleted: false },skip,limit);
   let categories = await categoryDB.getCategories();
 
   if (req.session.user) {
-    res.render("users/products", { user: req.session.user, products, sortOption: null, categories, categoryOption: null });
+    res.render("users/products", { user: req.session.user, products, sortOption: null, categories, categoryOption: null, currentPage:page, totalPages });
   } else {
-    res.render("users/products", { user: [], products, sortOption: null, categories, categoryOption: null });
+    res.render("users/products", { user: [], products, sortOption: null, categories, categoryOption: null, currentPage:page, totalPages });
   }
 };
 
@@ -216,11 +227,20 @@ exports.productDetailed = async (req, res) => {
 };
 
 exports.userCategories = async (req, res) => {
-  let categories = await categoryDB.getCategories({ isDeleted: false });
+  let page = parseInt(req.query.page) || 1;
+  let limit = 5; // Product count in each page
+  let skip = (page - 1) * limit;
+
+  let totalCategories = await categoryDB.getCategories({ isDeleted: false });
+  totalCategories = totalCategories.length;
+
+  let totalPages = Math.ceil(totalCategories / limit);
+
+  let categories = await categoryDB.getCategories({ isDeleted: false },skip,limit);
   if (req.session.user) {
-    res.render("users/categories", { user: req.session.user, categories });
+    res.render("users/categories", { user: req.session.user, categories, currentPage:page, totalPages });
   } else {
-    res.render("users/categories", { user: [], categories });
+    res.render("users/categories", { user: [], categories, currentPage:page, totalPages });
   }
 };
 

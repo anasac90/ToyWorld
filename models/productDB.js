@@ -15,9 +15,17 @@ const insertProduct = async (document, files) => {
 };
 
 // Function to get products
-const getProducts = async (search) => {
+const getProducts = async (search, skip, limit) => {
+
   const collection = getDB().collection(collections.PRODUCT_COLLECTION);
-  const products = await collection.find(search).toArray();
+  let products = [];
+
+  if (limit) {
+    products = await collection.find(search).skip(skip).limit(limit).toArray();
+  } else {
+    products = await collection.find(search).toArray();
+  }
+  
   return products;
 };
 
@@ -59,8 +67,8 @@ const renameCategory = async (oldCategory, newCategory) => {
 const search = async (searchQuery) => {
   const collection = getDB().collection(collections.PRODUCT_COLLECTION);
   const result = collection.find({
-      productName: { $regex: searchQuery, $options: "i" }
-    }).toArray();
+    productName: { $regex: searchQuery, $options: "i" }
+  }).toArray();
   return result;
 };
 

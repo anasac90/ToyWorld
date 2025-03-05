@@ -3,8 +3,18 @@ const { getCategories } = require("../models/categoryDB");
 
 // admin product listing page
 exports.productList = async (req, res) => {
+  let currentPage = parseInt(req.query.page) || 1;
+  let limit = 6;
+  let skip = (currentPage - 1) * limit;
+
   let products = await productDB.getProducts();
-  res.render("admin/products", { products });
+  let totalProductCount = products.length;
+  let totalPages = Math.ceil(totalProductCount / limit);
+
+  products = await productDB.getProducts({},skip,limit);
+
+  
+  res.render("admin/products", { products, totalPages, currentPage });
 };
 
 //add product page

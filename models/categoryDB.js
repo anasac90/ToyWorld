@@ -15,9 +15,16 @@ const insertCategory = async (document, file) => {
 };
 
 // Function to get categoies
-const getCategories = async (search) => {
+const getCategories = async (search,skip,limit) => {
   const collection = getDB().collection(collections.CATEGORY_COLLECTION);
-  const categories = await collection.find(search).toArray();
+  let categories;
+  
+  if(!limit){
+    categories = await collection.find(search).toArray();
+  } else {
+    categories = await collection.find(search).skip(skip).limit(limit).toArray();
+  }
+  
   return categories;
 };
 
