@@ -41,6 +41,9 @@ router.get("/login", conditions.isBlocked, userController.login);
 
 router.get("/forgetPassword",conditions.isBlocked, userController.forgetPassword)
 
+// reset password
+router.post('/my-account/reset-password', conditions.isBlocked,userController.resetPassword);
+
 // User login validation
 router.post("/home", conditions.isBlocked, userController.validation);
 

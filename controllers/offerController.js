@@ -7,6 +7,7 @@ const offersManagement = async (req, res) => {
     let { activeTab } = req.params;
     let products = await productDB.getProducts();
     let categories = await categoryDB.getCategories();
+    
 
     let productOffer = await offerDB.findOffer({ offerType: 'product' });
     let categoryOffer = await offerDB.findOffer({ offerType: 'category' });

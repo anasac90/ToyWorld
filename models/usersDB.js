@@ -16,16 +16,30 @@ exports.insertUser = async (document) => {
 };
 
 // Function to query document
-exports.findUser = async (query) => {
+exports.findUser = async (query,skip,limit) => {
   const collection = getDB().collection(collections.USER_COLLECTION);
-  const document = await collection.find(query).toArray();
+  let document;
+
+  if(!limit){
+    document = await collection.find(query).toArray();
+  } else {
+    document = await collection.find(query).skip(skip).limit(limit).toArray();
+  }
+  
   return document;
 };
 
 // Function to update user
 exports.updateUser = async (email, newData) => {
   const collection = getDB().collection(collections.USER_COLLECTION);
-  const result = await collection.findOneAndUpdate(email, { $set: newData },{ returnDocument: 'after' });
+
+  let result;
+  if(email.forgetPassword){
+    result = await collection.findOneAndUpdate({email:email.email}, { $set: newData },{ returnDocument: 'after' });
+  } else {
+    result = await collection.findOneAndUpdate(email, { $set: newData },{ returnDocument: 'after' });
+  }
+  
   return result;
 };
 

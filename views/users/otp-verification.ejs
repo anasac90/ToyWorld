@@ -41,6 +41,13 @@
                         <input class="form-control" id="otp" required type="otp" name="otp" placeholder="6 Digit OTP"
                             pattern="[0-9]{6}" />
                     </div>
+                    <% if(forgetPassword) {%>
+                        <div class="mb-3">
+                            <input class="form-control" hidden id="forgetPassword" required type=""
+                            value="yes" name="forgetPassword"/>
+                        </div>
+                    <% } %>
+
                     <button type="submit" id="submitOTP" class="btn bg-dark-grn" style="color: white;">Verify
                         OTP</button>
                 </form>

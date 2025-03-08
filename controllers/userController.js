@@ -37,7 +37,7 @@ exports.forgetPassword = async (req, res) => {
 
 exports.userHome = async (req, res, next) => {
   let products = await productDB.getProducts({ isDeleted: false });
-  
+
   let categories = await categoryDB.getCategories({ isDeleted: false });
   if (req.session.user) {
     res.render("users/home", { user: req.session.user, products, categories });
@@ -66,6 +66,7 @@ generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
 exports.sendOTP = async (req, res) => {
   const Email = req.body;
+
   let isEmailExist = await usersDB.findUser({ email: Email.email });
   if (isEmailExist.length == 0) {
     res.render("users/otp-sending", { user: [], email: null, status: "Entered email does not exist" });
@@ -77,6 +78,7 @@ exports.sendOTP = async (req, res) => {
       otpExpiresAt: Date.now() + 300000,
     };
     await usersDB.updateUser(Email, newData);
+
     const mailOptions = {
       from: "the.toyworld.com@gmail.com",
       to: Email.email,
@@ -108,12 +110,15 @@ exports.sendOTP = async (req, res) => {
         email: Email.email,
         status: "OTP sent successfully, Please enter the OTP",
         warning: "",
+        forgetPassword: false,
       });
     }
   }
 };
 
 exports.verifyOTP = async (req, res) => {
+  console.log(req.body);
+
   let email = req.body.email;
   let otp = req.body.otp;
   let user = await usersDB.findUser({ email: email });
@@ -131,31 +136,43 @@ exports.verifyOTP = async (req, res) => {
         email,
         status: "",
         warning: "Invalid OTP, Please try again",
+        forgetPassword: false,
       });
     } else {
-      let Email = { email: email };
-      let newData = { isEmailVerified: true };
-      let OTPdata = { otp: "", otpExpiresAt: "" };
-      let result = await usersDB.updateUser(Email, newData);
-      if (req.session.user) {
-        req.session.user = [result];
-      }
-      await usersDB.deleteField(Email, OTPdata);
-      if (req.session.user) {
-        res.render("users/my-account", {
-          user: req.session.user,
-          addresses: req.session.addresses ? req.session.addresses : [],
-          orders: req.session.orders ? req.session.orders : [],
-          status: "Email verified successfully",
-          warning: null,
+      if (req.body.forgetPassword) {
+        res.render("users/change-password", {
+          user: req.session.user ? req.session.user : [],
+          email,
+          status: "Email verified, Kindly please update password",
+          warning: "",
+          forgetPassword: true,
         });
       } else {
-        res.render("users/user-login", {
-          user: [],
-          status: "Email verified successfully, Kindly please login",
-          message: "",
-        });
+        let Email = { email: email };
+        let newData = { isEmailVerified: true };
+        let OTPdata = { otp: "", otpExpiresAt: "" };
+        let result = await usersDB.updateUser(Email, newData);
+        if (req.session.user) {
+          req.session.user = [result];
+        }
+        await usersDB.deleteField(Email, OTPdata);
+        if (req.session.user) {
+          res.render("users/my-account", {
+            user: req.session.user,
+            addresses: req.session.addresses ? req.session.addresses : [],
+            orders: req.session.orders ? req.session.orders : [],
+            status: "Email verified successfully",
+            warning: null,
+          });
+        } else {
+          res.render("users/user-login", {
+            user: [],
+            status: "Email verified successfully, Kindly please login",
+            message: "",
+          });
+        }
       }
+
     }
   }
 };
@@ -196,13 +213,13 @@ exports.userProducts = async (req, res) => {
 
   let totalPages = Math.ceil(totalProducts / limit);
 
-  let products = await productDB.getProducts({ isDeleted: false },skip,limit);
+  let products = await productDB.getProducts({ isDeleted: false }, skip, limit);
   let categories = await categoryDB.getCategories();
 
   if (req.session.user) {
-    res.render("users/products", { user: req.session.user, products, sortOption: null, categories, categoryOption: null, currentPage:page, totalPages });
+    res.render("users/products", { user: req.session.user, products, sortOption: null, categories, categoryOption: null, currentPage: page, totalPages });
   } else {
-    res.render("users/products", { user: [], products, sortOption: null, categories, categoryOption: null, currentPage:page, totalPages });
+    res.render("users/products", { user: [], products, sortOption: null, categories, categoryOption: null, currentPage: page, totalPages });
   }
 };
 
@@ -236,17 +253,25 @@ exports.userCategories = async (req, res) => {
 
   let totalPages = Math.ceil(totalCategories / limit);
 
-  let categories = await categoryDB.getCategories({ isDeleted: false },skip,limit);
+  let categories = await categoryDB.getCategories({ isDeleted: false }, skip, limit);
   if (req.session.user) {
-    res.render("users/categories", { user: req.session.user, categories, currentPage:page, totalPages });
+    res.render("users/categories", { user: req.session.user, categories, currentPage: page, totalPages });
   } else {
-    res.render("users/categories", { user: [], categories, currentPage:page, totalPages });
+    res.render("users/categories", { user: [], categories, currentPage: page, totalPages });
   }
 };
 
 exports.userManagement = async (req, res) => {
-  let users = await usersDB.findUser();
-  res.render("admin/users", { users });
+  let currentPage = parseInt(req.query.page) || 1;
+  let limit = 6;
+  let skip = (currentPage - 1) * limit;
+
+  let totalUsers = await usersDB.findUser({});
+  let totalUsersCount = totalUsers.length;
+  let totalPages = Math.ceil(totalUsersCount / limit);
+
+  let users = await usersDB.findUser({}, skip, limit);
+  res.render("admin/users", { users, currentPage, totalPages });
 };
 
 exports.blockUser = async (req, res) => {
@@ -326,8 +351,11 @@ exports.updateProfile = async (req, res) => {
 
 exports.changePassword = (req, res) => {
   res.render("users/change-password", {
+    status: "",
+    warning: "",
+    forgetPassword: true,
     user: req.session.user,
-    warning: null,
+    forgetPassword: false,
   });
 };
 
@@ -355,17 +383,40 @@ exports.updatePassword = async (req, res) => {
       });
     } else {
       res.render("users/change-password", {
+        status: "",
+        forgetPassword: true,
         user: req.session.user,
         warning: "Old password did not match, Please try again",
+        forgetPassword: false,
       });
     }
   } else {
     res.render("users/change-password", {
+      status: "",
+      forgetPassword: true,
       user: req.session.user,
       warning: "New password mismtach, Please try again",
+      forgetPassword: false,
     });
   }
 };
+
+exports.resetPassword = async (req, res) => {
+
+  if (req.body.password === req.body.password2) {
+    let protPassword = await bcrypt.hash(req.body.password, 10);
+    let result = await usersDB.updateUser(
+      { email: req.body.email },
+      { password: protPassword }
+    );
+  }
+
+  res.render("users/user-login", {
+    user: [],
+    status: "Password Reset Successful, Kindly login using new credential",
+    message: "",
+  });
+}
 
 exports.verifyEmail = (req, res) => {
   res.render("users/verify-email", { user: req.session.user, warning: null });

@@ -94,7 +94,7 @@ exports.placeOrder = async (req, res) => {
       products: products,
       orderDate: orderDate,
       orderTime: orderTime,
-      orderDateAndTime:today,
+      orderDateAndTime: today,
       productPrice: req.body.productPrice,
       deliveryCharge: req.body.deliveryCharge,
       discount: req.body.discount,
@@ -305,24 +305,49 @@ exports.returnOrder = async (req, res) => {
 }
 
 exports.getOrders = async (req, res) => {
-  const orders = await orderDB.getOrders();
-  const products = await Promise.all(
-    orders.map((order) => {
-      return Promise.all(
-        order.products.map(async (product) => {
-          const [result] = await productDB.getProducts({
-            productCode: product.productCode,
-          });
-          return result;
-        })
-      );
-    })
-  );
+  let currentPage = parseInt(req.query.page) || 1;
+  let limit = 6;
+  let skip = (currentPage - 1) * limit;
 
-  res.render("admin/orders", {
-    orders,
-    products,
-  });
+  const allOrders = await orderDB.getOrders();
+
+  try {
+
+    let allProducts = allOrders.flatMap(order => {
+      return order.products.map(product => ({
+        orderId: order._id,
+        productCode: product.productCode,
+      }))
+    })
+
+    let totalOrders = allProducts.length;
+    let totalPages = Math.ceil(totalOrders / limit);
+
+    let paginatedProduct = allProducts.slice(skip, skip + limit);
+
+    const products = await Promise.all(
+      paginatedProduct.map(async (product) => {
+        const [result] = await productDB.getProducts({
+          productCode: product.productCode,
+        });
+        return { ...result, orderId: product.orderId };
+      })
+    );
+
+    listedOrders = allOrders.filter(order => 
+      products.some(product => product.orderId.equals(order._id))
+    );
+
+    res.render("admin/orders", {
+      orders: listedOrders,
+      products,
+      totalPages,
+      currentPage
+    });
+
+  } catch (err) {
+    res.send('Error: ' + err)
+  }
 };
 
 exports.updateStatus = async (req, res) => {
@@ -409,20 +434,20 @@ exports.generateReport = async (req, res) => {
   try {
     // const today = new Date();
     // console.log(today);
-    
-    
+
+
     let { startDate, endDate } = req.body;
 
     startDate = new Date(startDate);
     endDate = new Date(endDate);
     endDate.setUTCHours(23, 59, 59, 999);
 
-    const overallReport = await orderDB.getOverallReport(startDate,endDate);
-    const individualReport = await orderDB.getIndividualReport(startDate,endDate);
-    
-    res.json({success:true, overallReport:overallReport,individualReport:individualReport});
+    const overallReport = await orderDB.getOverallReport(startDate, endDate);
+    const individualReport = await orderDB.getIndividualReport(startDate, endDate);
+
+    res.json({ success: true, overallReport: overallReport, individualReport: individualReport });
 
   } catch (error) {
-    console.error('Error: '+error);
+    console.error('Error: ' + error);
   }
 }

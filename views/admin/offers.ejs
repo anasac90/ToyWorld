@@ -151,7 +151,7 @@
                                 <label for="category" class="form-label">Select Category</label>
                                 <select required id="category" class="form-select">
                                     <option selected disabled>Choose a category</option>
-                                    <% for(let i=0;i < products.length;i++){ %>
+                                    <% for(let i=0;i < categories.length;i++){ %>
                                         <option value="<%= categories[i].categoryName %>"
                                             data-category-id="<%= categories[i]._id %>">
                                             <%= categories[i].categoryName %>
