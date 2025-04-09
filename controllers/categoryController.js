@@ -116,7 +116,7 @@ exports.categoryFilter = async (req, res) => {
   let filteredProducts = [];
   let i = 0;
   searchedProducts.forEach((product) => {
-    if (product.category === category){
+    if (product.category === category) {
       filteredProducts[i] = product;
       i++;
     }
@@ -125,12 +125,16 @@ exports.categoryFilter = async (req, res) => {
     user: req.session.user ? req.session.user : [],
     products: filteredProducts,
     categories,
-    searchQuery:searchWord,
+    searchQuery: searchWord,
   });
 };
 
 // filter category in products page
-exports.productsCategoryFilter =  async (req, res) => {
+exports.productsCategoryFilter = async (req, res) => {
+  let page = parseInt(req.query.page) || 1;
+  let limit = 5; // Product count in each page
+  let skip = (page - 1) * limit;
+
   const { category } = req.params;
 
   let products = await productDB.getProducts();
@@ -139,16 +143,24 @@ exports.productsCategoryFilter =  async (req, res) => {
   let filteredProducts = [];
   let i = 0;
   products.forEach((product) => {
-    if (product.category === category){
+    if (product.category === category) {
       filteredProducts[i] = product;
       i++;
     }
   });
+
+  // Get total product count
+  let totalProducts = filteredProducts.length;
+
+  let totalPages = Math.ceil(totalProducts / limit);
+
   res.render("users/products", {
     user: req.session.user ? req.session.user : [],
     products: filteredProducts,
     categories,
-    sortOption:null,
-    categoryOption:category,
+    sortOption: null,
+    categoryOption: category,
+    currentPage: page,
+    totalPages 
   });
 };

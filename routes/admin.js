@@ -66,8 +66,27 @@ router.post("/home", async (req, res) => {
 
 //admin homepage
 router.get("/home", validAdmin, (req, res) => {
-  res.render("admin/home");
+  let filterOption = 'yearly';
+
+  res.render("admin/home", {
+    bestSellingProducts:[],
+    bestSellingCategories:[],
+    bestSellingBrands:[]
+  });
 });
+
+//admin homepage filter
+router.get('/home/:filter', validAdmin, (req,res) => {
+  let filterOption = req.params.filter;
+
+  
+  
+  res.render("admin/home", {
+    bestSellingProducts:[],
+    bestSellingCategories:[],
+    bestSellingBrands:[]
+  });
+})
 
 // admin product listing page
 router.get("/products", validAdmin, productController.productList);

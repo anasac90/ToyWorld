@@ -21,7 +21,73 @@
             <a href="/admin/offers">OFFERS</a>
             <a href="/admin/report">REPORT</a>
         </div>
+
+        <div class="dashboard-content">
+            <div class="chart-container">
+                <!-- <canvas id="salesChart"></canvas> -->
+                <div class="chart-filters" style="display: flex; justify-content: center;">
+                    <button class="btn btn-filter active" data-filter="yearly">Yearly</button>
+                    <button class="btn btn-filter" data-filter="monthly">Monthly</button>
+                    <button class="btn btn-filter" data-filter="weekly">Weekly</button>
+                </div>
+            </div>
+            <div class="best-selling">
+                <div class="best-selling-products">
+                    <h3>Best Selling Products (Top 10)</h3>
+                    <ul>
+                        <% if(bestSellingProducts) { %>
+                            <% bestSellingProducts.forEach(product => { %>
+                                <li><%= product.name %> - <%= product.sales %> sold</li>
+                            <% }); %>
+                        <% } %>
+                    </ul>
+                </div>
+                <div class="best-selling-categories">
+                    <h3>Best Selling Categories (Top 10)</h3>
+                    <ul>
+                        <% if(bestSellingCategories) { %>
+                            <% bestSellingCategories.forEach(category => { %>
+                                <li><%= category.name %> - <%= category.sales %> sold</li>
+                            <% }); %>
+                        <% } %>
+                    </ul>
+                </div>
+                <div class="best-selling-brands">
+                    <h3>Best Selling Brands (Top 10)</h3>
+                    <ul>
+                        <% if(bestSellingBrands) { %>
+                            <% bestSellingBrands.forEach(brand => { %>
+                                <li><%= brand.name %> - <%= brand.sales %> sold</li>
+                            <% }); %>
+                        <% } %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
     </div> 
 </main>
+
+<script>
+    document.querySelectorAll(".btn-filter").forEach(button=>{
+        button.addEventListener('click',(e)=>{
+            e.preventDefault();
+
+            let filterOption = button.getAttribute('data-filter');
+
+            window.location = `/admin/home/${filterOption}`
+            // fetch(`/admin/home/${filterOption}`,{
+            //     method: 'GET',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     // body: JSON.stringify({filterOption})
+            // }).then(res => res.json())
+            // .then(data=>{
+            //     if(data.success){
+
+            //     }
+            // })
+        })
+    })
+</script>
 
 <%- include ('../partials/admin-footer.ejs') %>

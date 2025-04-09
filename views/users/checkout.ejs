@@ -41,7 +41,7 @@
                                             </div>
                                             <div class="card-body text-center px-3 pb-0">
                                                 <p>Use wallet if you have enough balance.</p>
-                                                <p id="walletBalance" style="color: green;">Wallet balance is: <%= wallet.balanceAmount.toFixed(2) %>.</p>
+                                                <p id="walletBalance" style="color: green;">Wallet balance is: <%= wallet?.balanceAmount?.toFixed(2) || 0 %>.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -279,7 +279,7 @@
             document.getElementById('total').innerText = '₹ ' +
                 total.toFixed(2);
 
-            if(total > '<%= wallet.balanceAmount %>'){
+            if(total > '<%= wallet?.balanceAmount || 0 %>'){
                 document.getElementById('walletOption').setAttribute('disabled',true);
                 document.getElementById('walletBalance').style = "color:red;"
             }

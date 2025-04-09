@@ -152,8 +152,17 @@ exports.sort = async (req, res) => {
 
 // sorting from products page
 exports.productSort = async (req,res)=>{
+  
+  let page = parseInt(req.query.page) || 1;
+  let limit = 5; // Product count in each page
+  let skip = (page - 1) * limit;
+
   let categories = await getCategories();
-  let products = await productDB.getProducts();
+  let products = await productDB.getProducts({ isDeleted: false });
+
+  let totalProducts = products.length;
+  let totalPages = Math.ceil(totalProducts / limit);
+
   const sortOption = req.params.id;
 
   switch (sortOption) {
@@ -194,11 +203,15 @@ exports.productSort = async (req,res)=>{
       break;
   }
 
+  products = products.splice(skip,limit);
+  
   res.render("users/products", {
     user: req.session.user ? req.session.user : [],
     products,
     categories,
     sortOption,
     categoryOption:null,
+    currentPage: page,
+    totalPages
   });
 }
