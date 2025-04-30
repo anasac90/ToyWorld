@@ -32,8 +32,9 @@ exports.addCategory = (req, res) => {
 
 // submit new category details to db
 exports.submitCategory = async (req, res) => {
+  let categoryName = req.catergoryName;
   let categories = await categoryDB.getCategories({
-    categoryName: req.categoryName,
+    categoryName: categoryName
   });
   if (categories) {
     req.session.categoryExist = true;
