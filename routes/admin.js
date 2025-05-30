@@ -54,7 +54,7 @@ router.get("/", (req, res) => {
 
 // Admin authentication
 router.post("/home", async (req, res) => {
-  const passwordCheck = await bcrypt.compare(req.body.password,'$2b$10$yU/WPcSunskn.E.Fvcni2uPSqqjK9CWlK2pX0HMoOosXOJ/N9qpqq');
+  const passwordCheck = await bcrypt.compare(req.body.password, '$2b$10$yU/WPcSunskn.E.Fvcni2uPSqqjK9CWlK2pX0HMoOosXOJ/N9qpqq');
   if (req.body.username == "admin" && passwordCheck) {
     req.session.admin = req.body.username;
     res.redirect("/admin/home");
@@ -65,28 +65,10 @@ router.post("/home", async (req, res) => {
 });
 
 //admin homepage
-router.get("/home", validAdmin, (req, res) => {
-  let filterOption = 'yearly';
-
-  res.render("admin/home", {
-    bestSellingProducts:[],
-    bestSellingCategories:[],
-    bestSellingBrands:[]
-  });
-});
+router.get("/home", validAdmin, reportGenerator.bestSellingProducts);
 
 //admin homepage filter
-router.get('/home/:filter', validAdmin, (req,res) => {
-  let filterOption = req.params.filter;
-
-  
-  
-  res.render("admin/home", {
-    bestSellingProducts:[],
-    bestSellingCategories:[],
-    bestSellingBrands:[]
-  });
-})
+router.get('/home/:filter', validAdmin, reportGenerator.bestSellingProducts);
 
 // admin product listing page
 router.get("/products", validAdmin, productController.productList);
@@ -115,10 +97,10 @@ router.post(
 );
 
 // delete a product
-router.get("/products/delete/:id",validAdmin,productController.deleteProduct);
+router.get("/products/delete/:id", validAdmin, productController.deleteProduct);
 
 // undelete a product
-router.get("/products/undelete/:id",validAdmin,productController.unDeleteProduct);
+router.get("/products/undelete/:id", validAdmin, productController.unDeleteProduct);
 
 // category listing page
 router.get("/categories", validAdmin, categoryController.categoryList);
@@ -146,31 +128,31 @@ router.post(
 );
 
 // delete a category
-router.get("/categories/delete/:id",validAdmin,categoryController.deleteCategory);
+router.get("/categories/delete/:id", validAdmin, categoryController.deleteCategory);
 
 // undelete a category
-router.get("/categories/undelete/:id",validAdmin,categoryController.unDeleteCategory);
+router.get("/categories/undelete/:id", validAdmin, categoryController.unDeleteCategory);
 
 //user management page
 router.get("/users", validAdmin, userController.userManagement);
 
 // block user
-router.get('/users/block/:id', validAdmin,userController.blockUser);
+router.get('/users/block/:id', validAdmin, userController.blockUser);
 
 // unblock user
-router.get('/users/unblock/:id', validAdmin,userController.unBlockUser);
+router.get('/users/unblock/:id', validAdmin, userController.unBlockUser);
 
 // order management page
-router.get('/orders',validAdmin,orderController.getOrders);
+router.get('/orders', validAdmin, orderController.getOrders);
 
 // order status update
-router.put('/orders/status/:order_id/:productCode/:newStatus',validAdmin,orderController.updateStatus)
+router.put('/orders/status/:order_id/:productCode/:newStatus', validAdmin, orderController.updateStatus)
 
 // order cancellation update
-router.put('/orders/cancellation/:order_id/:productCode/:cancellation',validAdmin,orderController.cancellation)
+router.put('/orders/cancellation/:order_id/:productCode/:cancellation', validAdmin, orderController.cancellation)
 
 // return order updata
-router.put('/orders/return/:order_id/:productCode/:returnStatus',validAdmin,orderController.returnUpdate)
+router.put('/orders/return/:order_id/:productCode/:returnStatus', validAdmin, orderController.returnUpdate)
 
 //brands management page
 router.get("/brands", validAdmin, (req, res) => {
@@ -179,67 +161,67 @@ router.get("/brands", validAdmin, (req, res) => {
 
 //coupon management page
 router.get("/coupons", validAdmin, (req, res) => {
-  couponController.coupons(req,res);
+  couponController.coupons(req, res);
 });
 
 // add new coupon page
-router.get('/coupons/add',validAdmin,couponController.addCouponPage)
+router.get('/coupons/add', validAdmin, couponController.addCouponPage)
 
 // submit new coupon 
-router.post ('/coupons/submit',validAdmin,couponController.addNewCoupon)
+router.post('/coupons/submit', validAdmin, couponController.addNewCoupon)
 
 // edit coupon page
-router.get('/coupons/edit/:id',validAdmin,couponController.editCouponPage)
+router.get('/coupons/edit/:id', validAdmin, couponController.editCouponPage)
 
 // update coupon page
-router.put('/coupons/update',validAdmin,couponController.updateCoupon)
+router.put('/coupons/update', validAdmin, couponController.updateCoupon)
 
 // delete coupon
-router.delete('/coupons/delete/:id',validAdmin,couponController.deleteCoupon)
+router.delete('/coupons/delete/:id', validAdmin, couponController.deleteCoupon)
 
 //offer management page
 router.get("/offers", validAdmin, (req, res) => {
-  offerController.offersManagement(req,res);
+  offerController.offersManagement(req, res);
 });
 
 //offer management page to a specific tab
 router.get("/offers/:activeTab", validAdmin, (req, res) => {
-  offerController.offersManagementTab(req,res);
+  offerController.offersManagementTab(req, res);
 });
 
 // add new product offer
-router.post('/productOffer/add',validAdmin,offerController.addProductOffer);
+router.post('/productOffer/add', validAdmin, offerController.addProductOffer);
 
 // add new category offer
-router.post('/categoryOffer/add',validAdmin,offerController.addCategoryOffer);
+router.post('/categoryOffer/add', validAdmin, offerController.addCategoryOffer);
 
 // add new referral offer
-router.post('/referralOffer/add',validAdmin,offerController.addReferralOffer);
+router.post('/referralOffer/add', validAdmin, offerController.addReferralOffer);
 
 // edit product offer
-router.get('/productOffer/edit/:id',validAdmin,(req,res)=>{
+router.get('/productOffer/edit/:id', validAdmin, (req, res) => {
   const offerID = req.params.id;
-  offerController.editProductOffer(req,res,offerID);
+  offerController.editProductOffer(req, res, offerID);
 })
 
 // edit category offer
-router.get('/categoryOffer/edit/:id',validAdmin,(req,res)=>{
+router.get('/categoryOffer/edit/:id', validAdmin, (req, res) => {
   const offerID = req.params.id;
-  offerController.editCategoryOffer(req,res,offerID);
+  offerController.editCategoryOffer(req, res, offerID);
 })
 
 // update product/category/referral offer
-router.put('/offer/update/:id',validAdmin,(req,res)=>{
+router.put('/offer/update/:id', validAdmin, (req, res) => {
   const offerID = req.params.id;
-  offerController.updateOffer(req,res,offerID);
+  offerController.updateOffer(req, res, offerID);
 })
 
 // delete offer
-router.delete('/deleteOffer/',validAdmin,(req,res)=>{
+router.delete('/deleteOffer/', validAdmin, (req, res) => {
   const offerID = req.body.offerID;
   const offerType = req.body.offerType;
 
-  offerController.deleteOffer(req,res,offerID,offerType);
+  offerController.deleteOffer(req, res, offerID, offerType);
 })
 
 // sales report page
@@ -248,23 +230,23 @@ router.get("/report", validAdmin, (req, res) => {
 });
 
 // generate report
-router.post('/report/generate',validAdmin,orderController.generateReport);
+router.post('/report/generate', validAdmin, orderController.generateReport);
 
 // generate pdf file
-router.post('/report/generatePdf',validAdmin,reportGenerator.generatePdf);
+router.post('/report/generatePdf', validAdmin, reportGenerator.generatePdf);
 
 // download pdf
-router.get('/reprt/downloadPdf',validAdmin,(req,res)=>{
-  pdfPath = path.join(__dirname,'../downloads/sales-report.pdf')
+router.get('/reprt/downloadPdf', validAdmin, (req, res) => {
+  pdfPath = path.join(__dirname, '../downloads/sales-report.pdf')
   res.download(pdfPath);
 })
 
 // generate excel file
-router.post('/report/generateExcel',validAdmin,reportGenerator.generateExcel)
+router.post('/report/generateExcel', validAdmin, reportGenerator.generateExcel)
 
 // download excel
-router.get('/reprt/downloadExcel',validAdmin,(req,res)=>{
-  excelPath = path.join(__dirname,'../downloads/sales-report.xlsx')
+router.get('/reprt/downloadExcel', validAdmin, (req, res) => {
+  excelPath = path.join(__dirname, '../downloads/sales-report.xlsx')
   res.download(excelPath);
 })
 

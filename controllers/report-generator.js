@@ -6,6 +6,7 @@ const orderDB = require("../models/orderDB");
 const addressDB = require("../models/addressDB");
 const productDB = require("../models/productDB");
 const usersDB = require("../models/usersDB");
+const { startOfDay, subDays, subMonths, subYears } = require('date-fns');
 
 
 const generatePdf = async (req, res) => {
@@ -209,7 +210,7 @@ const generateInvoice = async (req, res) => {
 
         doc.moveDown();
 
-        const rightAlignX = 390; 
+        const rightAlignX = 390;
         let currentY = doc.y + 10;
 
         doc.fontSize(14).text(`Total Amount: ₹${productTotalPrice}`, rightAlignX, currentY);
@@ -224,7 +225,7 @@ const generateInvoice = async (req, res) => {
 
         doc.end();
 
-        res.json({ success: true, invoice: invoiceId});
+        res.json({ success: true, invoice: invoiceId });
 
     } catch (error) {
         console.error('Error: ' + error);
@@ -233,8 +234,37 @@ const generateInvoice = async (req, res) => {
 }
 
 
+const bestSellingProducts = async (req, res) => {
+    try {
+        let filterOption = req.params.filter? req.params.filter : 'yearly';
+        const now = new Date();
+
+        let startDate;
+
+        if (filterOption === 'weekly') {
+            startDate = startOfDay(subDays(now, 7));
+        } else if (filterOption === 'monthly') {
+            startDate = startOfDay(subMonths(now, 1));
+        } else if (filterOption === 'yearly') {
+            startDate = startOfDay(subYears(now, 1));
+        }
+
+        const bestSellingProduct = await orderDB.homeDataQuery(startDate);
+
+        res.render("admin/home", {
+            bestSellingProducts : bestSellingProduct,
+            bestSellingCategories: [],
+            bestSellingBrands: []
+        });
+
+    } catch (error) {
+         console.error('Error: ' + error);
+    }
+}
+
 module.exports = {
     generatePdf,
     generateExcel,
     generateInvoice,
+    bestSellingProducts,
 }

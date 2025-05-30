@@ -2,6 +2,8 @@ const orderDB = require("../models/orderDB");
 const cartDB = require("../models/cartDB");
 const productDB = require("../models/productDB");
 const walletDB = require('../models/walletDB');
+const offerDB = require('../models/offerDB');
+const couponDB = require('../models/couponDB');
 const Razorpay = require("razorpay");
 
 const razorpay = new Razorpay({
@@ -11,8 +13,11 @@ const razorpay = new Razorpay({
 
 exports.checkout = async (req, res) => {
   const user_id = req.session.user[0]._id;
+  
   const cart = await cartDB.findCart(user_id);
   const wallet = await walletDB.getWallet(user_id);
+  const coupons = await couponDB.getCoupons();
+  const offers = await offerDB.findOffer();
 
   req.session.cart = cart;
   let cartProducts = await Promise.all(
@@ -24,7 +29,6 @@ exports.checkout = async (req, res) => {
       return result[0];
     })
   );
-
   let totalValue = 0;
   cartProducts.map((product) => {
     totalValue =
@@ -52,6 +56,8 @@ exports.checkout = async (req, res) => {
     deliveryCharge,
     discount,
     warning,
+    coupons,
+    offers
   });
 };
 
@@ -71,6 +77,7 @@ exports.placeOrder = async (req, res) => {
       let product = {
         productCode: value.productCode,
         quantity: value.quantity,
+        unitPrice: value.price,
         status: "Order placed",
       };
       return product;
@@ -88,6 +95,8 @@ exports.placeOrder = async (req, res) => {
     let user_id = req.session.user[0]._id;
     let totalAmount = parseFloat(req.body.total) * 100; //convert rupees to paisa
     let receipt = `tw_${Math.floor(Math.random() * 100000)}` //generate a receipt number
+    let couponDiscount = req.body.couponDiscount;
+    
 
     document = {
       cart_id: cart_id,
@@ -104,8 +113,8 @@ exports.placeOrder = async (req, res) => {
       paymentStatus: "Pending",
       orderStatus: "Successful",
       receipt: receipt,
-      offer_id: null,
-      coupon_id: null,
+      offerDiscount: null,
+      couponDiscount: couponDiscount,
     };
 
     if (req.body.paymentMethod === "COD") {
@@ -310,6 +319,8 @@ exports.getOrders = async (req, res) => {
   let skip = (currentPage - 1) * limit;
 
   const allOrders = await orderDB.getOrders();
+  allOrders.reverse();
+  
 
   try {
 
@@ -386,10 +397,39 @@ exports.cancellation = async (req, res) => {
   await orderDB.updateCancellation(order_id, productCode, cancellation);
   if (cancellation === "approved") {
     await orderDB.updateStatus(order_id, productCode, "Cancelled");
+
+    const orderResult = await orderDB.findOrder(order_id);
+    const [productResult] = await productDB.getProducts({ productCode: productCode });
+
+    const date = new Date();
+    const type = 'Refund';
+    const user_id = orderResult.user_id;
+    const amount = parseFloat(productResult.price);
+    const product = productResult.productName;
+
+    const wallet = await walletDB.getWallet(user_id);
+
+    const isRefunded = wallet.transactions.some((transaction) => transaction.order_id === order_id && transaction.productCode === productCode);
+
+    if (isRefunded) {
+      res.redirect("/admin/orders");
+    } else {
+      const document = {
+        order_id: order_id,
+        productCode: productCode,
+        amount: amount,
+        date: date,
+        type: type,
+        product: product
+      }
+      const updateWallet = await walletDB.addToWallet(user_id, amount, document);
+      res.redirect("/admin/orders");
+    }
   } else {
     await orderDB.updateStatus(order_id, productCode, "Order placed");
+
+    res.redirect("/admin/orders");
   }
-  res.redirect("/admin/orders");
 };
 
 exports.returnUpdate = async (req, res) => {

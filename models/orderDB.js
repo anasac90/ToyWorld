@@ -102,8 +102,8 @@ exports.getOverallReport = async (startDate, endDate) => {
         _id: null,
         totalOrderAmount: { $sum: { $toDouble: '$orderValue' } },
         totalOfferDiscount: { $sum: { $toDouble: '$discount' } },
-        totalCouponDiscount:{$sum: { $toDouble:'$couponDiscount'}},
-        products: {$push:'$products'}
+        totalCouponDiscount: { $sum: { $toDouble: '$couponDiscount' } },
+        products: { $push: '$products' }
       }
     },
     {
@@ -113,11 +113,11 @@ exports.getOverallReport = async (startDate, endDate) => {
       $unwind: '$products'
     },
     {
-      $group:{
-        _id:null,
-        totalOrderAmount:{$first:'$totalOrderAmount'},
-        totalOfferDiscount:{$first:'$totalOfferDiscount'},
-        totalCouponDiscount:{$first:'$totalCouponDiscount'},
+      $group: {
+        _id: null,
+        totalOrderAmount: { $first: '$totalOrderAmount' },
+        totalOfferDiscount: { $first: '$totalOfferDiscount' },
+        totalCouponDiscount: { $first: '$totalCouponDiscount' },
         totalSales: { $sum: '$products.quantity' },
       }
     },
@@ -135,18 +135,61 @@ exports.getIndividualReport = async (startDate, endDate) => {
       $match: { $and: [{ orderDateAndTime: { $gte: startDate } }, { orderDateAndTime: { $lte: endDate } }] }
     },
     {
-      $unwind:'$products'
+      $unwind: '$products'
     },
     {
       $group: {
         _id: '$_id',
-        date:{$first:'$orderDate'},
-        amount:{$first:'$orderValue'},
-        discount:{$first:'$discount'},
-        coupon:{$first:'$couponDiscount'},
-        salesCount:{$sum:'$products.quantity'}
+        date: { $first: '$orderDate' },
+        amount: { $first: '$orderValue' },
+        discount: { $first: '$discount' },
+        coupon: { $first: '$couponDiscount' },
+        salesCount: { $sum: '$products.quantity' }
       }
     }
   ]).toArray();
   return result;
+}
+
+exports.homeDataQuery = async (startDate) => {
+  const collection = getDB().collection(collections.ORDER_COLLECTION);
+
+  try {
+    const result = await collection.aggregate([
+      {
+        $match: {
+          orderDateAndTime: { $gte: startDate },
+          orderStatus: "Successful"
+        }
+      },
+      { $unwind: "$products" },
+      {
+        $group: {
+          _id: "$products.productCode",
+          totalSold: { $sum: "$products.quantity" }
+        }
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "_id",
+          foreignField: "productCode",
+          as: "productDetails"
+        }
+      },
+      { $unwind: "$productDetails" },
+      {
+        $project: {
+          name: "$productDetails.productName",
+          sales: "$totalSold"
+        }
+      },
+      { $sort: { sales: -1 } },
+      { $limit: 10 }
+    ]).toArray();
+
+    return result;
+  } catch (error) {
+     console.error('DB Error: ' + error);
+  }
 }

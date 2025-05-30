@@ -11,7 +11,7 @@ exports.cart = async (req, res) => {
         let productCode = element.productCode;
         let quantity = element.quantity;
         let result = await productDB.getProducts({ productCode: productCode });
-        result[0].quantity = quantity; // adding quantity to the result
+        result[0].quantity = quantity;
         return result[0]
       })
     );
@@ -38,7 +38,11 @@ exports.cart = async (req, res) => {
 
 exports.addToCart = async (req, res) => {
   const productCode = req.params.id;
-  const document = { productCode: productCode, quantity: 1 };
+
+  let [product] = await productDB.getProducts({ productCode: productCode });
+  let price = parseFloat(product.price)
+
+  const document = { productCode: productCode, price: price, quantity: 1 };
   const user_id = req.session.user[0]._id;
 
   let cart = await cartDB.findCartProductCode(productCode, user_id);

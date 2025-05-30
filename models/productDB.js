@@ -21,9 +21,9 @@ const getProducts = async (search, skip, limit) => {
   let products = [];
 
   if (limit) {
-    products = await collection.find(search).skip(skip).limit(limit).toArray();
+    products = await collection.find(search).sort({ _id: -1 }).skip(skip).limit(limit).toArray();
   } else {
-    products = await collection.find(search).toArray();
+    products = await collection.find(search).sort({ _id: -1 }).toArray();
   }
   
   return products;

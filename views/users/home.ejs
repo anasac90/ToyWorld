@@ -54,7 +54,7 @@
         </div>
         <div>
             <div class="content-body side-margin text-start mt-3 card-container product-container">
-                <% for( let i=0;i<5;i++ ) { %>
+                <% for( let i=0;i<Math.min(5,products.length);i++ ) { %>
                     <a href="/products/<%= products[i].productCode %>" style="text-decoration: none;"
                         class="col-dark-grn">
                         <div class="card cards product-card">
@@ -108,7 +108,7 @@
         <div>
             <div class="content-body side-margin text-start mt-3 card-container product-container"
                 style="min-height: auto;">
-                <% for( let i=0;i<5;i++ ) { %>
+                <% for( let i=0;i<Math.min(5,categories.length);i++ ) { %>
                     <a href="/categories/<%= categories[i].categoryName %>" style="text-decoration: none;"
                         class="col-dark-grn">
                         <div class="card cards">

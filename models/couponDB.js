@@ -3,13 +3,16 @@ const collections = require("../configure/collections");
 const { ObjectId } = require("mongodb");
 
 const getCoupons = async (search)=>{
-    const collection = getDB(search).collection(collections.COUPON_COLLECTION);
+    try {const collection = getDB().collection(collections.COUPON_COLLECTION);
     if(search?._id){
         let result = await collection.find({_id:new ObjectId(search._id)}).toArray();
         return result;
     } else {
         let result = await collection.find(search).toArray();
         return result;
+    }}
+    catch(error){
+        console.log(error); 
     }
 }
 

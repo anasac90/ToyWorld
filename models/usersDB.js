@@ -21,9 +21,9 @@ exports.findUser = async (query,skip,limit) => {
   let document;
 
   if(!limit){
-    document = await collection.find(query).toArray();
+    document = await collection.find(query).sort({ _id: -1 }).toArray();
   } else {
-    document = await collection.find(query).skip(skip).limit(limit).toArray();
+    document = await collection.find(query).sort({ _id: -1 }).skip(skip).limit(limit).toArray();
   }
   
   return document;

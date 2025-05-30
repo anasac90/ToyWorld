@@ -3,7 +3,8 @@ const productDB = require("../models/productDB");
 
 // category listing page
 exports.categoryList = async (req, res) => {
-  let categories = await categoryDB.getCategories();
+  let categories = await categoryDB.getCategories();  
+
   if (req.session.categoryAssigned) {
     req.session.categoryAssigned = false;
     res.render("admin/categories", {
@@ -32,11 +33,11 @@ exports.addCategory = (req, res) => {
 
 // submit new category details to db
 exports.submitCategory = async (req, res) => {
-  let categoryName = req.catergoryName;
+  let categoryName = req.body.categoryName;
   let categories = await categoryDB.getCategories({
     categoryName: categoryName
   });
-  if (categories) {
+  if (categories.length) {
     req.session.categoryExist = true;
     res.redirect("/admin/categories/add");
   } else {

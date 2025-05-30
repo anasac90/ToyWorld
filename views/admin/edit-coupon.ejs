@@ -14,36 +14,42 @@
                 <div class="modal-content">
                     <div class="modal-body">
                         <form id="couponForm" action="/admin/coupons/update?_method=PUT" method="post">
-                            <input type="text" value="<%= couponData?._id %>" class="form-control"
-                                id="couponID" name="couponID" hidden>
+                            <input type="text" value="<%= couponData?._id %>" class="form-control" id="couponID"
+                                name="couponID" hidden>
                             <div class="mb-3">
                                 <label for="couponCode" class="form-label">Coupon Code</label>
-                                <input type="text" value="<%= couponData?.couponCode %>" class="form-control" placeholder="Enter coupon code"
-                                id="couponCode" name="couponCode" required>
+                                <input type="text" value="<%= couponData?.couponCode %>" class="form-control"
+                                    placeholder="Enter coupon code" id="couponCode" name="couponCode" required>
                             </div>
                             <div class="mb-3">
                                 <label for="discount" class="form-label">Discount (%)</label>
-                                <input type="number" value="<%= couponData?.discountPercentage %>" class="form-control" placeholder="Enter discount percentage"
-                                id="discount" min="1" max="99" name="discountPercentage" required>
+                                <input type="number" value="<%= couponData?.discountPercentage %>" class="form-control"
+                                    placeholder="Enter discount percentage" id="discount" min="1" max="99"
+                                    name="discountPercentage" required>
                             </div>
                             <div class="mb-3">
                                 <label for="maxDiscount" class="form-label">Maximum Discount</label>
-                                <input type="number" value="<%= couponData?.maxDiscount %>" class="form-control" placeholder="Enter maximum discount"
-                                id="maxDiscount" min="1" name="maxDiscount" required>
+                                <input type="number" value="<%= couponData?.maxDiscount %>" class="form-control"
+                                    placeholder="Enter maximum discount" id="maxDiscount" min="1" name="maxDiscount"
+                                    required>
                             </div>
                             <div class="mb-3">
                                 <label for="expiryDate" class="form-label">Expiry Date</label>
-                                <input type="date" value="<%= couponData?.expiryDate.toISOString().split('T')[0] %>" class="form-control" id="expiryDate"
-                                placeholder="Enter the expiry date" name="expiryDate" required>
+                                <input type="date" value="<%= couponData ? couponData.expiryDate.getFullYear() + '-' + 
+                                String(couponData.expiryDate.getMonth() + 1).padStart(2, '0') + '-' + 
+                                String(couponData.expiryDate.getDate()).padStart(2, '0') : '' %>" class="form-control"
+                                    id="expiryDate" placeholder="Enter the expiry date" name="expiryDate" required>
                             </div>
                             <div class="mb-3">
                                 <label for="usageLimit" class="form-label">Usage Limit</label>
-                                <input type="number" value="<%= couponData?.usageLimit %>" class="form-control" id="usageLimit"
-                                placeholder="Enter the usage limit" min="1" name="usageLimit" required>
+                                <input type="number" value="<%= couponData?.usageLimit %>" class="form-control"
+                                    id="usageLimit" placeholder="Enter the usage limit" min="1" name="usageLimit"
+                                    required>
                             </div>
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
-                                <select class="form-select" value="<%= couponData?.status %>" id="status" name="status" required>
+                                <select class="form-select" value="<%= couponData?.status %>" id="status" name="status"
+                                    required>
                                     <option value="Active">Active</option>
                                     <option value="Inactive">Inactive</option>
                                 </select>
@@ -57,9 +63,9 @@
     </main>
 
     <script>
-        if('<%= success %>' === 'false'){
+        if ('<%= success %>' === 'false') {
             toastr.warning('<%= message %>');
-        } else if ('<%= success %>' === 'true'){
+        } else if ('<%= success %>' === 'true') {
             toastr.info('<%= message %>');
             setTimeout(() => {
                 window.location.href = '/admin/coupons/'

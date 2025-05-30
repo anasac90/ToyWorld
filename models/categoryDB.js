@@ -21,6 +21,7 @@ const getCategories = async (search,skip,limit) => {
   
   if(!limit){
     categories = await collection.find(search).toArray();
+    
   } else {
     categories = await collection.find(search).skip(skip).limit(limit).toArray();
   }

@@ -14,15 +14,19 @@
             <div class="card-body p-4">
               <div class="d-flex justify-content-between align-items-center mb-4">
                 <p class="lead fw-normal mb-0" style="color: black; font-weight: 700;">Receipt</p>
-                <p class="small text-muted mb-0"><button style="margin-left: 1rem; width: 9rem; color: white;
-                background-color: #66a5ad;" class="btn" type="button" data-order-id="<%= orderData._id %>"
-                    data-invoice-id="<%= orderData.receipt %>" id="downloadInvoice">Download Invoice</button>
-                </p>
               </div>
               <% for(let i=0;i < products.length;i++) { %>
                 <div class="card shadow-0 border mb-4">
                   <div class="card-body">
                     <div class="row">
+                      <% if(orderData.products[i].status==="Delivered") { %>
+                      <div style="display: flex; justify-content: center;">
+                        <p class="small text-muted mb-0"><button style="margin-left: 1rem; width: 9rem; color: white;
+                          background-color: #66a5ad;" class="btn" type="button" data-order-id="<%= orderData._id %>"
+                              data-invoice-id="<%= orderData.receipt %>" id="downloadInvoice">Download Invoice</button>
+                          </p>
+                      </div>
+                      <% } %>
                       <div class="col-md-2">
                         <img src="/images/<%= products[i].productImages[0] %>" class="img-fluid" alt="Phone">
                       </div>
@@ -191,8 +195,8 @@
           event.preventDefault();
           event.stopPropagation();
 
-          const productCode = form[index].getAttribute('data-product-code');
-          const orderId = form[index].getAttribute('data-order-id');
+          let productCode = form[index].getAttribute('data-product-code');
+          let orderId = form[index].getAttribute('data-order-id');
 
           fetch(`/orderCancel?productCode=${productCode}&orderId=${orderId}`, {
             method: 'PUT',
@@ -244,7 +248,7 @@
     });
 
     const downloadInvoice = document.getElementById('downloadInvoice');
-    const orderId = downloadInvoice.getAttribute('data-order-id');
+    let orderId = downloadInvoice.getAttribute('data-order-id');
     const invoiceId = downloadInvoice.getAttribute('data-invoice-id');
 
     downloadInvoice.addEventListener('click', (e) => {

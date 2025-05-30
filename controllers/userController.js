@@ -37,7 +37,7 @@ exports.forgetPassword = async (req, res) => {
 
 exports.userHome = async (req, res, next) => {
   let products = await productDB.getProducts({ isDeleted: false });
-
+  
   let categories = await categoryDB.getCategories({ isDeleted: false });
   if (req.session.user) {
     res.render("users/home", { user: req.session.user, products, categories });

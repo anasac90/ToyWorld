@@ -21,17 +21,20 @@ const passport = require('./configure/passport');
 
 
 
-// Set up storage for uploaded files
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-      cb(null, 'public/images');
-  },
-  filename: (req, file, cb) => {
-      cb(null, Date.now() + '-' + file.originalname);
-  }
-});
+// // Set up storage for uploaded files
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//       cb(null, 'public/images');
+//   },
+//   filename: (req, file, cb) => {
+//       cb(null, Date.now() + '-' + file.originalname);
+//   }
+// });
 
-const upload = multer({ storage: storage });
+// const upload = multer({ storage: storage });
+
+
+
 
 // Connect to the database
 connectDB();

@@ -15,7 +15,7 @@ const addOffer = async (offerData) => {
 }
 
 const findOffer = async (search)=>{
-    if(search._id){
+    if(search?._id){
         search = new ObjectId(search._id);
     }
     const collection = getDB().collection(collections.OFFER_COLLECTION);
