@@ -10,8 +10,8 @@ const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "the.toyworld.com@gmail.com",
-    pass: "ytgd ntjr lepo fdav",
+    user: process.env.OTP_MAIL,
+    pass: process.env.MAIL_PASS,
   },
 });
 
@@ -35,7 +35,7 @@ exports.forgetPassword = async (req, res) => {
   res.render("users/otp-sending", { user: [], email: '', status: "" });
 }
 
-exports.userHome = async (req, res, next) => {
+exports.userHome = async (req, res) => {
   let products = await productDB.getProducts({ isDeleted: false });
   
   let categories = await categoryDB.getCategories({ isDeleted: false });

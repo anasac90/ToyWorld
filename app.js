@@ -8,12 +8,22 @@ const { connectDB } = require("./configure/db-connect");
 require('dotenv').config();
 const session = require("express-session");
 const methodOverride = require('method-override');
+const nocache = require("nocache");
 
 
 var app = express();
 
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride('_method'));
+app.use(nocache());
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {secure: false},
+  })
+);
 
 var usersRouter = require('./routes/users');
 var adminRouter = require('./routes/admin');
@@ -46,14 +56,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {secure: false},
-  })
-);
+
 
 
 app.use(passport.initialize());

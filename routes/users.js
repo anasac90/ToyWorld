@@ -49,7 +49,8 @@ router.post("/home", conditions.isBlocked, userController.validation);
 
 // User signup
 router.get("/signup", conditions.isBlocked, (req, res) => {
-  res.render("users/user-signup", { user: [], warning: "", newUser: req.body });
+  if(req.session.user) res.redirect("/");
+  else res.render("users/user-signup", { user: [], warning: "", newUser: req.body });
 });
 
 // OTP verification page
@@ -66,7 +67,7 @@ router.post("/sendOTP", conditions.isBlocked, userController.sendOTP);
 
 // verify OTP
 router.post("/verifyOTP", conditions.isBlocked, userController.verifyOTP);
-
+  
 // product page
 router.get("/products", conditions.isBlocked, userController.userProducts);
 
