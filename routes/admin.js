@@ -1,5 +1,5 @@
-var express = require("express");
-var router = express.Router();
+let express = require("express");
+let router = express.Router();
 const nocache = require("nocache");
 const session = require("express-session");
 const path = require("path");

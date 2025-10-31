@@ -52,14 +52,39 @@ exports.addToCart = async (req, res) => {
     res.redirect("/cart");
   } else {
     const quantity = cart.quantity + 1;
-    let result = await cartDB.updateQuantity(user_id,productCode,quantity)
-    
+    let result = await cartDB.updateQuantity(user_id, productCode, quantity)
+
     res.redirect("/cart");
   }
 };
 
+exports.addToCartFetch = async (req, res) => {
+  try {
+    const { productCode } = req.body;
+    const user = req.session.user;
+
+    let [product] = await productDB.getProducts({ productCode: productCode });
+    let price = parseFloat(product.price)
+
+    const document = { productCode: productCode, price: price, quantity: 1 };
+    const user_id = user[0]._id;
+
+    let cart = await cartDB.findCartProductCode(productCode, user_id);
+
+    if (!cart) {
+      await cartDB.addToCart(document, user_id);
+      res.json({ success: true });
+    } else {
+      res.status(500).json({ success: false, message: 'Product already in cart' })
+    }
+  } catch (error) {
+    console.error('Unable to add to cart:', error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+};
+
 exports.updateQuantity = async (req, res) => {
-    
+
   const { productCode, quantity } = req.body;
   const user_id = req.session.user[0]._id;
 

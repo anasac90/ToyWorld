@@ -1,5 +1,5 @@
-var express = require("express");
-var router = express.Router();
+let express = require("express");
+let router = express.Router();
 const nocache = require("nocache");
 const { validUser } = require("../middlewares/session");
 const conditions = require("../middlewares/conditions");
@@ -134,6 +134,9 @@ router.delete('/address/delete/:id',conditions.isBlocked,validUser,addressContro
 
 // cart
 router.get('/cart',conditions.isBlocked,validUser,cartController.cart);
+
+// add to cart using fetch
+router.post('/add-to-cart',conditions.isBlocked,validUser,cartController.addToCartFetch);
 
 // add to cart
 router.get('/add-to-cart/:id',conditions.isBlocked,validUser,cartController.addToCart);
