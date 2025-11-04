@@ -9,6 +9,7 @@ require('dotenv').config();
 const session = require("express-session");
 const methodOverride = require('method-override');
 const nocache = require("nocache");
+const cartDB = require("./models/cartDB");
 
 
 var app = express();
@@ -22,9 +23,26 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: {secure: false},
+    cookie: { secure: false },
   })
 );
+
+app.use(async (req, res, next) => {
+  try {
+    if (req.session.user) {
+      let userId = req.session.user[0]._id;
+      let cart = await cartDB.findCart(userId);
+      
+      res.locals.cartCount = cart ? cart.length : 0;
+    } else {
+      res.locals.cartCount = 0;
+    }
+  } catch (error) {
+    console.error("Error fetching cart count:", err);
+    res.locals.cartCount = 0;
+  }
+  next();
+})
 
 var usersRouter = require('./routes/users');
 var adminRouter = require('./routes/admin');
@@ -65,12 +83,12 @@ app.use('/', usersRouter);
 app.use('/admin', adminRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

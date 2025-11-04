@@ -73,7 +73,8 @@ exports.addToCartFetch = async (req, res) => {
 
     if (!cart) {
       await cartDB.addToCart(document, user_id);
-      res.json({ success: true });
+      let cartCountNew = await cartDB.findCart(user_id);
+      res.json({ success: true, cartCountNew: cartCountNew.length });
     } else {
       res.status(500).json({ success: false, message: 'Product already in cart' })
     }

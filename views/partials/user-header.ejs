@@ -65,7 +65,8 @@
                     </div>
                     <div class="col-4 me-auto">
                         <form class="d-flex" role="search" action="/search" method="post">
-                            <input class="form-control" id="searchInput" type="search" placeholder="Search" name="search" aria-label="Search">
+                            <input class="form-control" id="searchInput" type="search" placeholder="Search"
+                                name="search" aria-label="Search">
                             <button class="btn text-light bg-darken ms-2" id="searchButton"
                                 type="submit">Search</button>
                         </form>
@@ -73,30 +74,36 @@
                     <div>
                         <ul class="navbar-nav width-auto">
                             <li class="nav-item">
-                                <a class="nav-link text-light" href="/cart">
+                                <a class="nav-link text-light position-relative" href="/cart">
                                     <i class="fa-solid fa-cart-shopping"></i> CART
+                                    <% if(user.length!=0) {%>
+                                        <span id="cart-count"
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger">
+                                        <%= typeof cartCount !== 'undefined' ? cartCount : 0 %>
+                                    </span>
+                                    <% } %>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <% if(user.length == 0) {%>
-                                <a class="nav-link text-light" style="padding-right: 0px;" href="/login">
-                                    <i class="fa-solid fa-user"></i> LOGIN
+                                <% if(user.length==0) {%>
+                                    <a class="nav-link text-light" style="padding-right: 0px;" href="/login">
+                                        <i class="fa-solid fa-user"></i> LOGIN
+                                    </a>
+                                    <% } else { %>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light" href="#" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <%= user[0].fname.toUpperCase() %>
                                 </a>
-                                <% } else { %>
-                                    <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle text-light" href="#" role="button"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            <%= user[0].fname.toUpperCase() %>
-                                        </a>
-                                        <ul class="dropdown-menu bg-soft-grn">
-                                            <li><a class="dropdown-item col-dark-grn" href="/my-account">MY ACCOUNT</a></li>
-                                            <li><a class="dropdown-item col-dark-grn" href="/wishlist">WISH LIST</a></li>
-                                            <li><a class="dropdown-item col-dark-grn" href="/wallet">WALLET</a></li>
-                                            <li><a class="dropdown-item col-dark-grn" href="/logout">LOG OUT</a></li>
-                                        </ul>
-                                    </li>
-                                <% } %>
+                                <ul class="dropdown-menu bg-soft-grn">
+                                    <li><a class="dropdown-item col-dark-grn" href="/my-account">MY ACCOUNT</a></li>
+                                    <li><a class="dropdown-item col-dark-grn" href="/wishlist">WISH LIST</a></li>
+                                    <li><a class="dropdown-item col-dark-grn" href="/wallet">WALLET</a></li>
+                                    <li><a class="dropdown-item col-dark-grn" href="/logout">LOG OUT</a></li>
+                                </ul>
                             </li>
+                            <% } %>
+                                </li>
                         </ul>
                     </div>
                 </div>

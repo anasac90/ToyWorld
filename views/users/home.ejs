@@ -80,9 +80,8 @@
                                             class="btn bg-dark-grn add-to-cart-btn" type="button"
                                             data-product-code="<%= products[i].productCode %>"><i
                                                 class="fa-solid fa-cart-shopping"></i></button>
-                                        <button style="color: white; z-index: 3;"
-                                            class="btn bg-dark-grn wish-list-btn" type="button"
-                                            data-product-code="<%= products[i].productCode %>"><i
+                                        <button style="color: white; z-index: 3;" class="btn bg-dark-grn wish-list-btn"
+                                            type="button" data-product-code="<%= products[i].productCode %>"><i
                                                 class="fa-regular fa-heart"></i></button>
                                     </div>
                                 </div>
@@ -150,6 +149,7 @@
     </main>
 
     <script>
+        // Buy now button handling
         let buyNow = document.querySelectorAll('.buy-now-btn');
         buyNow.forEach(button => {
             button.addEventListener('click', (event) => {
@@ -160,17 +160,51 @@
             });
         });
 
+
+        // Add to Cart button click event handling
         let addToCart = document.querySelectorAll('.add-to-cart-btn');
-        addToCart.forEach(button=>{
-            button.addEventListener('click',event=>{
-                event.preventDefault();
-                event.stopPropagation();
+        addToCart.forEach(button => {
+            button.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
                 const productCode = button.getAttribute('data-product-code');
-                window.location.href = `/add-to-cart/${productCode}`;
-            });
+                const user = "<%= user %>";
 
-        });
+                if (user.length > 0) {
+                    fetch(`/add-to-cart`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ productCode })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                toastr.info('Added to Cart!');
+                                document.getElementById("cart-count").textContent = data.cartCountNew;
+                            } else {
+                                toastr.warning(data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+                        });
+                } else {
+                    fetch(`/add-to-cart`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/html' }
+                    })
+                        .then(response => response.text())
+                        .then(html => {
+                            document.documentElement.innerHTML = html;
+                        })
+                        .catch(error => console.log('Error loading page:', error));
+                }
+            })
+        })
 
+
+        // add to wishlist button handling
         let wishList = document.querySelectorAll('.wish-list-btn');
         wishList.forEach(button => {
             button.addEventListener('click', (e) => {

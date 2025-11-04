@@ -101,48 +101,56 @@
             </div>
         </div>
         <div class="pagination-container text-center mt-4">
-            <% if (totalPages > 1) { %>
+            <% if (totalPages> 1) { %>
                 <nav>
                     <ul class="pagination" style="justify-content: center;">
-                        <% if (currentPage > 1) { %>
+                        <% if (currentPage> 1) { %>
                             <li class="page-item">
                                 <% if (sortOption) { %>
-                                    <a class="page-link" href="/products/sort/<%= sortOption %>/?page=<%= currentPage - 1 %>">Previous</a>
+                                    <a class="page-link"
+                                        href="/products/sort/<%= sortOption %>/?page=<%= currentPage - 1 %>">Previous</a>
                                     <% } else { %>
                                         <a class="page-link" href="/products?page=<%= currentPage - 1 %>">Previous</a>
-                                    <% } %>
+                                        <% } %>
                             </li>
-                        <% } %>
-        
-                        <% for (let i = 1; i <= totalPages; i++) { %>
-                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                <% if (sortOption) { %>
-                                    <a class="page-link" href="/products/sort/<%= sortOption %>/?page=<%= i %>"><%= i %></a>
-                                    <% } else { %>
-                                        <a class="page-link" href="/products?page=<%= i %>"><%= i %></a>
+                            <% } %>
+
+                                <% for (let i=1; i <=totalPages; i++) { %>
+                                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                        <% if (sortOption) { %>
+                                            <a class="page-link" href="/products/sort/<%= sortOption %>/?page=<%= i %>">
+                                                <%= i %>
+                                            </a>
+                                            <% } else { %>
+                                                <a class="page-link" href="/products?page=<%= i %>">
+                                                    <%= i %>
+                                                </a>
+                                                <% } %>
+
+                                    </li>
                                     <% } %>
-                                
-                            </li>
-                        <% } %>
-        
-                        <% if (currentPage < totalPages) { %>
-                            <li class="page-item">
-                                <% if (sortOption) { %>
-                                    <a class="page-link" href="/products/sort/<%= sortOption %>/?page=<%= currentPage + 1 %>">Next</a>
-                                    <% } else { %>
-                                        <a class="page-link" href="/products?page=<%= currentPage + 1 %>">Next</a>
-                                    <% } %>
-                                
-                            </li>
-                        <% } %>
+
+                                        <% if (currentPage < totalPages) { %>
+                                            <li class="page-item">
+                                                <% if (sortOption) { %>
+                                                    <a class="page-link"
+                                                        href="/products/sort/<%= sortOption %>/?page=<%= currentPage + 1 %>">Next</a>
+                                                    <% } else { %>
+                                                        <a class="page-link"
+                                                            href="/products?page=<%= currentPage + 1 %>">Next</a>
+                                                        <% } %>
+
+                                            </li>
+                                            <% } %>
                     </ul>
                 </nav>
-            <% } %>
+                <% } %>
         </div>
-        
+
     </main>
 
     <script>
+        // Buy Now button event handling
         let buyNow = document.querySelectorAll('.buyNow');
         buyNow.forEach(button => {
             button.addEventListener('click', (event) => {
@@ -153,17 +161,50 @@
             });
         });
 
+        // Add to Cart button click event handling
         let addToCart = document.querySelectorAll('.add-to-cart-btn');
         addToCart.forEach(button => {
-            button.addEventListener('click', event => {
-                event.preventDefault();
-                event.stopPropagation();
+            button.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
                 const productCode = button.getAttribute('data-product-code');
-                window.location.href = `/add-to-cart/${productCode}`;
-            });
+                const user = "<%= user %>";
 
-        });
+                if (user.length > 0) {
+                    fetch(`/add-to-cart`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ productCode })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                toastr.info('Added to Cart!');
+                                document.getElementById("cart-count").textContent = data.cartCountNew;
+                            } else {
+                                toastr.warning(data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+                        });
+                } else {
+                    fetch(`/add-to-cart`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/html' }
+                    })
+                        .then(response => response.text())
+                        .then(html => {
+                            document.documentElement.innerHTML = html;
+                        })
+                        .catch(error => console.log('Error loading page:', error));
+                }
+            })
+        })
 
+
+        // add to wishlist button handling
         let wishList = document.querySelectorAll('.wish-list-btn');
         wishList.forEach(button => {
             button.addEventListener('click', (e) => {
@@ -172,7 +213,7 @@
 
                 const productCode = button.getAttribute('data-product-code');
                 const user_id = '<%= user %>';
-                
+
                 if (user_id.length > 0) {
 
                     fetch(`/addToWishList`, {
