@@ -85,6 +85,9 @@ router.post(
   productController.submitProduct
 );
 
+// delete product image
+router.delete("/deleteImage",validAdmin,productController.deleteImage);
+
 // edit product
 router.get("/products/edit/:id", validAdmin, productController.findProduct);
 
@@ -93,6 +96,7 @@ router.post(
   "/products/update",
   validAdmin,
   upload.array("productImages", 5),
+  conditions.validProduct,
   productController.updateProduct
 );
 

@@ -9,6 +9,11 @@
                 <div class="content-head-tri ms-auto"></div>
             </div>
         </div>
+        <% if(categories.length==0) { %>
+            <div class="d-flex justify-content-center align-items-center min-vh-100">
+                <h3>No categories available</h3>
+            </div>
+            <% } else { %>
         <div class="content-body side-margin text-start mt-3 card-container product-container" style="min-height: auto;">
             <% for( let i=0;i<categories.length;i++ ) { %>
             <div class="card cards product-card">
@@ -28,6 +33,7 @@
             </div>
             <% } %>
         </div>
+        <% } %>
 
         <div class="pagination-container text-center mt-4">
             <% if (totalPages > 1) { %>

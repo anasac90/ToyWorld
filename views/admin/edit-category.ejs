@@ -13,6 +13,14 @@
         <div class="content-body side-margin text-start mt-3" style="justify-content: center;">
             <form autocomplete="off" action="/admin/categories/update" enctype="multipart/form-data" method="POST"
                 class="col-4">
+
+                <p style="text-align: center; color: green; font-weight:700;">
+                    <%= status %>
+                </p>
+                <p style="text-align: center; color: red; font-weight:700;">
+                    <%= warning %>
+                </p>
+
                 <div class="col mb-3">
                     <label>Category Name:</label>
                     <input class="form-control" value="<%= queriedCategory[0].categoryName %>" name="categoryName"
@@ -29,7 +37,11 @@
                         <img src="/images/<%= queriedCategory[0].categoryImage %>" style="width: 70px; height: 70px;"
                             alt="">
                     </div>
-                    <input class="form-control mb-1" type="file" accept="image/*" name="categoryImage" />
+                    <% if (!queriedCategory[0].categoryImage) { %>
+                        <input class="form-control mb-1" type="file" accept="image/*" name="categoryImage" required/>
+                    <% } else { %>
+                        <input class="form-control mb-1" type="file" accept="image/*" name="categoryImage" />
+                        <% } %>
                 </div>
                 <div>
                     <button type="Edit" class="btn" style="color: white; background-color: #66A5AD;">

@@ -401,11 +401,16 @@ exports.cancellation = async (req, res) => {
     const orderResult = await orderDB.findOrder(order_id);
     const [productResult] = await productDB.getProducts({ productCode: productCode });
 
+
     const date = new Date();
     const type = 'Refund';
     const user_id = orderResult.user_id;
     const amount = parseFloat(productResult.price);
     const product = productResult.productName;
+    const quantity = orderResult.quantity;
+
+    const updateQuantity = await productDB.incrementQuantity(productCode,quantity);
+    console.log(updateQuantity);
 
     const wallet = await walletDB.getWallet(user_id);
 

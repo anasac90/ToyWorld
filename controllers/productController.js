@@ -1,5 +1,7 @@
 const productDB = require("../models/productDB");
 const { getCategories } = require("../models/categoryDB");
+const fs = require("fs");
+const path = require("path");
 
 // admin product listing page
 exports.productList = async (req, res) => {
@@ -79,6 +81,17 @@ exports.unDeleteProduct = async (req, res) => {
   );
   res.redirect("/admin/products");
 };
+
+// to delete product image
+exports.deleteImage = async (req,res)=>{
+  let fileName = req.body;
+  
+  fs.unlink(path.join("./public",fileName.fileName),err=>{
+    if(err) {
+      res.json({success:false, message:err})
+    } else res.json({success:true});
+  })
+}
 
 // search product
 let searchedProducts;

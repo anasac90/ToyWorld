@@ -80,67 +80,80 @@
                         </form>
                         <br>
                         <br>
-                        <h3>Existing Product Offers</h3>
-                        <div style="width: 100%;">
-                            <table class="table table-hover text-center w-auto mx-auto mt-3">
-                                <thead>
-                                    <tr>
-                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">No</th>
-                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Product</th>
-                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Product Code
-                                        </th>
-                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Dicount %</th>
-                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Max Limit</th>
-                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Expiry Date
-                                        </th>
-                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;"></th>
-                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% for(var i=0; i < productOffer.length ; i++) { %>
-                                        <tr>
-                                            <td scope="row">
-                                                <%= i+1 %>
-                                            </td>
-                                            <td>
-                                                <%= productOffer[i].productName %>
-                                            </td>
-                                            <td>
-                                                <%= productOffer[i].productCode %>
-                                            </td>
-                                            <td>
-                                                <%= productOffer[i].discountPrecentage %>
-                                            </td>
-                                            <td>
-                                                <%= productOffer[i].maxDiscount %>
-                                            </td>
-                                            <td>
-                                                <%= productOffer[i].expiryDate.toLocaleDateString() %>
-                                            </td>
-                                            <td>
-                                                <form action="/admin/productOffer/edit/<%= productOffer[i]._id %>">
-                                                    <button style="margin-left: 1rem; width: 5rem; color: white;"
-                                                        class="btn bg-dark-grn productOfferEdit"
-                                                        type="submit">Edit</button>
-                                                </form>
-                                            </td>
-                                            <td>
-                                                <form
-                                                    action="/admin/deleteOffer/<%= productOffer[i].offerType %>/<%= productOffer[i]._id %>?_method=DELETE"
-                                                    method="post">
-                                                    <button
-                                                        style="margin-left: 1rem; width: 5rem; color: white; background-color: red;"
-                                                        class="btn productOfferDelete deleteOffer"
-                                                        data-id="<%= productOffer[i]._id %>"
-                                                        type="submit">Delete</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                        <% } %>
-                                </tbody>
-                            </table>
-                        </div>
+                        <% if(productOffer.length==0){ %>
+                            <h3>Existing Product Offers</h3>
+                            <h6>No Product Offers Availabel Now</h6>
+                            <% }else{ %>
+                                <h3>Existing Product Offers</h3>
+                                <div style="width: 100%;">
+                                    <table class="table table-hover text-center w-auto mx-auto mt-3">
+                                        <thead>
+                                            <tr>
+                                                <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">No
+                                                </th>
+                                                <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">
+                                                    Product</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">
+                                                    Product Code
+                                                </th>
+                                                <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">
+                                                    Dicount %</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Max
+                                                    Limit</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Expiry
+                                                    Date
+                                                </th>
+                                                <th class="fw-bold bg-dark-grn" scope="col" style="color: white;"></th>
+                                                <th class="fw-bold bg-dark-grn" scope="col" style="color: white;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% for(var i=0; i < productOffer.length ; i++) { %>
+                                                <tr>
+                                                    <td scope="row">
+                                                        <%= i+1 %>
+                                                    </td>
+                                                    <td>
+                                                        <%= productOffer[i].productName %>
+                                                    </td>
+                                                    <td>
+                                                        <%= productOffer[i].productCode %>
+                                                    </td>
+                                                    <td>
+                                                        <%= productOffer[i].discountPrecentage %>
+                                                    </td>
+                                                    <td>
+                                                        <%= productOffer[i].maxDiscount %>
+                                                    </td>
+                                                    <td>
+                                                        <%= productOffer[i].expiryDate.toLocaleDateString() %>
+                                                    </td>
+                                                    <td>
+                                                        <form
+                                                            action="/admin/productOffer/edit/<%= productOffer[i]._id %>">
+                                                            <button
+                                                                style="margin-left: 1rem; width: 5rem; color: white;"
+                                                                class="btn bg-dark-grn productOfferEdit"
+                                                                type="submit">Edit</button>
+                                                        </form>
+                                                    </td>
+                                                    <td>
+                                                        <form
+                                                            action="/admin/deleteOffer/<%= productOffer[i].offerType %>/<%= productOffer[i]._id %>?_method=DELETE"
+                                                            method="post">
+                                                            <button
+                                                                style="margin-left: 1rem; width: 5rem; color: white; background-color: red;"
+                                                                class="btn productOfferDelete deleteOffer"
+                                                                data-id="<%= productOffer[i]._id %>"
+                                                                type="submit">Delete</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                <% } %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <% } %>
                     </div>
 
                     <!-- Category Offer -->
@@ -178,67 +191,81 @@
                         </form>
                         <br>
                         <br>
-                        <h3>Existing Category Offers</h3>
-                        <div style="width: 100%;">
-                            <table class="table table-hover text-center w-auto mx-auto mt-3">
-                                <thead>
-                                    <tr>
-                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">No</th>
-                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Category</th>
-                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Category ID
-                                        </th>
-                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Dicount %</th>
-                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Max Limit</th>
-                                        <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Expiry Date
-                                        </th>
-                                        <th class="fw-bold bg-dark-grn" scope="col"></th>
-                                        <th class="fw-bold bg-dark-grn" scope="col"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% for(var i=0; i < categoryOffer.length ; i++) { %>
-                                        <tr>
-                                            <td scope="row">
-                                                <%= i+1 %>
-                                            </td>
-                                            <td>
-                                                <%= categoryOffer[i].categoryName %>
-                                            </td>
-                                            <td>
-                                                <%= categoryOffer[i].categoryID %>
-                                            </td>
-                                            <td>
-                                                <%= categoryOffer[i].discountPrecentage %>
-                                            </td>
-                                            <td>
-                                                <%= categoryOffer[i].maxDiscount %>
-                                            </td>
-                                            <td>
-                                                <%= categoryOffer[i].expiryDate.toLocaleDateString() %>
-                                            </td>
-                                            <td>
-                                                <form action="/admin/categoryOffer/edit/<%= categoryOffer[i]._id %>">
-                                                    <button style="margin-left: 1rem; width: 5rem; color: white;"
-                                                        class="btn bg-dark-grn categoryOfferEdit"
-                                                        type="submit">Edit</button>
-                                                </form>
-                                            </td>
-                                            <td>
-                                                <form
-                                                    action="/admin/deleteOffer/<%= categoryOffer[i].offerType %>/<%= categoryOffer[i]._id %>?_method=DELETE"
-                                                    method="post">
-                                                    <button
-                                                        style="margin-left: 1rem; width: 5rem; color: white; background-color: red;"
-                                                        class="btn categoryOfferDelete deleteOffer"
-                                                        data-id="<%= categoryOffer[i]._id %>"
-                                                        type="submit">Delete</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                        <% } %>
-                                </tbody>
-                            </table>
-                        </div>
+                        <% if(categoryOffer.length==0){ %>
+                            <h3>Existing Category Offers</h3>
+                            <h6>No Category Offers Availabel Now</h6>
+                            <% }else{ %>
+                                <h3>Existing Category Offers</h3>
+                                <div style="width: 100%;">
+                                    <table class="table table-hover text-center w-auto mx-auto mt-3">
+                                        <thead>
+                                            <tr>
+                                                <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">No
+                                                </th>
+                                                <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">
+                                                    Category</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">
+                                                    Category ID
+                                                </th>
+                                                <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">
+                                                    Dicount %</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Max
+                                                    Limit</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col" style="color: white;">Expiry
+                                                    Date
+                                                </th>
+                                                <th class="fw-bold bg-dark-grn" scope="col"></th>
+                                                <th class="fw-bold bg-dark-grn" scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% for(var i=0; i < categoryOffer.length ; i++) { %>
+                                                <tr>
+                                                    <td scope="row">
+                                                        <%= i+1 %>
+                                                    </td>
+                                                    <td>
+                                                        <%= categoryOffer[i].categoryName %>
+                                                    </td>
+                                                    <td>
+                                                        <%= categoryOffer[i].categoryID %>
+                                                    </td>
+                                                    <td>
+                                                        <%= categoryOffer[i].discountPrecentage %>
+                                                    </td>
+                                                    <td>
+                                                        <%= categoryOffer[i].maxDiscount %>
+                                                    </td>
+                                                    <td>
+                                                        <%= categoryOffer[i].expiryDate.toLocaleDateString() %>
+                                                    </td>
+                                                    <td>
+                                                        <form
+                                                            action="/admin/categoryOffer/edit/<%= categoryOffer[i]._id %>">
+                                                            <button
+                                                                style="margin-left: 1rem; width: 5rem; color: white;"
+                                                                class="btn bg-dark-grn categoryOfferEdit"
+                                                                type="submit">Edit</button>
+                                                        </form>
+                                                    </td>
+                                                    <td>
+                                                        <form
+                                                            action="/admin/deleteOffer/<%= categoryOffer[i].offerType %>/<%= categoryOffer[i]._id %>?_method=DELETE"
+                                                            method="post">
+                                                            <button
+                                                                style="margin-left: 1rem; width: 5rem; color: white; background-color: red;"
+                                                                class="btn categoryOfferDelete deleteOffer"
+                                                                data-id="<%= categoryOffer[i]._id %>"
+                                                                type="submit">Delete</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                <% } %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <% } %>
+
                     </div>
 
                     <!-- Referral Offer -->
@@ -471,7 +498,7 @@
         });
 
         // delete referral offer
-        document.getElementById('referralOfferDelete')?.addEventListener('click',e => {
+        document.getElementById('referralOfferDelete')?.addEventListener('click', e => {
             e.preventDefault();
             e.stopPropagation();
 

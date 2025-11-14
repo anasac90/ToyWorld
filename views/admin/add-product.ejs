@@ -1,14 +1,14 @@
 <%- include ('../partials/admin-header.ejs') %>
 
 
-    <main class="mt-3" style="height: auto;"">
+    <main class="mt-3" style="height: auto;">
         <div class=" content-head">
-        <div class="content-head-rect col-5 bg-dark-grn">
-            <div>
-                <h2 class="content-head-txt">ADD PRODUCT</h2>
+            <div class="content-head-rect col-5 bg-dark-grn">
+                <div>
+                    <h2 class="content-head-txt">ADD PRODUCT</h2>
+                </div>
+                <div class="content-head-tri ms-auto"></div>
             </div>
-            <div class="content-head-tri ms-auto"></div>
-        </div>
         </div>
         <div class="content-body side-margin text-start mt-3" style="justify-content: center;">
             <form autocomplete="off" action="/admin/products/submit" enctype="multipart/form-data" method="POST"
@@ -83,7 +83,7 @@
                                         <label>Images:</label>
                                         <div class="mb-2" id="img-preview"></div>
                                         <input class="form-control mb-1" type="file" accept="image/*"
-                                            name="productImages" id="imageInput" multiple />
+                                            name="productImages" id="imageInput" multiple required />
                                         <div style="display: flex;">
                                             <div id="crop-container" style="width: 50%; height: 50%; display:none;">
                                             </div>
@@ -160,14 +160,39 @@
                                         </div>
                                         <div class="mb-3">
                                             <label>Images:</label>
-                                            <div class="mb-2" id="img-preview">
+                                            <!-- <div class="mb-2" id="img-preview">
                                                 <% for ( let x=0; x < productImage?.length; x++ ) { %>
                                                     <img src="/images/<%= productImage[x]?.filename %>"
                                                         style="width: 70px; height: 70px;" alt="">
                                                     <% } %>
+                                            </div> -->
+
+                                            <div class="mb-2" id="img-preview"
+                                                style="display:flex; gap:10px; flex-wrap:wrap;">
+                                                <% if (productImage) { %>
+                                                    <% for (let x=0; x < productImage.length; x++) { %>
+                                                        <div class="preview-box"
+                                                            style="position:relative; display:inline-block; width:70px; height:70px;">
+
+                                                            <span class="remove-btn" data-index="<%= x %>" style="position:absolute; top:-8px; right:-8px; 
+                             background:red; color:white; width:20px; height:20px; 
+                             border-radius:50%; display:flex; justify-content:center; 
+                             align-items:center; font-size:14px; cursor:pointer;">
+                                                                ×
+                                                            </span>
+
+                                                            <img class="previewImage"
+                                                                src="/images/<%= productImage[x].filename %>"
+                                                                style="width:70px; height:70px; object-fit:cover;">
+                                                        </div>
+                                                        <% } %>
+                                                            <% } %>
                                             </div>
+
+                                            <input type="hidden" name="deletedImages" id="deletedImages">
+
                                             <input class="form-control mb-1" type="file" accept="image/*"
-                                                name="productImages" id="imageInput" multiple required/>
+                                                name="productImages" id="imageInput" multiple required />
                                             <div style="display: flex;">
                                                 <div id="crop-container" style="width: 50%; height: 50%; display:none;">
                                                 </div>
@@ -194,7 +219,7 @@
         document.getElementById('imageInput').addEventListener('change', function (event) {
             const files = event.target.files;
             const cropContainer = document.getElementById('crop-container');
-            
+
             cropContainer.style = "display:block";
             document.getElementById('cropButton').style = 'display:block;'
 
@@ -219,41 +244,132 @@
                         viewMode: 1,
                     });
 
-                    cropperInstances.push(cropper); // Store each cropper instance
+                    cropperInstances.push({ cropper, originalIndex: cropperInstances.length }); // Store each cropper instance
                 };
 
                 reader.readAsDataURL(file);
             });
         });
         document.getElementById('cropButton').addEventListener('click', function (event) {
-            event.preventDefault(); // Prevent the default form submission
+            event.preventDefault();
 
             const imagePreviewContainer = document.getElementById('img-preview');
-            imagePreviewContainer.innerHTML = ''; // Clear previous cropped images
+            imagePreviewContainer.innerHTML = '';
 
-            // Create a DataTransfer object to hold the cropped images
             const dataTransfer = new DataTransfer();
 
-            // Loop through each cropper instance and get the cropped image
-            cropperInstances.forEach((cropper, index) => {
-                cropper.getCroppedCanvas().toBlob((blob) => {
+            cropperInstances.forEach((item, index) => {
+                const c = item.cropper; // the actual Cropper instance
+                if (!c || typeof c.getCroppedCanvas !== 'function') return;
+
+                c.getCroppedCanvas().toBlob((blob) => {
                     const file = new File([blob], `cropped_${index}.jpg`, { type: 'image/jpeg' });
-                    dataTransfer.items.add(file); // Add cropped image to the DataTransfer object
+                    dataTransfer.items.add(file);
 
-                    // Create an img element for the preview and append it to the result container
+                    const previewBox = document.createElement('div');
+                    previewBox.style = `
+                        position: relative;
+                        display: inline-block;
+                        margin-right: 10px;
+                        width: 70px;
+                        height: 70px;
+                        `;
+
                     const previewImage = document.createElement('img');
-                    const url = URL.createObjectURL(blob); // Create a temporary URL for the image blob
-                    previewImage.src = url;
-                    previewImage.style = 'width:70px; margin-right:10px;' // Add some margin between images
-                    imagePreviewContainer.appendChild(previewImage);
+                    previewImage.src = URL.createObjectURL(blob);
+                    previewImage.style = 'width:70px; height:70px; object-fit:cover;';
 
-                    // Once all images are added, set the files to the input
+                    const crossBtn = document.createElement('span');
+                    crossBtn.innerHTML = "&times;";
+                    crossBtn.style = `
+                        position: absolute;
+                        top: -8px;
+                        right: -8px;
+                        background: red;
+                        color: white;
+                        width: 20px;
+                        height: 20px;
+                        border-radius: 50%;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        cursor: pointer;
+                        font-size: 14px;
+                        `;
+
+                    crossBtn.addEventListener("click", () => {
+                        const container = document.getElementById('img-preview');
+                        const boxes = Array.from(container.children);
+                        const currentIndex = boxes.indexOf(previewBox);
+
+                        // Remove preview from UI
+                        previewBox.remove();
+
+                        // Remove cropper UI image
+                        const cropContainer = document.getElementById('crop-container');
+                        const cropWrappers = Array.from(cropContainer.children);
+                        cropWrappers[currentIndex]?.remove();
+
+                        // Remove cropper instance
+                        cropperInstances.splice(currentIndex, 1);
+
+                        // Remove file from DataTransfer
+                        const remaining = Array.from(dataTransfer.files);
+                        remaining.splice(currentIndex, 1);
+
+                        // Rebuild DataTransfer
+                        const newDT = new DataTransfer();
+                        remaining.forEach(f => newDT.items.add(f));
+                        document.getElementById('imageInput').files = newDT.files;
+                    });
+
+
+                    previewBox.appendChild(previewImage);
+                    previewBox.appendChild(crossBtn);
+                    imagePreviewContainer.appendChild(previewBox);
+
                     if (index === cropperInstances.length - 1) {
-                        document.getElementById('imageInput').files = dataTransfer.files; // Update the input's file list
+                        document.getElementById('imageInput').files = dataTransfer.files;
                     }
                 });
             });
+
         });
+
+
+        let removeButtons = document.querySelectorAll(".remove-btn");
+
+        removeButtons.forEach((removeButton) => {
+            removeButton.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                let buttons = Array.from(document.querySelectorAll(".remove-btn"));
+                let boxes = Array.from(document.querySelectorAll(".preview-box"));
+                let images = Array.from(document.querySelectorAll(".previewImage"));
+
+                let currentIndex = buttons.indexOf(removeButton);
+
+                let fileName = images[currentIndex].getAttribute("src");
+
+                fetch("/admin/deleteImage", {
+                    method: "DELETE",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fileName })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            boxes[currentIndex].remove();
+
+                            toastr.info('Image deleted successfully!');
+                        } else {
+                            console.log(data.message);
+                            toastr.warning(data.message);
+                        }
+                    });
+            });
+        });
+
     </script>
 
     <%- include ('../partials/admin-footer.ejs') %>

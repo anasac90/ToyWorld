@@ -72,6 +72,18 @@ const search = async (searchQuery) => {
   return result;
 };
 
+const incrementQuantity = async (productCode,quantity)=>{
+  const collection = getDB().collection(collections.PRODUCT_COLLECTION);
+  const result = await collection.updateOne({productCode:productCode},{$inc:{stockQuantity:quantity}})
+  return result;
+}
+
+const decrementQuantity = async (productCode,quantity)=>{
+  const collection = getDB().collection(collections.PRODUCT_COLLECTION);
+  const result = await collection.updateOne({productCode:productCode},{$inc:{stockQuantity:-quantity}})
+  return result;
+}
+
 module.exports = {
   insertProduct,
   getProducts,
@@ -79,4 +91,6 @@ module.exports = {
   updateProduct,
   renameCategory,
   search,
+  incrementQuantity,
+  decrementQuantity
 };

@@ -3,7 +3,6 @@ let express = require('express');
 let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
-const multer = require('multer');
 const { connectDB } = require("./configure/db-connect");
 require('dotenv').config();
 const session = require("express-session");
@@ -47,22 +46,6 @@ app.use(async (req, res, next) => {
 var usersRouter = require('./routes/users');
 var adminRouter = require('./routes/admin');
 const passport = require('./configure/passport');
-
-
-
-// // Set up storage for uploaded files
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//       cb(null, 'public/images');
-//   },
-//   filename: (req, file, cb) => {
-//       cb(null, Date.now() + '-' + file.originalname);
-//   }
-// });
-
-// const upload = multer({ storage: storage });
-
-
 
 
 // Connect to the database

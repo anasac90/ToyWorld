@@ -49,25 +49,6 @@ function normalizePort(val) {
   return false;
 }
 
-// /**
-//  * Handle SIGTERM and SIGINT to properly close server
-//  */
-// process.on('SIGTERM', () => {
-//   console.log('SIGTERM received. Shutting down...');
-//   server.close(() => {
-//     console.log('Server closed.');
-//     process.exit(0);
-//   });
-// });
-
-// process.on('SIGINT', () => {
-//   console.log('SIGINT received. Shutting down...');
-//   server.close(() => {
-//     console.log('Server closed.');
-//     process.exit(0);
-//   });
-// });
-
 
 
 /**

@@ -21,7 +21,12 @@
                 <a href="/admin/offers">OFFERS</a>
                 <a href="/admin/report">REPORT</a>
             </div>
-            <div class="content-main ms-3 mt-3">
+            <% if(users.length == 0) { %>
+                <div class="content-main ms-3 mt-3">
+                    <h3>No user data available</h3>
+                </div>
+            <% }else { %>
+                <div class="content-main ms-3 mt-3">
                 <div style="width: 100%;">
                     <table class="table table-hover text-center w-auto mx-auto mt-3">
                         <thead>
@@ -86,6 +91,8 @@
                     </table>
                 </div>
             </div>
+            <% } %>
+            
         </div>
 
         <div class="pagination-container text-center mt-4">

@@ -1,9 +1,10 @@
 const categoryDB = require("../models/categoryDB");
 const productDB = require("../models/productDB");
+const fs = require("fs");
 
 // category listing page
 exports.categoryList = async (req, res) => {
-  let categories = await categoryDB.getCategories();  
+  let categories = await categoryDB.getCategories();
 
   if (req.session.categoryAssigned) {
     req.session.categoryAssigned = false;
@@ -27,18 +28,23 @@ exports.addCategory = (req, res) => {
       warning: "Category already exist",
     });
   } else {
-    res.render("admin/add-category", { status, warning: "" });
+    res.render("admin/add-category", { status: "", warning: "" });
   }
 };
 
 // submit new category details to db
 exports.submitCategory = async (req, res) => {
   let categoryName = req.body.categoryName;
+
   let categories = await categoryDB.getCategories({
     categoryName: categoryName
   });
   if (categories.length) {
     req.session.categoryExist = true;
+    fs.unlink("./" + req.file.path, (err) => {
+      if (err) throw (err);
+    })
+    status = "";
     res.redirect("/admin/categories/add");
   } else {
     let result = await categoryDB.insertCategory(req.body, req.file);
@@ -53,19 +59,33 @@ let queriedCategory;
 exports.findCategory = async (req, res) => {
   categoryId = req.params.id;
   queriedCategory = await categoryDB.findCategory(categoryId);
-  res.render("admin/edit-category", { queriedCategory });
+  res.render("admin/edit-category", { queriedCategory, warning: "", status: "" });
 };
 
+let oldCategory; 
 // update category
 exports.updateCategory = async (req, res) => {
-  let oldCategory = queriedCategory[0].categoryName;
+  oldCategory = oldCategory ? oldCategory : queriedCategory[0].categoryName;
   let newcategory = req.body.categoryName;
-  await productDB.renameCategory(
-    { category: oldCategory },
-    { category: newcategory }
-  );
-  let result = await categoryDB.updateCategory(categoryId, req.body, req.file);
-  res.redirect("/admin/categories");
+
+  let categories = await categoryDB.getCategories({
+    categoryName: newcategory
+  });
+
+  console.log("**Test: " + oldCategory,newcategory);
+  
+
+  if (oldCategory != newcategory && categories.length > 0) {
+    Object.assign(queriedCategory[0],req.body);
+    res.render("admin/edit-category", { queriedCategory, warning: "Category already exist", status: "" });
+  } else {
+    await productDB.renameCategory(
+      { category: oldCategory },
+      { category: newcategory }
+    );
+    let result = await categoryDB.updateCategory(categoryId, req.body, req.file);
+    res.redirect("/admin/categories");
+  }
 };
 
 // soft delete
@@ -163,6 +183,6 @@ exports.productsCategoryFilter = async (req, res) => {
     sortOption: null,
     categoryOption: category,
     currentPage: page,
-    totalPages 
+    totalPages
   });
 };
