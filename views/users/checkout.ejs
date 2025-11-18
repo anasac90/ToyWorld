@@ -5,8 +5,12 @@
             <div class="card-top border-bottom text-center">
                 <a href="/"> Back to shop</a>
                 <% if(warning) { %>
-                    <p id="warning" class="text-danger" style="margin-top: 0.7rem; margin-bottom: inherit;">
-                        <%= warning %>
+                    <p id="warning" class="text-danger" style="margin-top: 0.7rem; margin-bottom: inherit; white-space:nowrap;">
+                        <% if(warning == "Some product in the cart is out of stock") { %>
+                             <%= warning %>... Please Go To <a href="/cart" style="float: none;">Cart</a>
+                        <% } else { %>
+                            <%= warning %>
+                        <% } %>
                     </p>
                     <% } %>
             </div>

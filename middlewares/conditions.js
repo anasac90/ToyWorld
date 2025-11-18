@@ -49,9 +49,15 @@ exports.isBlocked = async (req, res, next) => {
 };
 
 exports.validProduct = async (req, res, next) => {
-  if (req.body || req.files) {
-    let productCodeResult = [];
-    productCodeResult = await productDB.getProducts({productCode:req.body?.productCode});
+  if (req.url == "/products/update") {
+    let brands = ["brand1", "brand2", "brand3"];
+    let productId = req.body.id;
+    let queriedProduct = await productDB.findProduct(productId);
+    let categoriesDocs = await getCategories();
+    let categories = categoriesDocs.map((data) => data.categoryName);
+    let warning = "";
+    let productCodeResult = await productDB.getProducts({ productCode: req.body?.productCode });
+
     if (
       !req.body.productName ||
       !req.body.price ||
@@ -62,109 +68,160 @@ exports.validProduct = async (req, res, next) => {
       req.body.category == "Choose..." ||
       !req.body.brand ||
       req.body.brand == "Choose..." ||
-      !req.body.productDescription ||
-      req.files.length == 0
+      !req.body.productDescription
     ) {
+      queriedProduct = Object.assign(queriedProduct, req.body);
+      warning = "Fill all the data"
       req.files?.forEach(file => {
-        fs.unlink("./"+file.path,err=>{
-          if(err) throw err;
+        fs.unlink("./" + file.path, err => {
+          if (err) throw err;
         })
       });
-
-      req.files = "";
-
-      let status = "";
-      let brands = ["brand1", "brand2", "brand3"];
-      let warning = "Fill all the fields";
-      let categoriesDocs = await getCategories();
-      categories = categoriesDocs.map((data) => data.categoryName);
-      let productData = req.body;
-      let productImage = req.files;
-      res.render("admin/add-product", {
-        status,
-        productData,
-        productImage,
-        warning,
-        categories,
-        brands,
-      });
-    } else if (req.body.price < 0 || req.body.stockQuantity < 0 || req.body.minimumAge < 0){
-      let status = "";
-      let brands = ["brand1", "brand2", "brand3"];
-      let warning = "Price, Quantity and Minimum Age should be positive";
-
+      res.render("admin/edit-product", { queriedProduct, categories, brands, warning });
+    } else if (req.body.price < 0 || req.body.stockQuantity < 0 || req.body.minimumAge < 0) {
+      queriedProduct = Object.assign(queriedProduct, req.body);
+      warning = "Quantity, Age or Price should positive"
       req.files?.forEach(file => {
-        fs.unlink("./"+file.path,err=>{
-          if(err) throw err;
+        fs.unlink("./" + file.path, err => {
+          if (err) throw err;
         })
       });
-
-      req.files = "";
-
-      let categoriesDocs = await getCategories();
-      categories = categoriesDocs.map((data) => data.categoryName);
-      let productData = req.body;
-      let productImage = req.files;
-      res.render("admin/add-product", {
-        status,
-        productData,
-        productImage,
-        warning,
-        categories,
-        brands,
-      });
-    } else if (productCodeResult?.length > 0){
-      let status = "";
-      let brands = ["brand1", "brand2", "brand3"];
-      let warning = "Product Code already exist";
-
+      res.render("admin/edit-product", { queriedProduct, categories, brands, warning });
+    } else if (productCodeResult.length > 0 && productCodeResult[0]._id != productId) {
+      queriedProduct = Object.assign(queriedProduct, req.body);
+      warning = "Product Code already exist";
       req.files?.forEach(file => {
-        fs.unlink("./"+file.path,err=>{
-          if(err) throw err;
+        fs.unlink("./" + file.path, err => {
+          if (err) throw err;
         })
       });
-
-      req.files = "";
-
-      let categoriesDocs = await getCategories();
-      categories = categoriesDocs.map((data) => data.categoryName);
-      let productData = req.body;
-      let productImage = req.files;
-      res.render("admin/add-product", {
-        status,
-        productData,
-        productImage,
-        warning,
-        categories,
-        brands,
-      });
+      res.render("admin/edit-product", { queriedProduct, categories, brands, warning });
     } else {
       next();
     }
-  } else {
-    let status = "";
-    let brands = ["brand1", "brand2", "brand3"];
-    let warning = "Fill all the fields";
 
-    req.files?.forEach(file => {
-        fs.unlink("./"+file.path,err=>{
-          if(err) throw err;
+
+
+  } else if (req.url == "/products/submit") {
+    if (req.body || req.files) {
+      let productCodeResult = [];
+      productCodeResult = await productDB.getProducts({ productCode: req.body?.productCode });
+      if (
+        !req.body.productName ||
+        !req.body.price ||
+        !req.body.stockQuantity ||
+        !req.body.productCode ||
+        !req.body.minimumAge ||
+        !req.body.category ||
+        req.body.category == "Choose..." ||
+        !req.body.brand ||
+        req.body.brand == "Choose..." ||
+        !req.body.productDescription ||
+        req.files.length == 0
+      ) {
+        req.files?.forEach(file => {
+          fs.unlink("./" + file.path, err => {
+            if (err) throw err;
+          })
+        });
+
+        req.files = "";
+
+        let status = "";
+        let brands = ["brand1", "brand2", "brand3"];
+        let warning = "Fill all the fields";
+        let categoriesDocs = await getCategories();
+        categories = categoriesDocs.map((data) => data.categoryName);
+        let productData = req.body;
+        let productImage = req.files;
+        res.render("admin/add-product", {
+          status,
+          productData,
+          productImage,
+          warning,
+          categories,
+          brands,
+        });
+      } else if (req.body.price < 0 || req.body.stockQuantity < 0 || req.body.minimumAge < 0) {
+        let status = "";
+        let brands = ["brand1", "brand2", "brand3"];
+        let warning = "Price, Quantity and Minimum Age should be positive";
+
+        req.files?.forEach(file => {
+          fs.unlink("./" + file.path, err => {
+            if (err) throw err;
+          })
+        });
+
+        req.files = "";
+
+        let categoriesDocs = await getCategories();
+        categories = categoriesDocs.map((data) => data.categoryName);
+        let productData = req.body;
+        let productImage = req.files;
+        res.render("admin/add-product", {
+          status,
+          productData,
+          productImage,
+          warning,
+          categories,
+          brands,
+        });
+      } else if (productCodeResult?.length > 0) {
+        let status = "";
+        let brands = ["brand1", "brand2", "brand3"];
+        let warning = "Product Code already exist";
+
+        req.files?.forEach(file => {
+          fs.unlink("./" + file.path, err => {
+            if (err) throw err;
+          })
+        });
+
+        req.files = "";
+
+        let categoriesDocs = await getCategories();
+        categories = categoriesDocs.map((data) => data.categoryName);
+        let productData = req.body;
+        let productImage = req.files;
+        res.render("admin/add-product", {
+          status,
+          productData,
+          productImage,
+          warning,
+          categories,
+          brands,
+        });
+      } else {
+        next();
+      }
+    } else {
+      let status = "";
+      let brands = ["brand1", "brand2", "brand3"];
+      let warning = "Fill all the fields";
+
+      req.files?.forEach(file => {
+        fs.unlink("./" + file.path, err => {
+          if (err) throw err;
         })
       });
 
       req.files = "";
 
-    let categoriesDocs = await getCategories();
-    categories = categoriesDocs.map((data) => data.categoryName);
-    let productData = req.body;
-    let productImage = req.files;
-    res.render("admin/add-product", {
-      status,
-      productData,
-      productImage,
-      warning,
-      categories,
-      brands,
-    });
+      let categoriesDocs = await getCategories();
+      categories = categoriesDocs.map((data) => data.categoryName);
+      let productData = req.body;
+      let productImage = req.files;
+      res.render("admin/add-product", {
+        status,
+        productData,
+        productImage,
+        warning,
+        categories,
+        brands,
+      });
+    }
   }
+
+
 };

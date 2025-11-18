@@ -15,7 +15,7 @@
         <div class="wallet-balance-container mb-5">
             <h3 class="mb-3">Your Wallet Balance</h3>
             <div class="wallet-balance bg-light p-4 rounded">
-                <h1 class="text-success">₹<%= walletBalance?.toFixed(2) %></h1>
+                <h1 class="text-success">₹<%= walletBalance ? walletBalance.toFixed(2) : 0 %></h1>
                 <p class="text-muted">Use your wallet balance for future purchases.</p>
             </div>
         </div>

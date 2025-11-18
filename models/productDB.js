@@ -57,6 +57,21 @@ const updateProduct = async (productId, document, files) => {
   return result;
 };
 
+// Delete image 
+const deleteImageDB = async (productId,filePath) =>{
+
+  fileName = filePath.replace("/images/","");
+  
+  try {
+    const collection = getDB().collection(collections.PRODUCT_COLLECTION);
+    const result = await collection.updateOne({_id: new ObjectId(productId)},{$pull:{"productImages":fileName}})
+  
+    return result;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+}
+
 const renameCategory = async (oldCategory, newCategory) => {
   const collection = getDB().collection(collections.PRODUCT_COLLECTION);
   const result = await collection.updateMany(oldCategory, {
@@ -73,15 +88,22 @@ const search = async (searchQuery) => {
 };
 
 const incrementQuantity = async (productCode,quantity)=>{
-  const collection = getDB().collection(collections.PRODUCT_COLLECTION);
+  try {const collection = getDB().collection(collections.PRODUCT_COLLECTION);
   const result = await collection.updateOne({productCode:productCode},{$inc:{stockQuantity:quantity}})
-  return result;
+  return result;}
+  catch (error) {
+    console.log("Error: " + error);
+  }
 }
 
 const decrementQuantity = async (productCode,quantity)=>{
-  const collection = getDB().collection(collections.PRODUCT_COLLECTION);
-  const result = await collection.updateOne({productCode:productCode},{$inc:{stockQuantity:-quantity}})
-  return result;
+  try {
+    const collection = getDB().collection(collections.PRODUCT_COLLECTION);
+    const result = await collection.updateOne({productCode:productCode},{$inc:{stockQuantity:-quantity}})
+    return result;
+  } catch (error) {
+    console.log("Error: " + error);
+  }
 }
 
 module.exports = {
@@ -92,5 +114,6 @@ module.exports = {
   renameCategory,
   search,
   incrementQuantity,
-  decrementQuantity
+  decrementQuantity,
+  deleteImageDB
 };

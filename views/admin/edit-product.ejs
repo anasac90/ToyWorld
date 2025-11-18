@@ -11,75 +11,110 @@
         </div>
         </div>
         <div class="content-body side-margin text-start mt-3" style="justify-content: center;">
-            <form autocomplete="off" action="/admin/products/update" enctype="multipart/form-data" method="POST" class="col-4">
-                <div class="col mb-3">
-                    <label>Product Name:</label>
-                    <input class="form-control" value="<%= queriedProduct[0].productName %>" placeholder="Enter the product name" name="productName" required
-                        type="text">
-                </div>
-                <div class="col mb-3">
-                    <label>Price:</label>
-                    <input class="form-control" value="<%= queriedProduct[0].price %>" placeholder="Price of the product" name="price" required type="number">
-                </div>
-                <div class="col mb-3">
-                    <label>Stock Quantity:</label>
-                    <input class="form-control" value="<%= queriedProduct[0].stockQuantity %>" placeholder="Stock quantity" name="stockQuantity" required
-                        type="number">
-                </div>
-                <div class="col mb-3">
-                    <label>Product Code:</label>
-                    <input class="form-control" value="<%= queriedProduct[0].productCode %>" placeholder="Product code" name="productCode" required type="text">
-                </div>
-                <div class="mb-3">
-                    <label>Minimum Age:</label>
-                    <input class="form-control" value="<%= queriedProduct[0].minimumAge %>" required type="number" name="minimumAge" placeholder="Minimum age" />
-                </div>
-                <div class="mb-3">
-                    <label>Category:</label>
-                    <div class="input-group mb-3">
-                        <select class="form-select" id="category" required name="category">
-                            <option selected><%= queriedProduct[0].category %></option>
-                            <% for(let j=0; j < categories.length;j++) { %>
-                                <option value= "<%= categories[j] %>" > <%= categories[j] %> </option>
-                                <% } %>
-                        </select>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label>Brand:</label>
-                    <div class="input-group mb-3">
-                        <select class="form-select" id="brand" required name="brand">
-                            <option selected><%= queriedProduct[0].brand %></option>
-                            <% for(let k=0; k < brands.length; k++) { %>
-                                <option value="<%= brands[k] %>" ><%= brands[k] %></option>
-                                <% } %>
-                        </select>
-                    </div>
-                </div>
-                <div class="col mb-3">
-                    <label>Description:</label>
-                    <textarea class="form-control" name="productDescription" required
-                        type="text"><%= queriedProduct[0].productDescription %> </textarea>
-                </div>
-                <div class="mb-3">
-                    <label>Images:</label>
-                    <div class="mb-2" id="img-preview">
-                        <% for ( let x=0; x < queriedProduct[0].productImages.length; x++ ) { %>
-                            <img src="/images/<%= queriedProduct[0].productImages[x] %>"
-                                                style="width: 70px; height: 70px;" alt="">
-                                                <% } %>
-                    </div>
-                    <input class="form-control mb-1" type="file" accept="image/*" name="productImages" id="imageInput" multiple/>
-                    <div style="display: flex;">
-                        <div id="crop-container" style="width: 50%; height: 50%; display:none;"></div>
-                        <button id="cropButton" class="ms-3" style="align-items: center;">Crop Images</button>
-                    </div>
-                </div>
-                <div>
-                    <button type="Edit" class="btn" style="color: white; background-color: #66A5AD;">
-                        Update
-                    </button>
-                </div>
+            <form autocomplete="off" action="/admin/products/update" enctype="multipart/form-data" method="POST"
+                class="col-4">
+                <% if(warning) { %>
+                    <p style="text-align: center; color: red; font-weight:700;">
+                        <%= warning %>
+                    </p>
+                    <% } %>
+                    
+                        <div class="col mb-3">
+                            <label>Product Name:</label>
+                            <input class="form-control" value="<%= queriedProduct[0].productName %>"
+                                placeholder="Enter the product name" name="productName" required type="text">
+                        </div>
+                        <div>
+                            <input type="text" value="<%= queriedProduct[0]._id %>" name="id" hidden>
+                        </div>
+                        <div class="col mb-3">
+                            <label>Price:</label>
+                            <input class="form-control" value="<%= queriedProduct[0].price %>"
+                                placeholder="Price of the product" name="price" required type="number">
+                        </div>
+                        <div class="col mb-3">
+                            <label>Stock Quantity:</label>
+                            <input class="form-control" value="<%= queriedProduct[0].stockQuantity %>"
+                                placeholder="Stock quantity" name="stockQuantity" required type="number">
+                        </div>
+                        <div class="col mb-3">
+                            <label>Product Code:</label>
+                            <input class="form-control" value="<%= queriedProduct[0].productCode %>"
+                                placeholder="Product code" name="productCode" required type="text">
+                        </div>
+                        <div class="mb-3">
+                            <label>Minimum Age:</label>
+                            <input class="form-control" value="<%= queriedProduct[0].minimumAge %>" required
+                                type="number" name="minimumAge" placeholder="Minimum age" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Category:</label>
+                            <div class="input-group mb-3">
+                                <select class="form-select" id="category" required name="category">
+                                    <option selected>
+                                        <%= queriedProduct[0].category %>
+                                    </option>
+                                    <% for(let j=0; j < categories.length;j++) { %>
+                                        <option value="<%= categories[j] %>">
+                                            <%= categories[j] %>
+                                        </option>
+                                        <% } %>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label>Brand:</label>
+                            <div class="input-group mb-3">
+                                <select class="form-select" id="brand" required name="brand">
+                                    <option selected>
+                                        <%= queriedProduct[0].brand %>
+                                    </option>
+                                    <% for(let k=0; k < brands.length; k++) { %>
+                                        <option value="<%= brands[k] %>">
+                                            <%= brands[k] %>
+                                        </option>
+                                        <% } %>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col mb-3">
+                            <label>Description:</label>
+                            <textarea class="form-control" name="productDescription" required
+                                type="text"><%= queriedProduct[0].productDescription %> </textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label>Images:</label>
+                            <div class="mb-2" id="img-preview">
+                                <% if (queriedProduct[0].productImages.length> 0) { %>
+                                    <% for ( let x=0; x < queriedProduct[0].productImages.length; x++ ) { %>
+                                        <div class="preview-box"
+                                            style="position:relative; display:inline-block; width:70px; height:70px;">
+                                            <span class="remove-btn" data-index="<%= x %>" style="position:absolute; top:-8px; right:-8px; 
+                             background:red; color:white; width:20px; height:20px; 
+                             border-radius:50%; display:flex; justify-content:center; 
+                             align-items:center; font-size:14px; cursor:pointer;">
+                                                ×
+                                            </span>
+
+                                            <img class="previewImage"
+                                                src="/images/<%= queriedProduct[0].productImages[x] %>"
+                                                style="width: 70px; height: 70px; object-fit:cover;" alt="">
+                                        </div>
+                                        <% } %>
+                                            <% } %>
+                            </div>
+                            <input class="form-control mb-1" type="file" accept="image/*" name="productImages"
+                                id="imageInput" multiple />
+                            <div style="display: flex;">
+                                <div id="crop-container" style="width: 50%; height: 50%; display:none;"></div>
+                                <button id="cropButton" class="ms-3" style="align-items: center;">Crop Images</button>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="Edit" class="btn" style="color: white; background-color: #66A5AD;">
+                                Update
+                            </button>
+                        </div>
             </form>
         </div>
     </main>
@@ -150,6 +185,41 @@
                         document.getElementById('imageInput').files = dataTransfer.files; // Update the input's file list
                     }
                 });
+            });
+        });
+
+
+        let removeButtons = document.querySelectorAll(".remove-btn");
+
+        removeButtons.forEach((removeButton) => {
+            removeButton.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                let buttons = Array.from(document.querySelectorAll(".remove-btn"));
+                let boxes = Array.from(document.querySelectorAll(".preview-box"));
+                let images = Array.from(document.querySelectorAll(".previewImage"));
+
+                let currentIndex = buttons.indexOf(removeButton);
+
+                let fileName = images[currentIndex].getAttribute("src");
+                let productId = "<%= queriedProduct[0]._id %>";
+
+                fetch("/admin/deleteImage", {
+                    method: "DELETE",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fileName, productId })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            boxes[currentIndex].remove();
+
+                            toastr.info('Image deleted successfully!');
+                        } else {
+                            console.log(data.message);
+                            toastr.warning(data.message);
+                        }
+                    });
             });
         });
     </script>

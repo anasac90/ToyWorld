@@ -39,6 +39,10 @@ exports.addProduct = async (req, res) => {
 
 // submit new product details to db
 exports.submitProduct = async (req, res) => {
+  req.body.price = Number(req.body.price);
+  req.body.stockQuantity = Number(req.body.stockQuantity);
+  req.body.minimumAge = Number(req.body.minimumAge);
+
   let result = await productDB.insertProduct(req.body, req.files);
   status = "Successfully Submitted";
   res.redirect("/admin/products");
@@ -48,10 +52,11 @@ exports.submitProduct = async (req, res) => {
 let productId;
 exports.findProduct = async (req, res) => {
   productId = req.params.id;
+  let warning = "";
   let queriedProduct = await productDB.findProduct(productId);
   let categoriesDocs = await getCategories();
   categories = categoriesDocs.map((data) => data.categoryName);
-  res.render("admin/edit-product", { queriedProduct, categories, brands });
+  res.render("admin/edit-product", { queriedProduct, categories, brands, warning });
 };
 
 // update product
@@ -84,9 +89,17 @@ exports.unDeleteProduct = async (req, res) => {
 
 // to delete product image
 exports.deleteImage = async (req,res)=>{
-  let fileName = req.body;
+  let fileName = req.body.fileName;
+  let productId =req.body.productId;
+
+  let result = await productDB.findProduct(productId);
+
+  if(result.length > 0){
+    await productDB.deleteImageDB(productId,fileName)
+  }
+
   
-  fs.unlink(path.join("./public",fileName.fileName),err=>{
+  fs.unlink(path.join("./public",fileName),err=>{
     if(err) {
       res.json({success:false, message:err})
     } else res.json({success:true});

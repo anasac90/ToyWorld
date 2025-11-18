@@ -13,7 +13,7 @@ const razorpay = new Razorpay({
 
 exports.checkout = async (req, res) => {
   const user_id = req.session.user[0]._id;
-  
+
   const cart = await cartDB.findCart(user_id);
   const wallet = await walletDB.getWallet(user_id);
   const coupons = await couponDB.getCoupons();
@@ -82,6 +82,16 @@ exports.placeOrder = async (req, res) => {
       };
       return product;
     });
+
+    for(let product of products){
+      let result = await productDB.getProducts({productCode:product.productCode})
+      if(result[0].stockQuantity == 0){
+        req.session.checkoutWarning = "Some product in the cart is out of stock";
+
+        return res.redirect("/checkout");
+      }
+    }
+
     let today = new Date();
 
     const orderDate = `${String(today.getDate()).padStart(2, "0")}/${String(
@@ -96,7 +106,7 @@ exports.placeOrder = async (req, res) => {
     let totalAmount = parseFloat(req.body.total) * 100; //convert rupees to paisa
     let receipt = `tw_${Math.floor(Math.random() * 100000)}` //generate a receipt number
     let couponDiscount = req.body.couponDiscount;
-    
+
 
     document = {
       cart_id: cart_id,
@@ -320,7 +330,7 @@ exports.getOrders = async (req, res) => {
 
   const allOrders = await orderDB.getOrders();
   allOrders.reverse();
-  
+
 
   try {
 
@@ -345,7 +355,7 @@ exports.getOrders = async (req, res) => {
       })
     );
 
-    listedOrders = allOrders.filter(order => 
+    listedOrders = allOrders.filter(order =>
       products.some(product => product.orderId.equals(order._id))
     );
 
@@ -407,14 +417,10 @@ exports.cancellation = async (req, res) => {
     const user_id = orderResult.user_id;
     const amount = parseFloat(productResult.price);
     const product = productResult.productName;
-    const quantity = orderResult.quantity;
-
-    const updateQuantity = await productDB.incrementQuantity(productCode,quantity);
-    console.log(updateQuantity);
 
     const wallet = await walletDB.getWallet(user_id);
 
-    const isRefunded = wallet.transactions.some((transaction) => transaction.order_id === order_id && transaction.productCode === productCode);
+    const isRefunded = wallet?.transactions.some((transaction) => transaction.order_id === order_id && transaction.productCode === productCode);
 
     if (isRefunded) {
       res.redirect("/admin/orders");
@@ -427,6 +433,11 @@ exports.cancellation = async (req, res) => {
         type: type,
         product: product
       }
+      const productFilter = orderResult.products.find(p => p.productCode == productCode);
+      const quantity = productFilter.quantity;
+
+      await productDB.incrementQuantity(productCode, quantity);
+
       const updateWallet = await walletDB.addToWallet(user_id, amount, document);
       res.redirect("/admin/orders");
     }
@@ -469,6 +480,12 @@ exports.returnUpdate = async (req, res) => {
         type: type,
         product: product
       }
+
+      const productFilter = orderResult.products.find(p => p.productCode == productCode);
+      const quantity = productFilter.quantity;
+
+      await productDB.incrementQuantity(productCode, quantity);
+
       const updateWallet = await walletDB.addToWallet(user_id, amount, document);
       res.redirect("/admin/orders");
     }
