@@ -5,12 +5,13 @@
             <div class="card-top border-bottom text-center">
                 <a href="/"> Back to shop</a>
                 <% if(warning) { %>
-                    <p id="warning" class="text-danger" style="margin-top: 0.7rem; margin-bottom: inherit; white-space:nowrap;">
-                        <% if(warning == "Some product in the cart is out of stock") { %>
-                             <%= warning %>... Please Go To <a href="/cart" style="float: none;">Cart</a>
-                        <% } else { %>
-                            <%= warning %>
-                        <% } %>
+                    <p id="warning" class="text-danger"
+                        style="margin-top: 0.7rem; margin-bottom: inherit; white-space:nowrap;">
+                        <% if(warning=="Some product in the cart is out of stock" ) { %>
+                            <%= warning %>... Please Go To <a href="/cart" style="float: none;">Cart</a>
+                                <% } else { %>
+                                    <%= warning %>
+                                        <% } %>
                     </p>
                     <% } %>
             </div>
@@ -21,6 +22,7 @@
                     <span id="payment"><span id="three">3</span> Payment</span>
                 </div>
                 <form id="checkoutForm" action="/checkout/place-order" method="POST">
+                    <input type="text" id="appliedCoupon" name="appliedCoupon" value="" hidden>
                     <div class="row">
                         <div class="col-md-7">
                             <div class="left border">
@@ -45,7 +47,8 @@
                                             </div>
                                             <div class="card-body text-center px-3 pb-0">
                                                 <p>Use wallet if you have enough balance.</p>
-                                                <p id="walletBalance" style="color: green;">Wallet balance is: <%= wallet?.balanceAmount?.toFixed(2) || 0 %>.</p>
+                                                <p id="walletBalance" style="color: green;">Wallet balance is: <%=
+                                                        wallet?.balanceAmount?.toFixed(2) || 0 %>.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -91,7 +94,7 @@
                                     </div>
 
                                     <!-- Card payment Option -->
-                                    <div class="col-md-12 mt-3">
+                                    <!-- <div class="col-md-12 mt-3">
                                         <div class="icons">
                                             <img src="https://img.icons8.com/color/48/000000/visa.png" />
                                             <img src="https://img.icons8.com/color/48/000000/mastercard-logo.png" />
@@ -130,12 +133,10 @@
                                                         <input disabled type="text" class="form-control" id="cvv"
                                                             placeholder="XXX">
                                                     </div>
-                                                    <!-- <button type="submit" class="btn btn-primary w-100 rounded">Pay -->
-                                                    <!-- Now</button> -->
                                                 </form>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
 
                                 </div>
                             </div>
@@ -237,44 +238,51 @@
                                                 </div>
                                                 
                                                 <% for(let i=0;i < coupons.length; i++) { %>
-                                                    <% if (coupons[i].status == 'Active') { %>
-                                                    <div class="row couponDetails">
-                                                        Use coupon '<%= coupons[i].couponCode %>'' for <%= coupons[i].discountPercentage %> % off upto ₹ <%= coupons[i].maxDiscount %>
+                                                    <% if (coupons[i].status == ' Active') { %>
+                                                                <div class="row couponDetails">
+                                                                    Use coupon '<%= coupons[i].couponCode %>'' for <%=
+                                                                            coupons[i].discountPercentage %> % off upto
+                                                                            ₹ <%= coupons[i].maxDiscount %>
+                                                                </div>
+
+                                                                <% } %>
+                                                                    <% } %>
+                                            </div>
+                                        </div>
+                                        <div class="row lower">
+
+                                            <div id="removeCouponDiv" hidden>
+                                                <br>
+                                                <span>Coupon Applied, <a href="" id="removeCoupon">Remove?</a></span>
+                                            </div>
+
+                                            <form class="form-inline" id="couponForm">
+                                                <div class="form-group">
+                                                    <label for="couponInput">Have coupon?</label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control coupon col-md-10"
+                                                            id="couponInput" name="couponCode" placeholder="Coupon code"
+                                                            style="margin: inherit;">
+                                                        <button class="btn rounded button bg-dark-grn col-md-2 ms-1"
+                                                            id="couponButton" style="width: 25%; margin: inherit;">
+                                                            Apply
+                                                        </button>
                                                     </div>
-                                                    
-                                                    <% } %>
-                                                <% } %>
-                                            </div>
-                                        </div>
-                                    <div class="row lower">
-
-                                        <div id="removeCouponDiv" hidden>
-                                            <br>
-                                            <span>Coupon Applied, <a href="" id="removeCoupon">Remove?</a></span>
-                                        </div>
-
-                                        <form class="form-inline" id="couponForm">
-                                            <div class="form-group">
-                                                <label for="couponInput">Have coupon?</label>
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control coupon col-md-10" id="couponInput" name="couponCode" placeholder="Coupon code" style="margin: inherit;">
-                                                    <button class="btn rounded button bg-dark-grn col-md-2 ms-1" id="couponButton" style="width: 25%; margin: inherit;">
-                                                        Apply
-                                                    </button>
                                                 </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                    
-                                    <!-- Hidden inputs to pass additional values -->
-                                    <input type="hidden" name="productPrice" id="productPriceHidden" value="">
-                                    <input type="hidden" name="deliveryCharge" id="deliveryChargeHidden" value="">
-                                    <input type="hidden" name="discount" id="discountHidden" value="">
-                                    <input type="hidden" name="couponDiscount" id="couponDiscountHidden" value="">
-                                    <input type="hidden" name="total" id="totalHidden" value="">
+                                            </form>
+                                        </div>
 
-                                    <button type="submit" class="btn rounded button bg-dark-grn">Place Order</button>
-                                    <p class="text-muted text-center">Complimentary Shipping & Returns for every purchase above 1000</p>
+                                        <!-- Hidden inputs to pass additional values -->
+                                        <input type="hidden" name="productPrice" id="productPriceHidden" value="">
+                                        <input type="hidden" name="deliveryCharge" id="deliveryChargeHidden" value="">
+                                        <input type="hidden" name="discount" id="discountHidden" value="">
+                                        <input type="hidden" name="couponDiscount" id="couponDiscountHidden" value="">
+                                        <input type="hidden" name="total" id="totalHidden" value="">
+
+                                        <button type="submit" class="btn rounded button bg-dark-grn">Place
+                                            Order</button>
+                                        <p class="text-muted text-center">Complimentary Shipping & Returns for every
+                                            purchase above 1000</p>
                             </div>
                         </div>
                     </div>
@@ -301,17 +309,17 @@
             document.getElementById('total').innerText = '₹ ' +
                 total.toFixed(2);
 
-            if(total > '<%= wallet?.balanceAmount || 0 %>'){
-                document.getElementById('walletOption').setAttribute('disabled',true);
+            if (total > '<%= wallet?.balanceAmount || 0 %>') {
+                document.getElementById('walletOption').setAttribute('disabled', true);
                 document.getElementById('walletBalance').style = "color:red;"
             }
 
-            if(total > 1000) {
-                document.getElementById('codOption').setAttribute('disabled',true);
+            if (total > 1000) {
+                document.getElementById('codOption').setAttribute('disabled', true);
                 document.getElementById('codText').style = 'color:red'
                 document.getElementById('codText').textContent = 'COD not available if the amount is above 1000'
             }
-                
+
             // Set hidden inputs to submit to the server
             document.getElementById('productPriceHidden').value = productPrice.toFixed(2);
             document.getElementById('deliveryChargeHidden').value = deliveryCharge.toFixed(2);
@@ -319,12 +327,14 @@
             document.getElementById('couponDiscountHidden').value = couponDiscount.toFixed(2);
             document.getElementById('totalHidden').value = total.toFixed(2);
         }
-        document.getElementById('add-address-button').addEventListener('click',
-            (e) => {
-                e.preventDefault();
-                window.location.href = '/address/add';
-            });
 
+        // add address button
+        document.getElementById('add-address-button').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = '/address/add-checkout';
+        });
+
+        // apply coupon button handling
         let couponInput =
             document.getElementById('couponInput');
         let couponButton =
@@ -332,9 +342,7 @@
 
         couponButton.addEventListener('click', (e) => {
             e.preventDefault();
-
             let productPrice = parseFloat(document.getElementById('productPrice').getAttribute('data-productPrice'));
-
             if (!couponInput.value.trim()) {
                 alert("Please enter a valid coupon code.");
                 return;
@@ -343,25 +351,24 @@
             fetch('/couponChecking', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ couponCode: couponInput.value, price: productPrice})
+                body: JSON.stringify({ couponCode: couponInput.value, price: productPrice })
             }).then(response => {
                 console.log(response);
-                
+
                 if (!response.ok) {
                     throw new Error("Failed to apply coupon");
                 }
                 return response.json();
-            }).then(data =>{
-                console.log(data);
-                
-                if(data.success == false){
+            }).then(data => {
+                if (data.success == false) {
                     alert(data.message);
                     return;
                 }
-                document.getElementById('couponForm').setAttribute('hidden',true);
+                document.getElementById('couponForm').setAttribute('hidden', true);
                 document.getElementById('removeCouponDiv').removeAttribute('hidden');
                 document.getElementById('couponDiscount').setAttribute('data-couponDiscount', data.discount);
                 document.getElementById('couponDiscount').innerText = `₹ ${data.discount}`;
+                document.getElementById('appliedCoupon').setAttribute("value",couponInput.value)
 
                 calculation();
             }).catch(err => {
@@ -369,9 +376,10 @@
             })
         });
 
+        // remove coupon button handling
         document.getElementById('removeCoupon').addEventListener('click', (e) => {
             e.preventDefault();
-            document.getElementById('removeCouponDiv').setAttribute('hidden',true);
+            document.getElementById('removeCouponDiv').setAttribute('hidden', true);
             document.getElementById('couponDiscount').setAttribute('data-couponDiscount', `${0.00}`);
             document.getElementById('couponDiscount').innerText = `₹ ${0.00}`
             document.getElementById('couponForm').removeAttribute('hidden');
@@ -381,4 +389,4 @@
 
     </script>
 
-                                                                <%- include ('../partials/user-footer.ejs') %>
+    <%- include ('../partials/user-footer.ejs') %>

@@ -119,6 +119,7 @@ router.get('/my-account/verify-email', conditions.isBlocked,validUser,userContro
 
 // add address page
 router.get('/address/add',conditions.isBlocked,validUser,addressController.addAddress);
+router.get('/address/add-checkout',conditions.isBlocked,validUser,addressController.addAddress)
 
 // submit address
 router.post('/address/submit',conditions.isBlocked,validUser,addressController.submitAddress);

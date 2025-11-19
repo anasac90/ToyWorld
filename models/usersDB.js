@@ -54,3 +54,18 @@ exports.findUserById = async (id) => {
   const document = await collection.find({ _id: new ObjectId(id) }).toArray();
   return document;
 };
+
+exports.addCouponData = async (userId,couponId)=>{
+  try {
+    const collection = getDB().collection(collections.USER_COLLECTION);
+    updateCouponUsage = await collection.updateOne({_id:new ObjectId(userId),"usedCoupons.couponId":couponId},{$inc:{"usedCoupons.$.usage":1}});
+  
+    
+    if(updateCouponUsage.matchedCount === 0) {
+      const collection = getDB().collection(collections.USER_COLLECTION);
+      let result = await collection.updateOne({_id:new ObjectId(userId)},{$push:{usedCoupons:{couponId:couponId,usage:1}}});
+    }
+  } catch (error) {
+    console.log("Error: " + error);
+  }
+}

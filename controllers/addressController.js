@@ -4,22 +4,30 @@ const addressDB = require("../models/addressDB");
 
 
 exports.addAddress = (req, res) => {
+  let url = req.url;
+  console.log(url);
+  
+
     if (req.body) {
       res.render("users/add-address", {
         user: req.session.user,
         addressData: req.body,
         warning: null,
+        url
       });
     } else {
       res.render("users/add-address", {
         user: req.session.user,
         addressData: null,
         warning: null,
+        url
       });
     }
   };
   
   exports.submitAddress = async (req, res) => {
+    let redirectURL = req.body.redirectURL;
+
     let warning = null;
     if (!req.body.house) {
       warning = "House name did not filled";
@@ -82,8 +90,11 @@ exports.addAddress = (req, res) => {
       let document = req.body;
       await addressDB.insertAddress(document, user_id);
       req.session.addresses = await addressDB.findUserAddress(user_id);
-  
-      res.render("users/my-account", {
+
+      if(redirectURL == "/address/add-checkout"){
+        res.redirect("/checkout");
+      }else {
+        res.render("users/my-account", {
         user: req.session.user,
         addresses: req.session.addresses ? req.session.addresses : [],
         orders: req.session.orders ? req.session.orders : [],
@@ -91,6 +102,7 @@ exports.addAddress = (req, res) => {
         warning: null,
         redirectTo:'address'
       });
+      }
     }
   };
   

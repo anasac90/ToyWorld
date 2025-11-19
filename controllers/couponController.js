@@ -1,25 +1,38 @@
 const couponDB = require("../models/couponDB");
+const userDB = require("../models/usersDB");
 
 const couponChecking = async (req, res) => {
     try {
         let { couponCode, price } = req.body;
         price = parseFloat(price);
 
+        const userId = req.session.user[0]._id;
+        req.session.user = await userDB.findUserById(userId);
+
         const coupons = await couponDB.getCoupons({ couponCode: couponCode });
+        const couponId = coupons[0]._id;
+        
+        const couponEntry = req.session.user[0].usedCoupons?.find((coupon) => {
+            return String(coupon.couponId) == String(couponId)
+        });
+        const userCouponUsage = couponEntry ? couponEntry.usage : 0;
+
 
         if (coupons.length > 0) {
             let today = new Date();
-            today.setHours(0,0,0,0);
+            today.setHours(0, 0, 0, 0);
 
-            let expiry = new Date (coupons[0].expiryDate)
-            expiry.setHours(0,0,0,0);
+            let expiry = new Date(coupons[0].expiryDate)
+            expiry.setHours(0, 0, 0, 0);
 
-            
-            
+
+
             if (expiry < today) {
                 return res.status(200).json({ success: false, message: 'Coupon Expired' });
-            } else if ( coupons[0].status != 'Active'){
+            } else if (coupons[0].status != 'Active') {
                 return res.status(200).json({ success: false, message: 'Coupon not active' });
+            } else if (coupons[0].usageLimit <= userCouponUsage) {
+                return res.status(200).json({ success: false, message: 'Coupon usage limit reached' });
             } else {
                 const discountPercentage = parseFloat(coupons[0].discountPercentage);
                 const maxDiscount = parseFloat(coupons[0].maxDiscount);
@@ -59,10 +72,10 @@ const addNewCoupon = async (req, res) => {
     couponData = couponData ? couponData : null;
     let couponExist = await couponDB.getCoupons({ couponCode: { $regex: couponCode, $options: 'i' } });
     let date = new Date(expiryDate);
-    date.setHours(0,0,0,0);
+    date.setHours(0, 0, 0, 0);
 
     let today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
 
     if (!couponCode.trim() || !discountPercentage.trim() || !maxDiscount.trim() || !expiryDate.trim() || !usageLimit.trim() || !status.trim()) {
         res.render('admin/add-coupon', {
@@ -117,10 +130,10 @@ const updateCoupon = async (req, res) => {
     let { couponID, couponCode, discountPercentage, maxDiscount, expiryDate, usageLimit, status } = req.body;
 
     let date = new Date(expiryDate);
-    date.setHours(0,0,0,0);
+    date.setHours(0, 0, 0, 0);
 
     let today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
 
     let document = {
         couponCode: couponCode,
@@ -132,7 +145,6 @@ const updateCoupon = async (req, res) => {
     }
 
     let couponExist = await couponDB.getCoupons({ couponCode: couponCode });
-    console.log(couponExist[0]?._id, couponID);
 
     if (!couponCode.trim() || !discountPercentage.trim() || !maxDiscount.trim() || !expiryDate.trim() || !usageLimit.trim() || !status.trim()) {
         res.render('admin/edit-coupon', {

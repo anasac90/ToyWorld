@@ -5,6 +5,7 @@ const walletDB = require('../models/walletDB');
 const offerDB = require('../models/offerDB');
 const couponDB = require('../models/couponDB');
 const Razorpay = require("razorpay");
+const userDB = require('../models/usersDB');
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -83,9 +84,9 @@ exports.placeOrder = async (req, res) => {
       return product;
     });
 
-    for(let product of products){
-      let result = await productDB.getProducts({productCode:product.productCode})
-      if(result[0].stockQuantity == 0){
+    for (let product of products) {
+      let result = await productDB.getProducts({ productCode: product.productCode })
+      if (result[0].stockQuantity == 0) {
         req.session.checkoutWarning = "Some product in the cart is out of stock";
 
         return res.redirect("/checkout");
@@ -105,8 +106,12 @@ exports.placeOrder = async (req, res) => {
     let user_id = req.session.user[0]._id;
     let totalAmount = parseFloat(req.body.total) * 100; //convert rupees to paisa
     let receipt = `tw_${Math.floor(Math.random() * 100000)}` //generate a receipt number
-    let couponDiscount = req.body.couponDiscount;
 
+    let couponDiscount = req.body.couponDiscount;
+    let couponCode = req.body.appliedCoupon;
+    const coupons = await couponDB.getCoupons({ couponCode: couponCode });
+    const couponId = coupons[0]._id;
+    req.session.couponId = couponId;
 
     document = {
       cart_id: cart_id,
@@ -125,11 +130,13 @@ exports.placeOrder = async (req, res) => {
       receipt: receipt,
       offerDiscount: null,
       couponDiscount: couponDiscount,
+      couponId: couponId
     };
 
     if (req.body.paymentMethod === "COD") {
       const result = await orderDB.insertOrder(document, user_id);
       await cartDB.deleteCart(req.session.user[0]._id);
+      await userDB.addCouponData(user_id, couponId);
 
       res.render("users/order-status", {
         user: req.session.user,
@@ -171,6 +178,7 @@ exports.placeOrder = async (req, res) => {
         })
       )
       await cartDB.deleteCart(req.session.user[0]._id);
+      await userDB.addCouponData(user_id, couponId);
 
       const walletDocument = {
         order_id: result.insertedId,
@@ -208,6 +216,9 @@ exports.verifyPayment = async (req, res) => {
     // Insert order to DB
     await orderDB.insertOrder(orderData, user_id);
     await cartDB.deleteCart(user_id);
+
+    const couponId = req.session.couponId;
+    await userDB.addCouponData(user_id, couponId);
 
     res.json({ status: "success" });
   } else {
