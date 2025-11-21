@@ -168,11 +168,11 @@
                                     </div>
                                     <% }); %>
                                     <div style="display: flex; justify-content: center;">
-                                        <a id="add-address" href="/address/add"><button id="add-address-button"
+                                        <a id="add-address" href="/address/add-checkout"><button id="add-address-button"
                                             class="btn rounded button bg-dark-grn">Add Address</button></a>
                                     </div>
                                         <% } else { %>
-                                            <p>No saved addresses. <a href="/address/add">Add a new address</a></p>
+                                            <p>No saved addresses. <a href="/address/add-checkout">Add a new address</a></p>
                                             <% } %>
                         </div>
                         <div class="right border mt-3">
@@ -238,60 +238,59 @@
                                                 </div>
                                                 
                                                 <% for(let i=0;i < coupons.length; i++) { %>
-                                                    <% if (coupons[i].status == ' Active') { %>
+                                                    <% if (coupons[i].status == "Active") { %>
                                                                 <div class="row couponDetails">
-                                                                    Use coupon '<%= coupons[i].couponCode %>'' for <%=
-                                                                            coupons[i].discountPercentage %> % off upto
-                                                                            ₹ <%= coupons[i].maxDiscount %>
-                                                                </div>
-
-                                                                <% } %>
-                                                                    <% } %>
-                                            </div>
-                                        </div>
-                                        <div class="row lower">
-
-                                            <div id="removeCouponDiv" hidden>
-                                                <br>
-                                                <span>Coupon Applied, <a href="" id="removeCoupon">Remove?</a></span>
+                                                                    Use coupon "<%=coupons[i].couponCode %>" for <%=
+                                                                    coupons[i].discountPercentage %> % off upto
+                                                                    ₹ <%= coupons[i].maxDiscount %>
                                             </div>
 
-                                            <form class="form-inline" id="couponForm">
-                                                <div class="form-group">
-                                                    <label for="couponInput">Have coupon?</label>
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control coupon col-md-10"
-                                                            id="couponInput" name="couponCode" placeholder="Coupon code"
-                                                            style="margin: inherit;">
-                                                        <button class="btn rounded button bg-dark-grn col-md-2 ms-1"
-                                                            id="couponButton" style="width: 25%; margin: inherit;">
-                                                            Apply
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </form>
+                                            <% } %>
+                                                <% } %>
                                         </div>
-
-                                        <!-- Hidden inputs to pass additional values -->
-                                        <input type="hidden" name="productPrice" id="productPriceHidden" value="">
-                                        <input type="hidden" name="deliveryCharge" id="deliveryChargeHidden" value="">
-                                        <input type="hidden" name="discount" id="discountHidden" value="">
-                                        <input type="hidden" name="couponDiscount" id="couponDiscountHidden" value="">
-                                        <input type="hidden" name="total" id="totalHidden" value="">
-
-                                        <button type="submit" class="btn rounded button bg-dark-grn">Place
-                                            Order</button>
-                                        <p class="text-muted text-center">Complimentary Shipping & Returns for every
-                                            purchase above 1000</p>
                             </div>
+                            <br>
+                            <div class="row lower">
+                                <div id="removeCouponDiv" hidden>
+                                    <br>
+                                    <span>Coupon Applied, <a href="" id="removeCoupon">Remove?</a></span>
+                                </div>
+                                <div class="form-inline" id="couponForm">
+                                    <div class="form-group">
+                                        <label style="font-weight: 600;" class="text-muted" for="couponInput">Have coupon?</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control coupon col-md-10" id="couponInput"
+                                                name="couponCode" placeholder="Coupon code" style="margin: inherit;">
+                                            <button class="btn rounded button bg-dark-grn col-md-2 ms-1"
+                                                id="couponButton" style="width: 25%; margin: inherit;">
+                                                Apply
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hidden inputs to pass additional values -->
+                            <input type="hidden" name="productPrice" id="productPriceHidden" value="">
+                            <input type="hidden" name="deliveryCharge" id="deliveryChargeHidden" value="">
+                            <input type="hidden" name="discount" id="discountHidden" value="">
+                            <input type="hidden" name="couponDiscount" id="couponDiscountHidden" value="">
+                            <input type="hidden" name="total" id="totalHidden" value="">
+
+                            <button type="submit" class="btn rounded button bg-dark-grn">Place
+                                Order</button>
+                            <p class="text-muted text-center">Complimentary Shipping & Returns for every
+                                purchase above 1000</p>
                         </div>
                     </div>
-                </form>
             </div>
+            </form>
         </div>
+    </div>
     </div>
 
     <script>
+        
         window.onload = () => {
             calculation();
         }
@@ -353,8 +352,6 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ couponCode: couponInput.value, price: productPrice })
             }).then(response => {
-                console.log(response);
-
                 if (!response.ok) {
                     throw new Error("Failed to apply coupon");
                 }
@@ -364,15 +361,16 @@
                     alert(data.message);
                     return;
                 }
+
                 document.getElementById('couponForm').setAttribute('hidden', true);
                 document.getElementById('removeCouponDiv').removeAttribute('hidden');
                 document.getElementById('couponDiscount').setAttribute('data-couponDiscount', data.discount);
                 document.getElementById('couponDiscount').innerText = `₹ ${data.discount}`;
-                document.getElementById('appliedCoupon').setAttribute("value",couponInput.value)
+                document.getElementById('appliedCoupon').setAttribute("value", couponInput.value)
 
                 calculation();
             }).catch(err => {
-                alert("Error applying coupon. Please try again.");
+                alert("Error applying coupon. Please try again. "+err);
             })
         });
 

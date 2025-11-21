@@ -10,7 +10,7 @@ const couponChecking = async (req, res) => {
         req.session.user = await userDB.findUserById(userId);
 
         const coupons = await couponDB.getCoupons({ couponCode: couponCode });
-        const couponId = coupons[0]._id;
+        const couponId = coupons[0]?._id;
         
         const couponEntry = req.session.user[0].usedCoupons?.find((coupon) => {
             return String(coupon.couponId) == String(couponId)

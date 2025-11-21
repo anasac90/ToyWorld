@@ -97,7 +97,7 @@
                             </div>
                             <div class="mb-3">
                                 <label>Re-enter password:</label>
-                                <input class="form-control" required type="password" name="password2"
+                                <input class="form-control" id="password2" required type="password" name="password2"
                                     placeholder="Re-enter password" />
                             </div>
                             <% } %>
@@ -136,10 +136,12 @@
     <script>
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
+        const passwordInput2 = document.getElementById('password2');
 
         togglePassword.addEventListener('click',()=>{
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type',type);
+            passwordInput2.setAttribute('type',type);
 
             togglePassword.textContent = type === 'password' ? 'Show' : 'Hide';
         });

@@ -222,6 +222,4 @@ exports.validProduct = async (req, res, next) => {
       });
     }
   }
-
-
 };

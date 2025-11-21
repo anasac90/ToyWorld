@@ -6,6 +6,7 @@ const offerDB = require('../models/offerDB');
 const couponDB = require('../models/couponDB');
 const Razorpay = require("razorpay");
 const userDB = require('../models/usersDB');
+const addressDB = require('../models/addressDB');
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -19,6 +20,7 @@ exports.checkout = async (req, res) => {
   const wallet = await walletDB.getWallet(user_id);
   const coupons = await couponDB.getCoupons();
   const offers = await offerDB.findOffer();
+  const addresses = await addressDB.findUserAddress(user_id);
 
   req.session.cart = cart;
   let cartProducts = await Promise.all(
@@ -50,7 +52,7 @@ exports.checkout = async (req, res) => {
 
   res.render("users/checkout", {
     user: req.session.user,
-    addresses: req.session.addresses ? req.session.addresses : [],
+    addresses: addresses ? addresses : [],
     cartProducts: cartProducts ? cartProducts : [],
     wallet,
     totalValue,
@@ -93,6 +95,7 @@ exports.placeOrder = async (req, res) => {
       }
     }
 
+    
     let today = new Date();
 
     const orderDate = `${String(today.getDate()).padStart(2, "0")}/${String(
@@ -110,7 +113,7 @@ exports.placeOrder = async (req, res) => {
     let couponDiscount = req.body.couponDiscount;
     let couponCode = req.body.appliedCoupon;
     const coupons = await couponDB.getCoupons({ couponCode: couponCode });
-    const couponId = coupons[0]._id;
+    const couponId = coupons[0]?._id;
     req.session.couponId = couponId;
 
     document = {

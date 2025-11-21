@@ -39,17 +39,17 @@ router.get("/", conditions.isBlocked, userController.userHome);
 
 router.get("/login", conditions.isBlocked, userController.login);
 
-router.get("/forgetPassword",conditions.isBlocked, userController.forgetPassword)
+router.get("/forgetPassword", conditions.isBlocked, userController.forgetPassword)
 
 // reset password
-router.post('/my-account/reset-password', conditions.isBlocked,userController.resetPassword);
+router.post('/my-account/reset-password', conditions.isBlocked, userController.resetPassword);
 
 // User login validation
 router.post("/home", conditions.isBlocked, userController.validation);
 
 // User signup
 router.get("/signup", conditions.isBlocked, (req, res) => {
-  if(req.session.user) res.redirect("/");
+  if (req.session.user) res.redirect("/");
   else res.render("users/user-signup", { user: [], warning: "", newUser: req.body });
 });
 
@@ -67,18 +67,18 @@ router.post("/sendOTP", conditions.isBlocked, userController.sendOTP);
 
 // verify OTP
 router.post("/verifyOTP", conditions.isBlocked, userController.verifyOTP);
-  
+
 // product page
 router.get("/products", conditions.isBlocked, userController.userProducts);
 
 // detailed product page
-router.get("/products/:id",conditions.isBlocked, userController.productDetailed);
+router.get("/products/:id", conditions.isBlocked, userController.productDetailed);
 
 // category page
 router.get("/categories", conditions.isBlocked, userController.userCategories);
 
 // list of products in a category
-router.get('/categories/:id',conditions.isBlocked,categoryController.categryProducts)
+router.get('/categories/:id', conditions.isBlocked, categoryController.categryProducts)
 
 // google authentication
 router.get(
@@ -100,65 +100,65 @@ router.get(
 router.get("/logout", conditions.isBlocked, userController.logout);
 
 // user my account page
-router.get('/my-account', conditions.isBlocked,validUser,userController.userAccount);
+router.get('/my-account', conditions.isBlocked, validUser, userController.userAccount);
 
 // edit profile
-router.get('/my-account/edit-profile', conditions.isBlocked,validUser,userController.editProfile);
+router.get('/my-account/edit-profile', conditions.isBlocked, validUser, userController.editProfile);
 
 // update profile
-router.post('/my-account/update-profile', conditions.isBlocked,validUser,userController.updateProfile);
+router.post('/my-account/update-profile', conditions.isBlocked, validUser, userController.updateProfile);
 
 // change password page
-router.get('/my-account/change-password', conditions.isBlocked,validUser,userController.changePassword)
+router.get('/my-account/change-password', conditions.isBlocked, validUser, userController.changePassword)
 
 // update password
-router.post('/my-account/update-password', conditions.isBlocked,validUser,userController.updatePassword);
+router.post('/my-account/update-password', conditions.isBlocked, validUser, userController.updatePassword);
 
 // verify email page
-router.get('/my-account/verify-email', conditions.isBlocked,validUser,userController.verifyEmail);
+router.get('/my-account/verify-email', conditions.isBlocked, validUser, userController.verifyEmail);
 
 // add address page
-router.get('/address/add',conditions.isBlocked,validUser,addressController.addAddress);
-router.get('/address/add-checkout',conditions.isBlocked,validUser,addressController.addAddress)
+router.get('/address/add', conditions.isBlocked, validUser, addressController.addAddress);
+router.get('/address/add-checkout', conditions.isBlocked, validUser, addressController.addAddress)
 
 // submit address
-router.post('/address/submit',conditions.isBlocked,validUser,addressController.submitAddress);
+router.post('/address/submit', conditions.isBlocked, validUser, addressController.submitAddress);
 
 // edit address
-router.get('/address/edit/:id',conditions.isBlocked,validUser,addressController.editAddress);
+router.get('/address/edit/:id', conditions.isBlocked, validUser, addressController.editAddress);
 
 // update address
-router.put('/address/update',conditions.isBlocked,validUser,addressController.updateAddress);
+router.put('/address/update', conditions.isBlocked, validUser, addressController.updateAddress);
 
 // delete one address
-router.delete('/address/delete/:id',conditions.isBlocked,validUser,addressController.deleteAddress);
+router.delete('/address/delete/:id', conditions.isBlocked, validUser, addressController.deleteAddress);
 
 // cart
-router.get('/cart',conditions.isBlocked,validUser,cartController.cart);
+router.get('/cart', conditions.isBlocked, validUser, cartController.cart);
 
 // add to cart using fetch
-router.post('/add-to-cart',conditions.isBlocked,validUser,cartController.addToCartFetch);
+router.post('/add-to-cart', conditions.isBlocked, validUser, cartController.addToCartFetch);
 
 // add to cart
-router.get('/add-to-cart/:id',conditions.isBlocked,validUser,cartController.addToCart);
+router.get('/add-to-cart/:id', conditions.isBlocked, validUser, cartController.addToCart);
 
 // update quantity
-router.post('/cart/update-quantity',conditions.isBlocked,validUser,cartController.updateQuantity)
+router.post('/cart/update-quantity', conditions.isBlocked, validUser, cartController.updateQuantity)
 
 // delete from cart
-router.delete('/cart/delete/:id',conditions.isBlocked,validUser,cartController.deleteFromCart);
+router.delete('/cart/delete/:id', conditions.isBlocked, validUser, cartController.deleteFromCart);
 
 // checkout page
-router.get('/checkout',conditions.isBlocked,validUser,orderController.checkout);
+router.get('/checkout', conditions.isBlocked, validUser, orderController.checkout);
 
 // place-order
-router.post('/checkout/place-order',conditions.isBlocked,validUser,orderController.placeOrder);
+router.post('/checkout/place-order', conditions.isBlocked, validUser, orderController.placeOrder);
 
 // razorpay order payment 
-router.post('/checkout/verify-payment',conditions.isBlocked,validUser, orderController.verifyPayment);
+router.post('/checkout/verify-payment', conditions.isBlocked, validUser, orderController.verifyPayment);
 
 // success payment
-router.get('/order-success',conditions.isBlocked,validUser, (req,res)=>{
+router.get('/order-success', conditions.isBlocked, validUser, (req, res) => {
   res.render("users/order-status", {
     user: req.session.user,
     status: "Order Placed Successfully",
@@ -167,67 +167,67 @@ router.get('/order-success',conditions.isBlocked,validUser, (req,res)=>{
 })
 
 // orders
-router.get('/orders',conditions.isBlocked,validUser,orderController.orders);
+router.get('/orders', conditions.isBlocked, validUser, orderController.orders);
 
 // order details
-router.get('/orderDetails/:id',conditions.isBlocked,validUser,orderController.orderDetails)
+router.get('/orderDetails/:id', conditions.isBlocked, validUser, orderController.orderDetails)
 
 // invoice generate
-router.post('/orderDetails/generateInvoice',conditions.isBlocked, validUser,reportGenerator.generateInvoice);
+router.post('/orderDetails/generateInvoice', conditions.isBlocked, validUser, reportGenerator.generateInvoice);
 
 // download invoice
-router.get('/orderDetails/downloadInvoice/:invoice',conditions.isBlocked,validUser,(req,res)=>{
+router.get('/orderDetails/downloadInvoice/:invoice', conditions.isBlocked, validUser, (req, res) => {
   const invoice = req.params.invoice;
-  res.download(path.join(__dirname,`../downloads/invoice ${invoice}.pdf`))
+  res.download(path.join(__dirname, `../downloads/invoice ${invoice}.pdf`))
 })
 
 // cancel order
-router.put('/orderCancel',conditions.isBlocked,validUser,orderController.cancelOrder);
+router.put('/orderCancel', conditions.isBlocked, validUser, orderController.cancelOrder);
 
 // return order
-router.put('/orderReturn',conditions.isBlocked,validUser,orderController.returnOrder);
+router.put('/orderReturn', conditions.isBlocked, validUser, orderController.returnOrder);
 
 // search
-router.post('/search',conditions.isBlocked,productController.search);
+router.post('/search', conditions.isBlocked, productController.search);
 
 // sort
-router.get('/sort/:id',conditions.isBlocked,productController.sort);
+router.get('/sort/:id', conditions.isBlocked, productController.sort);
 
 // sort from products page 
-router.get('/products/sort/:id',conditions.isBlocked,productController.productSort);
+router.get('/products/sort/:id', conditions.isBlocked, productController.productSort);
 
 // coupon
-router.post('/couponChecking',conditions.isBlocked,validUser,couponController.couponChecking)
+router.post('/couponChecking', conditions.isBlocked, validUser, couponController.couponChecking)
 
 // category filtering on search page
-router.get('/search/:searchWord/:category',conditions.isBlocked,categoryController.categoryFilter)
+router.get('/search/:searchWord/:category', conditions.isBlocked, categoryController.categoryFilter)
 
 // category filtering on products page
-router.get('/products/filter/:category',conditions.isBlocked,categoryController.productsCategoryFilter)
+router.get('/products/filter/:category', conditions.isBlocked, categoryController.productsCategoryFilter)
 
 // wish list
-router.get('/wishlist',conditions.isBlocked,validUser,(req,res)=>{
+router.get('/wishlist', conditions.isBlocked, validUser, (req, res) => {
   const user_id = req.session.user[0]._id;
-  
-  wishListController.wishlist(req,res,user_id);
+
+  wishListController.wishlist(req, res, user_id);
 })
 
 // add to wish list
-router.post('/addToWishList',conditions.isBlocked,validUser,(req,res)=>{
+router.post('/addToWishList', conditions.isBlocked, validUser, (req, res) => {
   const productCode = req.body.productCode;
   const user_id = req.session.user[0]._id;
 
-  wishListController.addToWishList(req,res,productCode,user_id);
+  wishListController.addToWishList(req, res, productCode, user_id);
 })
 
-router.delete('/wishlist/delete/:productCode',conditions.isBlocked,validUser,(req,res)=>{
-  const {productCode} = req.params;
+router.delete('/wishlist/delete/:productCode', conditions.isBlocked, validUser, (req, res) => {
+  const { productCode } = req.params;
   const user_id = req.session.user[0]._id;
 
-  wishListController.deleteWishlist(req,res,productCode,user_id);
+  wishListController.deleteWishlist(req, res, productCode, user_id);
 })
 
-router.get('/wallet',conditions.isBlocked,validUser,walletController.wallet);
+router.get('/wallet', conditions.isBlocked, validUser, walletController.wallet);
 
 
 

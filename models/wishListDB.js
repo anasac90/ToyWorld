@@ -18,7 +18,7 @@ const addToWishList = async (productCode, user_id) => {
 const wishlistProducts = async (user_id)=>{
     const collection = getDB().collection(collections.WISHLIST_COLLECTION);
     const result = await collection.findOne({user_id:new ObjectId(user_id)},{poduct:1,_id:0});
-    return result.products;
+    return result?.products;
 }
 
 const deleteWishlist = async (productCode,user_id)=>{
