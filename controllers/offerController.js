@@ -261,7 +261,6 @@ const updateOffer = async (req, res, offerID) => {
                 }
 
                 const result = await offerDB.updateOffer(newOfferData, offerID);
-                referralOffer = await offerDB.findOffer({ _id: offerID });
                 success = true, message = 'Offer updated successfully'
             }
 
@@ -271,6 +270,7 @@ const updateOffer = async (req, res, offerID) => {
 
             let productOffer = await offerDB.findOffer({ offerType: 'product' });
             let categoryOffer = await offerDB.findOffer({ offerType: 'category' });
+            referralOffer = await offerDB.findOffer({ _id: offerID });
 
             res.render('admin/offers', {
                 activeTab: activeTab ? activeTab : '',

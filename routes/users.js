@@ -229,6 +229,10 @@ router.delete('/wishlist/delete/:productCode', conditions.isBlocked, validUser, 
 
 router.get('/wallet', conditions.isBlocked, validUser, walletController.wallet);
 
+router.get('/referral',conditions.isBlocked,validUser,userController.referral);
+
+router.post('/applyReferral',conditions.isBlocked,validUser,userController.applyReferral);
+
 
 
 module.exports = router;

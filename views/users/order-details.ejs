@@ -233,7 +233,7 @@
             headers: { 'Content-Type': 'application/json' }
           }).then(response => {
             if (response.ok) {
-              button.style = 'display:none';
+              button.setAttribute("hidden", true)
               returnStatus[index].textContent = 'Return requested';
               returnStatus[index].style = 'color:green;font-weight:600';
             } else {

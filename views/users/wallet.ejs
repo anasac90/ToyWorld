@@ -1,104 +1,126 @@
 <%- include ('../partials/user-header.ejs') %>
 
-<main class="mt-3" style="height: auto;">
-    <div class="content-head">
-        <div class="content-head-rect col-5 bg-dark-grn">
-            <div>
-                <h2 class="content-head-txt">WALLET</h2>
-            </div>
-            <div class="content-head-tri ms-auto"></div>
-        </div>
-    </div>
-    <div class="content-body side-margin text-center mt-3" style="display: block;">
-
-        <!-- Wallet Balance Section -->
-        <div class="wallet-balance-container mb-5">
-            <h3 class="mb-3">Your Wallet Balance</h3>
-            <div class="wallet-balance bg-light p-4 rounded">
-                <h1 class="text-success">₹<%= walletBalance ? walletBalance.toFixed(2) : 0 %></h1>
-                <p class="text-muted">Use your wallet balance for future purchases.</p>
+    <main class="mt-3" style="height: auto;">
+        <div class="content-head">
+            <div class="content-head-rect col-5 bg-dark-grn">
+                <div>
+                    <h2 class="content-head-txt">WALLET</h2>
+                </div>
+                <div class="content-head-tri ms-auto"></div>
             </div>
         </div>
+        <div class="content-body side-margin text-center mt-3" style="display: block;">
 
-        <!-- Transaction History Section -->
-        <div class="wallet-transaction-history">
-            <h3 class="mb-3">Transaction History</h3>
-            <% if (transactions && transactions?.length > 0) { %>
-                <table class="table table-striped">
-                    <thead class="table">
-                        <tr>
-                            <th class="bg-dark-grn" style="color: white;">Sl No</th>
-                            <th class="bg-dark-grn" style="color: white;">Date</th>
-                            <th class="bg-dark-grn" style="color: white;">Transaction Type</th>
-                            <th class="bg-dark-grn" style="color: white;">Order ID</th>
-                            <th class="bg-dark-grn" style="color: white;">Returned Product</th>
-                            <th class="bg-dark-grn" style="color: white;">Amount</th>
-                            <th class="bg-dark-grn" style="color: white;">Status</th>
-                            <th class="bg-dark-grn" style="color: white;"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% let i = 1 %>
-                        <% transactions.forEach(transaction => { %>
+            <!-- Wallet Balance Section -->
+            <div class="wallet-balance-container mb-5">
+                <h3 class="mb-3">Your Wallet Balance</h3>
+                <div class="wallet-balance bg-light p-4 rounded">
+                    <h1 class="text-success">₹<%= walletBalance ? walletBalance.toFixed(2) : 0 %>
+                    </h1>
+                    <p class="text-muted">Use your wallet balance for future purchases.</p>
+                </div>
+            </div>
+
+            <!-- Transaction History Section -->
+            <div class="wallet-transaction-history">
+                <h3 class="mb-3">Transaction History</h3>
+                <% if (transactions && transactions?.length> 0) { %>
+                    <table class="table table-striped">
+                        <thead class="table">
                             <tr>
-                                <td><%= i++ %></td>
-                                <td><%= new Date(transaction.date).toLocaleDateString() %></td>
-                                <td><%= transaction?.type %></td>
-                                <td><%= transaction?.order_id %></td>
-                                <td><%= transaction?.product %></td>
-                                <td>₹<%= parseFloat(transaction?.amount).toFixed(2) %></td>
-                                <td><span class="badge bg-success">
-                                    success
-                                </span></td>
-                                <td style="color: black;">
-                                    <form action="/orderDetails/<%= transaction.order_id %>">
-                                        <button
-                                            style="margin-left: 1rem; width: 7rem; color: white;"
-                                            class="btn bg-dark-grn" type="submit">Know More</button>
-                                    </form>
-                                </td>
+                                <th class="bg-dark-grn" style="color: white;">Sl No</th>
+                                <th class="bg-dark-grn" style="color: white;">Date</th>
+                                <th class="bg-dark-grn" style="color: white;">Transaction Type</th>
+                                <th class="bg-dark-grn" style="color: white;">Order ID</th>
+                                <th class="bg-dark-grn" style="color: white;">Returned Product</th>
+                                <th class="bg-dark-grn" style="color: white;">Amount</th>
+                                <th class="bg-dark-grn" style="color: white;">Status</th>
+                                <th class="bg-dark-grn" style="color: white;"></th>
                             </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
-            <% } else { %>
-                <p class="text-muted">No transactions found in your wallet.</p>
-            <% } %>
-        </div>
+                        </thead>
+                        <tbody>
+                            <% let i=1 %>
+                                <% transactions.forEach(transaction=> { %>
+                                    <tr>
+                                        <td>
+                                            <%= i++ %>
+                                        </td>
+                                        <td>
+                                            <%= new Date(transaction.date).toLocaleDateString() %>
+                                        </td>
+                                        <td>
+                                            <%= transaction?.type %>
+                                        </td>
+                                        <td>
+                                            <%= transaction?.order_id || "NA" %>
+                                        </td>
+                                        <td>
+                                            <%= transaction?.product || "NA" %>
+                                        </td>
+                                        <td>₹<%= parseFloat(transaction?.amount).toFixed(2) %>
+                                        </td>
+                                        <td><span class="badge bg-success">
+                                                success
+                                            </span></td>
+                                        <td style="color: black;">
+                                            <% if(transaction?.order_id) { %>
+                                                <form action="/orderDetails/<%= transaction?.order_id %>">
+                                                    <button style="margin-left: 1rem; width: 7rem; color: white;"
+                                                        class="btn bg-dark-grn" type="submit">Know More</button>
+                                                </form>
+                                                <% } else { %>
+                                                    <button style="margin-left: 1rem; width: 7rem; color: white;"
+                                                        class="btn bg-dark-grn" type="submit" disabled>NA</button>
+                                                    <% } %>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                        </tbody>
+                    </table>
+                    <% } else { %>
+                        <p class="text-muted">No transactions found in your wallet.</p>
+                        <% } %>
+            </div>
 
-        <!-- FAQs Section -->
-        <div class="wallet-faq mt-5">
-            <h3 class="mb-3">Wallet FAQs</h3>
-            <div class="accordion" id="walletFAQs">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="faq1">
-                        <button class="accordion-button bg-dark-grn" style="color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1"
-                            aria-expanded="true" aria-controls="collapse1">
-                            What is Wallet Balance?
-                        </button>
-                    </h2>
-                    <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="faq1" data-bs-parent="#walletFAQs">
-                        <div class="accordion-body">
-                            Wallet balance is the amount refunded from canceled or returned orders. You can use it for future purchases.
+            <!-- FAQs Section -->
+            <div class="wallet-faq mt-5">
+                <h3 class="mb-3">Wallet FAQs</h3>
+                <div class="accordion" id="walletFAQs">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq1">
+                            <button class="accordion-button bg-dark-grn" style="color: white;" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true"
+                                aria-controls="collapse1">
+                                What is Wallet Balance?
+                            </button>
+                        </h2>
+                        <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="faq1"
+                            data-bs-parent="#walletFAQs">
+                            <div class="accordion-body">
+                                Wallet balance is the amount refunded from canceled or returned orders. You can use it
+                                for future purchases.
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="faq2">
-                        <button class="accordion-button collapsed bg-dark-grn" style="color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2"
-                            aria-expanded="false" aria-controls="collapse2">
-                            Can I withdraw Wallet Balance?
-                        </button>
-                    </h2>
-                    <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="faq2" data-bs-parent="#walletFAQs">
-                        <div class="accordion-body">
-                            Currently, wallet balance cannot be withdrawn and can only be used for purchases on this platform.
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq2">
+                            <button class="accordion-button collapsed bg-dark-grn" style="color: white;" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false"
+                                aria-controls="collapse2">
+                                Can I withdraw Wallet Balance?
+                            </button>
+                        </h2>
+                        <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="faq2"
+                            data-bs-parent="#walletFAQs">
+                            <div class="accordion-body">
+                                Currently, wallet balance cannot be withdrawn and can only be used for purchases on this
+                                platform.
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 
-<%- include ('../partials/user-footer.ejs') %>
+    <%- include ('../partials/user-footer.ejs') %>

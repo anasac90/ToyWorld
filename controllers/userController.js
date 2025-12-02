@@ -5,6 +5,8 @@ const addressDB = require("../models/addressDB");
 const orderDB = require("../models/orderDB");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+const offerDB = require("../models/offerDB");
+const walletDB = require("../models/walletDB");
 
 // Configure Nodemailer
 const transporter = nodemailer.createTransport({
@@ -37,7 +39,7 @@ exports.forgetPassword = async (req, res) => {
 
 exports.userHome = async (req, res) => {
   let products = await productDB.getProducts({ isDeleted: false });
-  
+
   let categories = await categoryDB.getCategories({ isDeleted: false });
   if (req.session.user) {
     res.render("users/home", { user: req.session.user, products, categories });
@@ -49,12 +51,25 @@ exports.userHome = async (req, res) => {
 exports.signUp = async (req, res) => {
   let email = req.body.email;
   let protectedPassword = await bcrypt.hash(req.body.password, 10);
+  let referralCodeGenerator = () => {
+    let char = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let code = "";
+    for (let i = 1; i <= 8; i++) {
+      code += char.charAt(Math.floor(Math.random() * char.length))
+    }
+    return code;
+  }
+
+  let referralCode = referralCodeGenerator();
+
   let user = {
     fname: req.body.fname,
     lname: req.body.lname,
     email: req.body.email,
     mobile: req.body.mobile,
     password: protectedPassword,
+    referralCode: referralCode,
+    referredByCode: "",
     isBlocked: false,
     isEmailVerified: false,
   };
@@ -421,3 +436,97 @@ exports.resetPassword = async (req, res) => {
 exports.verifyEmail = (req, res) => {
   res.render("users/verify-email", { user: req.session.user, warning: null });
 };
+
+exports.referral = async (req, res) => {
+  let referralByDetails;
+  let referralOffer = await offerDB.findOffer({ offerType: "referral" })
+
+  if (req.session.user[0].referredByCode == "") {
+    referralByDetails = null;
+  } else {
+    let result = await usersDB.findUser({ referralCode: req.session.user[0].referredByCode })
+    referralByDetails = {
+      referralByCode: result[0].referralCode,
+      referralByFName: result[0].fname,
+      referralByLName: result[0].lname
+    }
+  }
+
+  res.render("users/referral", { user: req.session.user, referralByDetails, referralOffer, message: '' });
+}
+
+exports.applyReferral = async (req, res) => {
+  req.body.referredByCode = req.body.referredByCode.toUpperCase();
+
+  let referralByDetails;
+  let referralOffer = await offerDB.findOffer({ offerType: "referral" })
+  req.session.user = await usersDB.findUserById(req.session.user[0]._id);
+  let isReferralCodeExist = await usersDB.findUser({ referralCode: req.body.referredByCode })
+  let now = new Date();
+
+
+
+  if (req.session.user[0].referredByCode != "") {
+    let message = { success: false, status: "Referred by details already registered with this account" }
+    res.render("users/referral", { user: req.session.user, referralByDetails, referralOffer, message });
+  } else if (!req.body.referredByCode.trim()) {
+    let message = { success: false, status: "Enter Correct Referral Code" }
+    res.render("users/referral", { user: req.session.user, referralByDetails, referralOffer, message });
+  } else if (req.body.referredByCode == req.session.user[0].referredByCode) {
+    let message = { success: false, status: "Referral code already linked to your account" }
+    res.render("users/referral", { user: req.session.user, referralByDetails, referralOffer, message });
+  } else if (req.body.referredByCode == req.session.user[0].referralCode) {
+    let message = { success: false, status: "You can't enter your own referral code" }
+    res.render("users/referral", { user: req.session.user, referralByDetails, referralOffer, message });
+  } else if (isReferralCodeExist.length == 0) {
+    let message = { success: false, status: "Entered referral code does not exist, Please check" }
+    res.render("users/referral", { user: req.session.user, referralByDetails, referralOffer, message });
+  } else if (isReferralCodeExist[0].referredByCode == req.session.user[0].referralCode) {
+    let message = { success: false, status: "You can't use referral codes back and forth" }
+    res.render("users/referral", { user: req.session.user, referralByDetails, referralOffer, message });
+  } else {
+    await usersDB.updateUser({ email: req.session.user[0].email }, { referredByCode: req.body.referredByCode });
+    req.session.user = await usersDB.findUserById(req.session.user[0]._id);
+
+    if (req.session.user[0].referredByCode == "") {
+      referralByDetails = null;
+    } else {
+      let result = await usersDB.findUser({ referralCode: req.session.user[0].referredByCode })
+      referralByDetails = {
+        referralByCode: result[0].referralCode,
+        referralByFName: result[0].fname,
+        referralByLName: result[0].lname
+      }
+    }
+
+
+    if (referralOffer[0]?.expiryDate > now && referralOffer[0]?.referralAmount > 0) {
+      let offerAmount = Number(referralOffer[0]?.referralAmount);
+      const document1 = {
+        amount: offerAmount,
+        date: now,
+        type: "Referral",
+        referralCodeEntered: req.body.referredByCode,
+      }
+
+      const document2 = {
+        amount: offerAmount,
+        date: now,
+        type: "Referral",
+        referralCodeUsedBy: `${req.session.user[0].fname} ${req.session.user[0].lname}`,
+        referralCodeUsedById: req.session.user[0]._id
+      }
+      await walletDB.addToWallet(req.session.user[0]._id, offerAmount, document1);
+      await walletDB.addToWallet(isReferralCodeExist[0]?._id, offerAmount, document2);
+
+      let message = {
+        success: true, status: "Referred by details updated and " + offerAmount +
+          " credited to your wallet"
+      }
+      res.render("users/referral", { user: req.session.user, referralByDetails, referralOffer, message });
+    } else {
+      let message = { success: true, status: "Referred by details updated" }
+      res.render("users/referral", { user: req.session.user, referralByDetails, referralOffer, message });
+    }
+  }
+}

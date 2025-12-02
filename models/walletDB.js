@@ -1,6 +1,6 @@
 const { getDB } = require('../configure/db-connect');
 const collections = require('../configure/collections');
-const { ObjectId, Transaction } = require("mongodb");
+const { ObjectId} = require("mongodb");
 
 const getWallet = async (user_id)=>{
     const collection = getDB().collection(collections.WALLET_COLLECTION);
