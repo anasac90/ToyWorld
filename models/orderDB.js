@@ -193,3 +193,145 @@ exports.homeDataQuery = async (startDate) => {
      console.error('DB Error: ' + error);
   }
 }
+
+exports.getDashboardSummary = async (startDate) => {
+  const collection = getDB().collection(collections.ORDER_COLLECTION);
+
+  const result = await collection.aggregate([
+    {
+      $match: {
+        orderDateAndTime: { $gte: startDate },
+        orderStatus: "Successful",
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        totalRevenue: { $sum: { $toDouble: "$orderValue" } },
+        totalOrders: { $sum: 1 }
+      }
+    },
+    { $project: { _id: 0 } }
+  ]).toArray();
+
+  return result[0] || { totalRevenue: 0, totalOrders: 0 };
+};
+
+
+exports.getSalesTrend = async (startDate, filterOption) => {
+  const collection = getDB().collection(collections.ORDER_COLLECTION);
+
+  // group format depends on filter
+  let format;
+  if (filterOption === 'weekly' || filterOption === 'monthly') {
+    // group by day
+    format = "%Y-%m-%d";
+  } else {
+    // yearly -> group by month
+    format = "%Y-%m";
+  }
+
+  const result = await collection.aggregate([
+    {
+      $match: {
+        orderDateAndTime: { $gte: startDate },
+        orderStatus: "Successful"
+      }
+    },
+    {
+      $group: {
+        _id: { $dateToString: { format, date: "$orderDateAndTime" } },
+        total: { $sum: { $toDouble: "$orderValue" } }
+      }
+    },
+    { $sort: { _id: 1 } }
+  ]).toArray();
+
+  // map to { labels, data }
+  const labels = result.map(r => r._id);
+  const data = result.map(r => r.total);
+
+  return { labels, data };
+};
+
+
+exports.homeCategoryDataQuery = async (startDate) => {
+  const collection = getDB().collection(collections.ORDER_COLLECTION);
+
+  const result = await collection.aggregate([
+    {
+      $match: {
+        orderDateAndTime: { $gte: startDate },
+        orderStatus: "Successful"
+      }
+    },
+    { $unwind: "$products" },
+    {
+      $lookup: {
+        from: "products",
+        localField: "products.productCode",
+        foreignField: "productCode",
+        as: "productDetails"
+      }
+    },
+    { $unwind: "$productDetails" },
+    {
+      $group: {
+        _id: "$productDetails.category",
+        totalSold: { $sum: "$products.quantity" }
+      }
+    },
+    {
+      $project: {
+        name: "$_id",
+        sales: "$totalSold",
+        _id: 0
+      }
+    },
+    { $sort: { sales: -1 } },
+    { $limit: 10 }
+  ]).toArray();
+
+  return result;
+};
+
+
+exports.homeBrandDataQuery = async (startDate) => {
+  const collection = getDB().collection(collections.ORDER_COLLECTION);
+
+  const result = await collection.aggregate([
+    {
+      $match: {
+        orderDateAndTime: { $gte: startDate },
+        orderStatus: "Successful"
+      }
+    },
+    { $unwind: "$products" },
+    {
+      $lookup: {
+        from: "products",
+        localField: "products.productCode",
+        foreignField: "productCode",
+        as: "productDetails"
+      }
+    },
+    { $unwind: "$productDetails" },
+    {
+      $group: {
+        _id: "$productDetails.brand",
+        totalSold: { $sum: "$products.quantity" }
+      }
+    },
+    {
+      $project: {
+        name: "$_id",
+        sales: "$totalSold",
+        _id: 0
+      }
+    },
+    { $sort: { sales: -1 } },
+    { $limit: 10 }
+  ]).toArray();
+
+  return result;
+};

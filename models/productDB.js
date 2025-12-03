@@ -106,6 +106,13 @@ const decrementQuantity = async (productCode,quantity)=>{
   }
 }
 
+const countActiveProducts = async () => {
+  const collection = getDB().collection(collections.PRODUCT_COLLECTION);
+  const count = await collection.countDocuments({isDeleted: false});
+  return count;
+};
+
+
 module.exports = {
   insertProduct,
   getProducts,
@@ -115,5 +122,6 @@ module.exports = {
   search,
   incrementQuantity,
   decrementQuantity,
-  deleteImageDB
+  deleteImageDB,
+  countActiveProducts
 };

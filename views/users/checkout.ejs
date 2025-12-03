@@ -93,88 +93,48 @@
                                         </div>
                                     </div>
 
-                                    <!-- Card payment Option -->
-                                    <!-- <div class="col-md-12 mt-3">
-                                        <div class="icons">
-                                            <img src="https://img.icons8.com/color/48/000000/visa.png" />
-                                            <img src="https://img.icons8.com/color/48/000000/mastercard-logo.png" />
-                                            <img src="https://img.icons8.com/color/48/000000/maestro.png" />
-                                        </div>
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <div class="form-check">
-                                                    <input disabled style="width: inherit;" class="form-check-input"
-                                                        type="radio" name="paymentMethod" id="cardOption" value="Card">
-                                                    <label class="form-check-label" for="cardOption">
-                                                        <h5 style="font-weight: 700;">Card Payment</h5>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="card-body">
-                                                <form>
-                                                    <div class="mb-3">
-                                                        <label for="cardName" class="form-label">Cardholder's
-                                                            Name</label>
-                                                        <input disabled type="text" class="form-control" id="cardName"
-                                                            placeholder="Enter name">
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="cardNumber" class="form-label">Card Number</label>
-                                                        <input disabled type="text" class="form-control" id="cardNumber"
-                                                            placeholder="XXXX-XXXX-XXXX-XXXX">
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="expiryDate" class="form-label">Expiry Date</label>
-                                                        <input disabled type="month" class="form-control"
-                                                            id="expiryDate">
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="cvv" class="form-label">CVV</label>
-                                                        <input disabled type="text" class="form-control" id="cvv"
-                                                            placeholder="XXX">
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div> -->
 
+                                    <!-- address section -->
+                                    <div class="col-md-12 mt-3 addressContainer" >
+                                        <div class="card">
+                                            <div class="header rounded p-3">Select Address</div>
+                                            <% if (addresses && addresses.length> 0) { %>
+                                                <% addresses.forEach(function(address, index) { %>
+                                                    <div class="address-card mb-3 p-3 border">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" style="width: inherit;" type="radio"
+                                                            name="selectedAddress" id="address<%= index %>"
+                                                            value="<%= address._id %>">
+                                                            <label class="form-check-label" for="address<%= index %>">
+                                                                <p>
+                                                                    <strong>
+                                                                        <%= user[0].fname+' '+user[0].lname %>
+                                                                    </strong>
+                                                                </p>
+                                                                <p>
+                                                                    <%= address.house %>, <%= address.street %>, <%= address.post %>,
+                                                                        <%= address.city %>, <%= address.state %>, - <%= address.pincode %> 
+                                                                </p>
+                                                                <p>
+                                                                    <%= address.mobile %>
+                                                                </p>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                <% }); %>
+                                                    <div style="display: flex; justify-content: center;">
+                                                        <a id="add-address" href="/address/add-checkout"><button id="add-address-button"
+                                                            class="btn rounded button bg-dark-grn">Add Address</button></a>
+                                                    </div>
+                                            <% } else { %>
+                                                <p>No saved addresses. <a href="/address/add-checkout">Add a new address</a></p>
+                                            <% } %>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-5">
-                            <div class="right border addressContainer">
-                                <div class="header rounded p-3">Select Address</div>
-                                <!-- Loop through the addresses passed from the backend -->
-                                <% if (addresses && addresses.length> 0) { %>
-                                    <% addresses.forEach(function(address, index) { %>
-                                        <div class="address-card mb-3 p-3 border">
-                                            <div class="form-check">
-                                                <input class="form-check-input" style="width: inherit;" type="radio"
-                                                    name="selectedAddress" id="address<%= index %>"
-                                                    value="<%= address._id %>">
-                                                <label class="form-check-label" for="address<%= index %>">
-                                                    <p><strong>
-                                                            <%= user[0].fname+' '+user[0].lname %>
-                                                    </strong></p>
-                                                <p>
-                                                    <%= address.house %>, <%= address.street %>, <%= address.post %>,
-                                                     <%= address.city %>, <%= address.state %>, - <%= address.pincode %> 
-                                                </p>
-                                                <p>
-                                                    <%= address.mobile %>
-                                                </p>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <% }); %>
-                                    <div style="display: flex; justify-content: center;">
-                                        <a id="add-address" href="/address/add-checkout"><button id="add-address-button"
-                                            class="btn rounded button bg-dark-grn">Add Address</button></a>
-                                    </div>
-                                        <% } else { %>
-                                            <p>No saved addresses. <a href="/address/add-checkout">Add a new address</a></p>
-                                            <% } %>
-                        </div>
                         <div class="right border mt-3">
                             <div class="header rounded p-3">Order Summary</div>
                             <p>
@@ -217,7 +177,7 @@
                                         data-delivery="<%= deliveryCharge.toFixed(2) %>">₹ <%= deliveryCharge.toFixed(2) %></div>
                                     </div>
                                     <div class="row lower">
-                                        <div class="col text-left">Discount</div>
+                                        <div class="col text-left">Offer Discount</div>
                                         <div class="col text-right" id="discount" 
                                         data-discount="<%= discount.toFixed(2) %>">₹ <%= discount.toFixed(2) %></div>
                                     </div>
@@ -231,6 +191,27 @@
                                     </div>
 
                                     <hr>
+                                    <div class="row item productCard">
+                                            <div class="col-10 align-self-center">
+                                                <div class="row text-muted productName" style="font-weight: 600;">
+                                                    Applied Offers:
+                                                </div>
+                                                    <% for(let i=0;i < offers.length; i++) { %>
+                                                        <% if (offers[i].offerType == "product") { %>
+                                                                    <div class="row offerDetails mt-3">
+                                                                        Get "<%= offers[i].discountPrecentage %>%" off upto
+                                                                        "₹ <%= offers[i].maxDiscount %>" for "<%=offers[i].productName %>".
+                                                                    </div>
+                                                        <% } else if (offers[i].offerType == "category") { %>
+                                                            <div class="row offerDetails mt-3">
+                                                                Get "<%= offers[i].discountPrecentage %>%" off upto
+                                                                "₹ <%= offers[i].maxDiscount %>" for the category "<%=offers[i].categoryName %>".
+                                                            </div>                                                            
+                                                        <% } %>
+                                                    <% } %>
+                                                </div>
+                                    </div>
+                                    <hr>
                                         <div class="row item productCard">
                                             <div class="col-10 align-self-center">
                                                 <div class="row text-muted productName" style="font-weight: 600;">
@@ -242,7 +223,7 @@
                                                                 <div class="row couponDetails">
                                                                     Use coupon "<%=coupons[i].couponCode %>" for <%=
                                                                     coupons[i].discountPercentage %> % off upto
-                                                                    ₹ <%= coupons[i].maxDiscount %>
+                                                                    ₹ <%= coupons[i].maxDiscount %>.
                                             </div>
 
                                             <% } %>
@@ -290,23 +271,19 @@
     </div>
 
     <script>
-        
+
         window.onload = () => {
             calculation();
         }
 
         function calculation() {
             let productPrice = parseFloat(document.getElementById('productPrice').getAttribute('data-productPrice'));
-            let
-                deliveryCharge = parseFloat(document.getElementById('delivery').getAttribute('data-delivery'));
-            let
-                discount = parseFloat(document.getElementById('discount').getAttribute('data-discount'));
-            let
-                couponDiscount = parseFloat(document.getElementById('couponDiscount').getAttribute('data-couponDiscount'));
-            let total = productPrice + deliveryCharge - discount -
-                couponDiscount;
-            document.getElementById('total').innerText = '₹ ' +
-                total.toFixed(2);
+            let deliveryCharge = parseFloat(document.getElementById('delivery').getAttribute('data-delivery'));
+            let discount = parseFloat(document.getElementById('discount').getAttribute('data-discount'));
+            let couponDiscount = parseFloat(document.getElementById('couponDiscount').getAttribute('data-couponDiscount'));
+            let total = productPrice + deliveryCharge - discount - couponDiscount;
+
+            document.getElementById('total').innerText = '₹ ' + total.toFixed(2);
 
             if (total > '<%= wallet?.balanceAmount || 0 %>') {
                 document.getElementById('walletOption').setAttribute('disabled', true);
@@ -328,20 +305,20 @@
         }
 
         // add address button
-        document.getElementById('add-address-button').addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = '/address/add-checkout';
-        });
+        document.getElementById('add-address-button').addEventListener('click',
+            (e) => {
+                e.preventDefault();
+                window.location.href = '/address/add-checkout';
+            });
 
         // apply coupon button handling
-        let couponInput =
-            document.getElementById('couponInput');
-        let couponButton =
-            document.getElementById('couponButton');
+        let couponInput = document.getElementById('couponInput');
+        let couponButton = document.getElementById('couponButton');
 
         couponButton.addEventListener('click', (e) => {
             e.preventDefault();
-            let productPrice = parseFloat(document.getElementById('productPrice').getAttribute('data-productPrice'));
+            let productPrice =
+                parseFloat(document.getElementById('productPrice').getAttribute('data-productPrice'));
             if (!couponInput.value.trim()) {
                 alert("Please enter a valid coupon code.");
                 return;
@@ -350,7 +327,9 @@
             fetch('/couponChecking', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ couponCode: couponInput.value, price: productPrice })
+                body: JSON.stringify({
+                    couponCode: couponInput.value, price: productPrice
+                })
             }).then(response => {
                 if (!response.ok) {
                     throw new Error("Failed to apply coupon");
@@ -369,22 +348,24 @@
                 document.getElementById('appliedCoupon').setAttribute("value", couponInput.value)
 
                 calculation();
+
             }).catch(err => {
-                alert("Error applying coupon. Please try again. "+err);
+                alert("Error applying coupon. Please try again."+err);
             })
         });
 
         // remove coupon button handling
-        document.getElementById('removeCoupon').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.getElementById('removeCouponDiv').setAttribute('hidden', true);
-            document.getElementById('couponDiscount').setAttribute('data-couponDiscount', `${0.00}`);
-            document.getElementById('couponDiscount').innerText = `₹ ${0.00}`
-            document.getElementById('couponForm').removeAttribute('hidden');
+        document.getElementById('removeCoupon').addEventListener('click',
+            (e) => {
+                e.preventDefault();
+                document.getElementById('removeCouponDiv').setAttribute('hidden', true);
+                document.getElementById('couponDiscount').setAttribute('data-couponDiscount',`${0.00}`);
+                document.getElementById('couponDiscount').innerText = `₹ ${0.00}`
+                document.getElementById('couponForm').removeAttribute('hidden');
 
-            calculation()
-        })
+                calculation()
+            })
 
     </script>
 
-    <%- include ('../partials/user-footer.ejs') %>
+ <%- include ('../partials/user-footer.ejs') %>

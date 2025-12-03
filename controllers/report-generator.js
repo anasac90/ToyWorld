@@ -235,32 +235,72 @@ const generateInvoice = async (req, res) => {
 
 
 const bestSellingProducts = async (req, res) => {
-    try {
-        let filterOption = req.params.filter? req.params.filter : 'yearly';
-        const now = new Date();
+  try {
+    let filterOption = req.params.filter ? req.params.filter : 'yearly';
+    const now = new Date();
 
-        let startDate;
-
-        if (filterOption === 'weekly') {
-            startDate = startOfDay(subDays(now, 7));
-        } else if (filterOption === 'monthly') {
-            startDate = startOfDay(subMonths(now, 1));
-        } else if (filterOption === 'yearly') {
-            startDate = startOfDay(subYears(now, 1));
-        }
-
-        const bestSellingProduct = await orderDB.homeDataQuery(startDate);
-
-        res.render("admin/home", {
-            bestSellingProducts : bestSellingProduct,
-            bestSellingCategories: [],
-            bestSellingBrands: []
-        });
-
-    } catch (error) {
-         console.error('Error: ' + error);
+    let startDate;
+    if (filterOption === 'weekly') {
+      startDate = startOfDay(subDays(now, 7));
+    } else if (filterOption === 'monthly') {
+      startDate = startOfDay(subMonths(now, 1));
+    } else { // yearly default
+      startDate = startOfDay(subYears(now, 1));
+      filterOption = 'yearly'; // normalize
     }
-}
+
+    // 1. Top products / categories / brands
+    const bestProducts   = await orderDB.homeDataQuery(startDate);
+    const bestCategories = await orderDB.homeCategoryDataQuery(startDate);
+    const bestBrands     = await orderDB.homeBrandDataQuery(startDate);
+
+    // 2. Sales trend
+    const { labels: salesLabels, data: salesData } =
+      await orderDB.getSalesTrend(startDate, filterOption);
+
+    // 3. Summary cards
+    const { totalRevenue, totalOrders } =
+      await orderDB.getDashboardSummary(startDate);
+
+    const totalProducts = await productDB.countActiveProducts();
+
+    // 4. Category chart data
+    const catLabels = bestCategories.map(c => c.name);
+    const catData   = bestCategories.map(c => c.sales);
+
+    res.render("admin/home", {
+      bestSellingProducts:bestProducts,
+      bestSellingCategories:bestCategories,
+      bestSellingBrands:bestBrands,
+      salesLabels,
+      salesData,
+      catLabels,
+      catData,
+      totalRevenue,
+      totalOrders,
+      totalProducts,
+      currentFilter: filterOption
+    });
+
+  } catch (error) {
+    console.error('Error: ' + error);
+    // fallback – no data
+    res.render("admin/home", {
+      bestSellingProducts:   [],
+      bestSellingCategories: [],
+      bestSellingBrands:     [],
+      salesLabels: [],
+      salesData: [],
+      catLabels: [],
+      catData: [],
+      totalRevenue: 0,
+      totalOrders: 0,
+      totalProducts: 0,
+      currentFilter: 'yearly'
+    });
+  }
+};
+
 
 module.exports = {
     generatePdf,

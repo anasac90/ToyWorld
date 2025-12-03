@@ -187,8 +187,8 @@ const updateOffer = async (req, res, offerID) => {
                 res.render('admin/edit-productOffer', { success: false, message: 'Please fill the form correctly' })
             } else if (parseInt(discount) > 99 || parseInt(discount) < 1) {
                 res.render('admin/edit-productOffer', { offerData, success: false, message: 'Choose a correct offer precentage' })
-            } else if (maxLimit < 100) {
-                res.render('admin/edit-productOffer', { offerData, success: false, message: 'Maximum discount amount should be 100 or more' })
+            } else if (maxLimit < 1) {
+                res.render('admin/edit-productOffer', { offerData, success: false, message: 'Enter correct maximum discount amount' })
             } else if (today >= date) {
                 res.render('admin/edit-productOffer', { success: false, message: 'Choose a correct date' })
             } else {
@@ -221,8 +221,8 @@ const updateOffer = async (req, res, offerID) => {
                 res.render('admin/edit-categoryOffer', { offerData, success: false, message: 'Fill the form correctly' })
             } else if (parseInt(discount) > 99 || parseInt(discount) < 1) {
                 res.render('admin/edit-categoryOffer', { offerData, success: false, message: 'Choose a correct offer precentage' })
-            } else if (maxLimit < 100) {
-                res.render('admin/edit-categoryOffer', { offerData, success: false, message: 'Maximum discount amount should be 100 or more' })
+            } else if (maxLimit < 1) {
+                res.render('admin/edit-categoryOffer', { offerData, success: false, message: 'Enter correct maximum discount amount' })
             } else if (today >= date) {
                 res.render('admin/edit-categoryOffer', { offerData, success: false, message: 'Choose a correct date' })
             } else {

@@ -122,7 +122,7 @@
             const msgEl = document.getElementById('referralMsg');
 
             if ("<%= message %>") {
-                if ("<% message.success %>") {
+                if ("<%= message.success %>" === "true") {
                     toastr.info("<%= message.status %>");
                 } else {
                     toastr.warning("<%= message.status %>")

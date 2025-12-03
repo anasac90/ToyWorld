@@ -21,6 +21,8 @@ exports.checkout = async (req, res) => {
   const coupons = await couponDB.getCoupons();
   const offers = await offerDB.findOffer();
   const addresses = await addressDB.findUserAddress(user_id);
+  let productCodesIncluded = [];
+  let categoriesIncluded = [];
 
   req.session.cart = cart;
   let cartProducts = await Promise.all(
@@ -29,18 +31,63 @@ exports.checkout = async (req, res) => {
       let quantity = element.quantity;
       let result = await productDB.getProducts({ productCode: productCode });
       result[0].quantity = quantity; // adding quantity to the result
+
+      productCodesIncluded.push(productCode);
+      categoriesIncluded.push(result[0].category);
+
       return result[0];
     })
   );
+
   let totalValue = 0;
   cartProducts.map((product) => {
     totalValue =
       totalValue + parseFloat(product.price) * parseInt(product.quantity);
   });
 
+  let appliedOffers = [];
+  
+  offers.forEach(offer => {
+    if(offer.offerType == "product"){
+      if(productCodesIncluded.includes(offer.productCode)){
+        appliedOffers.push(offer);
+      }
+    } else if (offer.offerType == "category") {
+      if(categoriesIncluded.includes(offer.categoryName)){
+        appliedOffers.push(offer);
+      }
+    }
+  });
+
   const deliveryCharge = totalValue >= 1000 ? 0.0 : 100.0;
-  const discount =
-    totalValue >= 4000 ? Math.min(1000, (totalValue * 10) / 100) : 0.0;
+  let discount = 0;
+
+  appliedOffers.forEach(offer=>{
+    if(offer.offerType == 'product'){
+      let offerAmount = 0;
+      cartProducts.forEach(product=>{
+        if(product.productCode == offer.productCode){
+          let total = parseFloat(product.price) * parseInt(product.quantity);
+          offerAmount = total*parseFloat(offer.discountPrecentage)/100;
+          let maxDiscount = parseFloat(offer.maxDiscount);
+          offerAmount = offerAmount > maxDiscount ? maxDiscount : offerAmount;
+          discount += offerAmount;
+        }
+      })
+    } else if (offer.offerType == 'category'){
+      let total = 0;
+      let offerAmount = 0;
+      cartProducts.forEach(product=>{
+        if(product.category == offer.categoryName){
+          total += parseFloat(product.price) * parseInt(product.quantity);
+        }
+      })
+      offerAmount = total*parseFloat(offer.discountPrecentage)/100;
+      let maxDiscount = parseFloat(offer.maxDiscount);
+      offerAmount = offerAmount > maxDiscount ? maxDiscount : offerAmount;
+      discount += offerAmount;
+    }
+  })
 
   let warning;
   if (req.session.checkoutWarning) {
@@ -60,7 +107,7 @@ exports.checkout = async (req, res) => {
     discount,
     warning,
     coupons,
-    offers
+    offers: appliedOffers
   });
 };
 
@@ -124,14 +171,13 @@ exports.placeOrder = async (req, res) => {
       orderDateAndTime: today,
       productPrice: req.body.productPrice,
       deliveryCharge: req.body.deliveryCharge,
-      discount: req.body.discount,
       orderValue: req.body.total,
       paymentMethod: req.body.paymentMethod,
       address_id: req.body.selectedAddress,
       paymentStatus: "Pending",
       orderStatus: "Successful",
       receipt: receipt,
-      offerDiscount: null,
+      offerDiscount: req.body.discount,
       couponDiscount: couponDiscount,
       couponId: couponId
     };

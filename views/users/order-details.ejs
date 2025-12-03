@@ -154,20 +154,30 @@
                 <% } %>
                   <div class="d-flex justify-content-between pt-2">
                     <p class="fw-bold mb-0">Order Details</p>
-                    <p class="text-muted mb-0"><span class="fw-bold me-4">Total:</span> ₹ <%= orderData.productPrice %>
-                    </p>
+                    
                   </div>
 
                   <div class="d-flex justify-content-between pt-2">
                     <p class="text-muted mb-0">Invoice Number: <%= orderData.receipt %>
                     </p>
-                    <p class="text-muted mb-0"><span class="fw-bold me-4">Discount:</span> ₹ <%= orderData.discount %>
+                    <p class="text-muted mb-0"><span class="fw-bold me-4">Total:</span> ₹ <%= orderData.productPrice %>
                     </p>
                   </div>
 
                   <div class="d-flex justify-content-between">
                     <p class="text-muted mb-0">Order ID: <%= orderData._id %>
                     </p>
+                    <p class="text-muted mb-0"><span class="fw-bold me-4">Offer Discount:</span> ₹ <%= orderData.offerDiscount %>
+                    </p>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <p></p>
+                    <p class="text-muted mb-0"><span class="fw-bold me-4">Coupon Discount:</span> ₹ <%=
+                        orderData.couponDiscount %>
+                    </p>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <p></p>
                     <p class="text-muted mb-0"><span class="fw-bold me-4">Delivery Charges:</span> ₹ <%=
                         orderData.deliveryCharge %>
                     </p>
