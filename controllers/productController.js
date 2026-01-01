@@ -5,19 +5,41 @@ const path = require("path");
 
 // admin product listing page
 exports.productList = async (req, res) => {
-  let currentPage = parseInt(req.query.page) || 1;
-  let limit = 6;
-  let skip = (currentPage - 1) * limit;
+  try {
+    let searchInput = req.query.search || "";
+    let currentPage = parseInt(req.query.page) || 1;
+    let limit = 6;
+    let skip = (currentPage - 1) * limit;
 
-  let products = await productDB.getProducts();
-  let totalProductCount = products.length;
-  let totalPages = Math.ceil(totalProductCount / limit);
+    // Build search query
+    let searchQuery = {};
 
-  products = await productDB.getProducts({},skip,limit);
+    if (searchInput.trim() !== "") {
+      searchQuery.productName = { $regex: searchInput, $options: "i" };
+    }
 
-  
-  res.render("admin/products", { products, totalPages, currentPage });
+    // Get total count for pagination
+    let allProducts = await productDB.getProducts(searchQuery);
+    let totalProductCount = allProducts.length;
+    let totalPages = Math.ceil(totalProductCount / limit);
+
+    // Fetch paginated results
+    let products = await productDB.getProducts(searchQuery, skip, limit);
+
+    res.render("admin/products", {
+      products,
+      totalPages,
+      currentPage,
+      search: searchInput
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error");
+  }
 };
+
+
 
 //add product page
 let status = "";
@@ -61,9 +83,7 @@ exports.findProduct = async (req, res) => {
 
 // update product
 exports.updateProduct = async (req, res) => {
-  req.body.price = Number(req.body.price);
-  req.body.stockQuantity = Number(req.body.stockQuantity);
-  req.body.minimumAge = Number(req.body.minimumAge);
+  
 
   let result = await productDB.updateProduct(productId, req.body, req.files);
   res.redirect("/admin/products");

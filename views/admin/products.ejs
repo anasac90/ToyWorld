@@ -21,7 +21,7 @@
                 <a href="/admin/offers">OFFERS</a>
                 <a href="/admin/report">REPORT</a>
             </div>
-            <% if(products.length==0) { %>
+            <% if(products.length==0 && !search) { %>
                 <div class="content-main ms-3 mt-3 w-100">
                     <h3>No product available</h3>
                     <div style="width: 100%;" class="mt-3">
@@ -32,86 +32,100 @@
                 </div>
                 <% } else { %>
                     <div class="content-main ms-3 mt-3">
-                        <div style="width: 100%;">
-                            <button type="submit" class="btn" style="color: white; background-color: #66A5AD;">
-                                <a href="/admin/products/add" style="text-decoration: none; color: white;">Add
-                                    Product</a>
-                            </button>
+                        <div style="width: 100%; display: flex; justify-content: center;">
+                            <form action="/admin/products" method="GET" class="d-flex mb-3" style="width: 300px;">
+                                <input type="text" name="search" class="form-control" id="searchInput"
+                                    placeholder="Search products..." value="<%= typeof search !== 'undefined' ? search : '' %>">
+                                <button class="btn bg-dark-grn ms-2" type="submit" style="color: white;">Search</button>
+                            </form>
                         </div>
-                        <div style="width: 100%;">
-                            <table class="table table-hover text-center w-auto mx-auto mt-3">
-                                <thead>
-                                    <tr>
-                                        <th class="fw-bold bg-dark-grn" scope="col">No</th>
-                                        <th class="fw-bold bg-dark-grn" scope="col">Product Name</th>
-                                        <th class="fw-bold bg-dark-grn" scope="col">Price</th>
-                                        <th class="fw-bold bg-dark-grn" scope="col">Stock</th>
-                                        <th class="fw-bold bg-dark-grn" scope="col">Product code</th>
-                                        <th class="fw-bold bg-dark-grn" scope="col">Minimum age</th>
-                                        <th class="fw-bold bg-dark-grn" scope="col">Category</th>
-                                        <th class="fw-bold bg-dark-grn" scope="col">Brand</th>
-                                        <th class="fw-bold bg-dark-grn" scope="col">Image</th>
-                                        <th class="fw-bold bg-dark-grn" scope="col"></th>
-                                        <th class="fw-bold bg-dark-grn" scope="col"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% for(var i=0; i < products.length ; i++) { %>
-                                        <tr>
-                                            <td scope="row">
-                                                <%= i+1 %>
-                                            </td>
-                                            <td>
-                                                <%= products[i].productName %>
-                                            </td>
-                                            <td>
-                                                <%= products[i].price %>
-                                            </td>
-                                            <td>
-                                                <%= products[i].stockQuantity %>
-                                            </td>
-                                            <td>
-                                                <%= products[i].productCode %>
-                                            </td>
-                                            <td>
-                                                <%= products[i].minimumAge %>
-                                            </td>
-                                            <td>
-                                                <%= products[i].category %>
-                                            </td>
-                                            <td>
-                                                <%= products[i].brand %>
-                                            </td>
-                                            <td>
-                                                <img src="/images/<%= products[i].productImages[0] %>"
-                                                    style="width: 50px; height: 50px;" alt="">
-                                            </td>
-                                            <td>
-                                                <form action="/admin/products/edit/<%= products[i]._id %>">
-                                                    <button style="margin-left: 1rem; width: 5rem; color: white;"
-                                                        class="btn bg-dark-grn" type="submit">Edit</button>
-                                                </form>
-                                            </td>
-                                            <td>
-                                                <% if (products[i].isDeleted==false) { %>
-                                                    <form action="/admin/products/delete/<%= products[i]._id %>">
-                                                        <button
-                                                            style="margin-left: 1rem; width: 5rem; color: white; background-color: red;"
-                                                            class="btn" type="submit">Unlist</button>
-                                                    </form>
-                                                    <% } else { %>
-                                                        <form action="/admin/products/undelete/<%= products[i]._id %>">
-                                                            <button
-                                                                style="margin-left: 1rem; width: 5rem; color: white; background-color: green;"
-                                                                class="btn" type="submit">List</button>
+            
+                        <% if(products.length==0) { %>
+                            <div class="content-main ms-3 mt-3 w-100">
+                                <h3>No product available</h3>
+                            </div>
+                            <% } else { %>
+                                <div style="width: 100%;">
+                                    <table class="table table-hover text-center w-auto mx-auto mt-3">
+                                        <thead>
+                                            <tr>
+                                                <th class="fw-bold bg-dark-grn" scope="col">No</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">Product Name</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">Price</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">Stock</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">Product code</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">Minimum age</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">Category</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">Brand</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col">Image</th>
+                                                <th class="fw-bold bg-dark-grn" scope="col"></th>
+                                                <th class="fw-bold bg-dark-grn" scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% for(var i=0; i < products.length ; i++) { %>
+                                                <tr>
+                                                    <td scope="row">
+                                                        <%= i+1 %>
+                                                    </td>
+                                                    <td>
+                                                        <%= products[i].productName %>
+                                                    </td>
+                                                    <td>
+                                                        <%= products[i].price %>
+                                                    </td>
+                                                    <td>
+                                                        <%= products[i].stockQuantity %>
+                                                    </td>
+                                                    <td>
+                                                        <%= products[i].productCode %>
+                                                    </td>
+                                                    <td>
+                                                        <%= products[i].minimumAge %>
+                                                    </td>
+                                                    <td>
+                                                        <%= products[i].category %>
+                                                    </td>
+                                                    <td>
+                                                        <%= products[i].brand %>
+                                                    </td>
+                                                    <td>
+                                                        <img src="/images/<%= products[i].productImages[0] %>"
+                                                            style="width: 50px; height: 50px;" alt="">
+                                                    </td>
+                                                    <td>
+                                                        <form action="/admin/products/edit/<%= products[i]._id %>">
+                                                            <button style="margin-left: 1rem; width: 5rem; color: white;"
+                                                                class="btn bg-dark-grn" type="submit">Edit</button>
                                                         </form>
-                                                        <% } %>
-                                            </td>
-                                        </tr>
-                                        <% } %>
-                                </tbody>
-                            </table>
-                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <% if (products[i].isDeleted==false) { %>
+                                                            <form action="/admin/products/delete/<%= products[i]._id %>">
+                                                                <button
+                                                                    style="margin-left: 1rem; width: 5rem; color: white; background-color: red;"
+                                                                    class="btn" type="submit">Unlist</button>
+                                                            </form>
+                                                            <% } else { %>
+                                                                <form action="/admin/products/undelete/<%= products[i]._id %>">
+                                                                    <button
+                                                                        style="margin-left: 1rem; width: 5rem; color: white; background-color: green;"
+                                                                        class="btn" type="submit">List</button>
+                                                                </form>
+                                                                <% } %>
+                                                    </td>
+                                                </tr>
+                                                <% } %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="width: 100%;">
+                                    <button type="submit" class="btn" style="color: white; background-color: #66A5AD;">
+                                        <a href="/admin/products/add" style="text-decoration: none; color: white;">Add
+                                            Product</a>
+                                    </button>
+                                </div>
+                                <% } %>
                     </div>
                     <% } %>
         </div>
@@ -145,5 +159,16 @@
                 <% } %>
         </div>
     </main>
+
+    <!-- <script>
+        const searchInput = document.getElementById("searchInput");
+
+        searchInput.addEventListener("input", function () {
+            if (this.value.trim() === "") {
+                window.location.href = "/admin/products";
+            }
+        });
+
+    </script> -->
 
     <%- include ('../partials/admin-footer.ejs') %>

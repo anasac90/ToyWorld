@@ -15,19 +15,24 @@ const insertProduct = async (document, files) => {
 };
 
 // Function to get products
-const getProducts = async (search, skip, limit) => {
-
+const getProducts = async (search = {}, skip = 0, limit = 0) => {
   const collection = getDB().collection(collections.PRODUCT_COLLECTION);
-  let products = [];
 
-  if (limit) {
-    products = await collection.find(search).sort({ _id: -1 }).skip(skip).limit(limit).toArray();
-  } else {
-    products = await collection.find(search).sort({ _id: -1 }).toArray();
+  if (limit > 0) {
+    return await collection
+      .find(search)
+      .sort({ _id: -1 })
+      .skip(skip)
+      .limit(limit)
+      .toArray();
   }
-  
-  return products;
+
+  return await collection
+    .find(search)
+    .sort({ _id: -1 })
+    .toArray();
 };
+
 
 // Function to query document using Id
 const findProduct = async (productId) => {
