@@ -38,23 +38,30 @@ exports.cart = async (req, res) => {
 
 exports.addToCart = async (req, res) => {
   const productCode = req.params.id;
+  console.log(productCode);
+  
 
   let [product] = await productDB.getProducts({ productCode: productCode });
-  let price = parseFloat(product.price)
-
-  const document = { productCode: productCode, price: price, quantity: 1 };
-  const user_id = req.session.user[0]._id;
-
-  let cart = await cartDB.findCartProductCode(productCode, user_id);
-
-  if (!cart) {
-    let result = await cartDB.addToCart(document, user_id);
-    res.redirect("/cart");
+  if (product?.stockQuantity < 1) {
+    return res.json({ success: false, message: "This product is not in stock" })
   } else {
-    const quantity = cart.quantity + 1;
-    let result = await cartDB.updateQuantity(user_id, productCode, quantity)
+    let price = parseFloat(product.price)
 
-    res.redirect("/cart");
+    const document = { productCode: productCode, price: price, quantity: 1 };
+    const user_id = req.session.user[0]._id;
+
+    let cart = await cartDB.findCartProductCode(productCode, user_id);
+
+    if (!cart) {
+      let result = await cartDB.addToCart(document, user_id);
+      return res.json({ success: true, message: '' });
+    } else {
+      const quantity = cart.quantity + 1;
+      let result = await cartDB.updateQuantity(user_id, productCode, quantity)
+
+      // res.redirect("/cart");
+      return res.json({ success: true, message: '' });
+    }
   }
 };
 
@@ -64,7 +71,12 @@ exports.addToCartFetch = async (req, res) => {
     const user = req.session.user;
 
     let [product] = await productDB.getProducts({ productCode: productCode });
-    let price = parseFloat(product.price)
+    let price = parseFloat(product.price);
+
+    if(product.stockQuantity < 1){
+      res.status(500).json({ success: false, message: 'Product not in stock' });
+      return;
+    }
 
     const document = { productCode: productCode, price: price, quantity: 1 };
     const user_id = user[0]._id;

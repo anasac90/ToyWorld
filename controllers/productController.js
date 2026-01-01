@@ -61,6 +61,10 @@ exports.findProduct = async (req, res) => {
 
 // update product
 exports.updateProduct = async (req, res) => {
+  req.body.price = Number(req.body.price);
+  req.body.stockQuantity = Number(req.body.stockQuantity);
+  req.body.minimumAge = Number(req.body.minimumAge);
+
   let result = await productDB.updateProduct(productId, req.body, req.files);
   res.redirect("/admin/products");
 };

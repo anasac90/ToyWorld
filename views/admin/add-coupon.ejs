@@ -15,32 +15,32 @@
                     <div class="modal-body">
                         <form id="couponForm" action="/admin/coupons/submit" method="post">
                             <div class="mb-3">
-                                <label for="couponCode" class="form-label">Coupon Code</label>
+                                <label for="couponCode" class="form-label">Coupon Code <span style="color:red">*</span></label>
                                 <input type="text" value="<%= couponData?.couponCode %>" class="form-control" placeholder="Enter coupon code"
                                 id="couponCode" name="couponCode" required>
                             </div>
                             <div class="mb-3">
-                                <label for="discount" class="form-label">Discount (%)</label>
+                                <label for="discount" class="form-label">Discount (%) <span style="color:red">*</span></label>
                                 <input type="number" value="<%= couponData?.discountPercentage %>" class="form-control" placeholder="Enter discount percentage"
                                 id="discount" min="1" max="99" name="discountPercentage" required>
                             </div>
                             <div class="mb-3">
-                                <label for="maxDiscount" class="form-label">Maximum Discount</label>
+                                <label for="maxDiscount" class="form-label">Maximum Discount <span style="color:red">*</span></label>
                                 <input type="number" value="<%= couponData?.maxDiscount %>" class="form-control" placeholder="Enter maximum discount"
                                 id="maxDiscount" min="1" name="maxDiscount" required>
                             </div>
                             <div class="mb-3">
-                                <label for="expiryDate" class="form-label">Expiry Date</label>
+                                <label for="expiryDate" class="form-label">Expiry Date <span style="color:red">*</span></label>
                                 <input type="date" value="<%= couponData?.expiryDate %>" class="form-control" id="expiryDate"
                                 placeholder="Enter the expiry date" name="expiryDate" required>
                             </div>
                             <div class="mb-3">
-                                <label for="usageLimit" class="form-label">Usage Limit</label>
+                                <label for="usageLimit" class="form-label">Usage Limit <span style="color:red">*</span></label>
                                 <input type="number" value="<%= couponData?.usageLimit %>" class="form-control" id="usageLimit"
                                 placeholder="Enter the usage limit" min="1" name="usageLimit" required>
                             </div>
                             <div class="mb-3">
-                                <label for="status" class="form-label">Status</label>
+                                <label for="status" class="form-label">Status <span style="color:red">*</span></label>
                                 <select class="form-select" value="<%= couponData?.status %>" id="status" name="status" required>
                                     <option value="Active">Active</option>
                                     <option value="Inactive">Inactive</option>

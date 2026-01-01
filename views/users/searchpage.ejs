@@ -99,30 +99,127 @@
     </main>
 
     <script>
+
         window.onload = ()=>{
             document.getElementById('searchInput').value = "<%= searchQuery %>"; 
         }
 
+        // Buy Now button event handling
         let buyNow = document.querySelectorAll('.buyNow');
         buyNow.forEach(button => {
             button.addEventListener('click', (event) => {
                 event.preventDefault();
                 event.stopPropagation();
                 const productCode = button.getAttribute('data-product-code');
-                window.location.href = `/add-to-cart/${productCode}`;
+
+                fetch(`/add-to-cart/${productCode}`,{
+                    method:"GET",
+                    headers:{'Content-Type':'application/json'}
+                })
+                .then(response=>response.json())
+                .then(data=>{
+                    if(data.success) {
+                        toastr.info('Success !');
+                        setTimeout(() => {
+                            window.location.href = `/cart`;
+                        }, 1000);
+                    } else {
+                        toastr.warning(data.message);
+                    }
+                })
+                .catch(err=>{
+                    console.log("There is an Error: " + err);
+                })
             });
         });
 
+
+        // Add to Cart button click event handling
         let addToCart = document.querySelectorAll('.add-to-cart-btn');
         addToCart.forEach(button => {
-            button.addEventListener('click', event => {
-                event.preventDefault();
-                event.stopPropagation();
-                const productCode = button.getAttribute('data-product-code');
-                window.location.href = `/add-to-cart/${productCode}`;
-            });
+            button.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
 
-        });
+                const productCode = button.getAttribute('data-product-code');
+                const user = "<%= user %>";
+
+                if (user.length > 0) {
+                    fetch(`/add-to-cart`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ productCode })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                toastr.info('Added to Cart!');
+                                document.getElementById("cart-count").textContent = data.cartCountNew;
+                            } else {
+                                toastr.warning(data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+                        });
+                } else {
+                    fetch(`/add-to-cart`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/html' }
+                    })
+                        .then(response => response.text())
+                        .then(html => {
+                            document.documentElement.innerHTML = html;
+                        })
+                        .catch(error => console.log('Error loading page:', error));
+                }
+            })
+        })
+
+
+        // add to wishlist button handling
+        let wishList = document.querySelectorAll('.wish-list-btn');
+        wishList.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const productCode = button.getAttribute('data-product-code');
+                const user_id = '<%= user %>';
+
+                if (user_id.length > 0) {
+
+                    fetch(`/addToWishList`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ productCode })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                toastr.info('Added to wishlist!');
+                            } else {
+                                toastr.warning(data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+                        });
+
+                } else {
+
+                    fetch(`/addToWishList`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/html' },
+                    }).then(response => response.text())
+                        .then(html => {
+                            document.documentElement.innerHTML = html;
+                        })
+                        .catch(error => console.log('Error loading page:', error));
+
+                }
+            })
+        })
 
         document.getElementById('searchInput').addEventListener('input',(e)=>{
             if (e.target.value === '')  window.location.href = '/products';

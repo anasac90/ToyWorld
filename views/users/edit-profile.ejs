@@ -23,23 +23,23 @@
                                     <form action="/my-account/update-profile" method="post">
                                         <div class="row">
                                             <div class="col mb-3">
-                                                <label>First name:</label>
+                                                <label>First name: <span style="color:red">*</span></label>
                                                 <input class="form-control" placeholder="First name" name="fname"
                                                     value="<%= user[0].fname %>" required type="text">
                                             </div>
                                             <div class="col mb-3">
-                                                <label>Last name:</label>
+                                                <label>Last name: <span style="color:red">*</span></label>
                                                 <input class="form-control" placeholder="Last name" name="lname"
                                                     value="<%= user[0].lname %>" required type="text">
                                             </div>
                                         </div>
                                         <div class="mb-3">
-                                            <label>Email:</label>
+                                            <label>Email: <span style="color:red">*</span></label>
                                             <input class="form-control" required type="email" name="email"
                                                 value="<%= user[0].email %>" placeholder="Email" />
                                         </div>
                                         <div class="mb-3">
-                                            <label>Mobile: (Eg:-9809112233)</label>
+                                            <label>Mobile: (Eg:-9809112233) <span style="color:red">*</span></label>
                                             <input class="form-control" required type="tel" pattern="[0-9]{10}"
                                                 name="mobile" value="<%= user[0].mobile %>"
                                                 placeholder="Mobile number" />

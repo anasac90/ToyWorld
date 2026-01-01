@@ -50,7 +50,7 @@
                         <h3>Product Offer</h3>
                         <form>
                             <div class="mb-3 text-start">
-                                <label for="product" class="form-label">Select Product</label>
+                                <label for="product" class="form-label">Select Product <span style="color:red">*</span></label>
                                 <select id="product" required name="product" class="form-select">
                                     <option selected disabled>Choose a product</option>
                                     <% for(let i=0;i < products.length;i++){ %>
@@ -62,17 +62,17 @@
                                 </select>
                             </div>
                             <div class="mb-3 text-start">
-                                <label for="product-discount" class="form-label">Discount Percentage (%)</label>
+                                <label for="product-discount" class="form-label">Discount Percentage (%) <span style="color:red">*</span></label>
                                 <input required type="number" name="discount" id="product-discount" class="form-control"
                                     placeholder="Enter discount percentage">
                             </div>
                             <div class="mb-3 text-start">
-                                <label for="product-max-limit" class="form-label">Maximum Limit</label>
+                                <label for="product-max-limit" class="form-label">Maximum Limit <span style="color:red">*</span></label>
                                 <input required type="number" name="maxLimit" id="product-max-limit"
                                     class="form-control" placeholder="Enter maximum discount limit">
                             </div>
                             <div class="mb-3 text-start">
-                                <label for="product-expiry" class="form-label">Expiry Date</label>
+                                <label for="product-expiry" class="form-label">Expiry Date <span style="color:red">*</span></label>
                                 <input required type="date" name="expiryDate" id="product-expiry" class="form-control">
                             </div>
                             <button type="submit" class="btn bg-dark-grn addProductOffer" style="color: white;"
@@ -161,7 +161,7 @@
                         <h3>Category Offer</h3>
                         <form>
                             <div class="mb-3 text-start">
-                                <label for="category" class="form-label">Select Category</label>
+                                <label for="category" class="form-label">Select Category <span style="color:red">*</span></label>
                                 <select required id="category" class="form-select">
                                     <option selected disabled>Choose a category</option>
                                     <% for(let i=0;i < categories.length;i++){ %>
@@ -173,17 +173,17 @@
                                 </select>
                             </div>
                             <div class="mb-3 text-start">
-                                <label for="category-discount" class="form-label">Discount Percentage (%)</label>
+                                <label for="category-discount" class="form-label">Discount Percentage (%) <span style="color:red">*</span></label>
                                 <input required type="number" id="category-discount" class="form-control"
                                     placeholder="Enter discount percentage">
                             </div>
                             <div class="mb-3 text-start">
-                                <label for="category-max-limit" class="form-label">Maximum Limit</label>
+                                <label for="category-max-limit" class="form-label">Maximum Limit <span style="color:red">*</span></label>
                                 <input required type="number" id="category-max-limit" class="form-control"
                                     placeholder="Enter maximum discount limit">
                             </div>
                             <div class="mb-3 text-start">
-                                <label for="category-expiry" class="form-label">Expiry Date</label>
+                                <label for="category-expiry" class="form-label">Expiry Date <span style="color:red">*</span></label>
                                 <input required type="date" id="category-expiry" class="form-control">
                             </div>
                             <button type="submit" class="btn bg-dark-grn addCategoryOffer" style="color: white;"

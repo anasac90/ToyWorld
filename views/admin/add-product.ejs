@@ -25,32 +25,32 @@
                             <% } %>
                                 <% if(!productData) { %>
                                     <div class="col mb-3">
-                                        <label>Product Name:</label>
+                                        <label>Product Name: <span style="color:red">*</span></label>
                                         <input class="form-control" placeholder="Enter the product name"
                                             name="productName" type="text">
                                     </div>
                                     <div class="col mb-3">
-                                        <label>Price:</label>
+                                        <label>Price: <span style="color:red">*</span></label>
                                         <input class="form-control" placeholder="Price of the product" name="price"
                                             type="number">
                                     </div>
                                     <div class="col mb-3">
-                                        <label>Stock Quantity:</label>
+                                        <label>Stock Quantity: <span style="color:red">*</span></label>
                                         <input class="form-control" placeholder="Stock quantity" name="stockQuantity"
                                             type="number">
                                     </div>
                                     <div class="col mb-3">
-                                        <label>Product Code:</label>
+                                        <label>Product Code: <span style="color:red">*</span></label>
                                         <input class="form-control" placeholder="Product code" name="productCode"
                                             type="text">
                                     </div>
                                     <div class="mb-3">
-                                        <label>Minimum Age:</label>
+                                        <label>Minimum Age: <span style="color:red">*</span></label>
                                         <input class="form-control" type="number" name="minimumAge"
                                             placeholder="Minimum age" />
                                     </div>
                                     <div class="mb-3">
-                                        <label>Category:</label>
+                                        <label>Category: <span style="color:red">*</span></label>
                                         <div class="input-group mb-3">
                                             <select class="form-select" id="category" name="category">
                                                 <option selected>Choose...</option>
@@ -63,7 +63,7 @@
                                         </div>
                                     </div>
                                     <div class="mb-3">
-                                        <label>Brand:</label>
+                                        <label>Brand: <span style="color:red">*</span></label>
                                         <div class="input-group mb-3">
                                             <select class="form-select" id="brand" name="brand">
                                                 <option selected>Choose...</option>
@@ -75,12 +75,12 @@
                                         </div>
                                     </div>
                                     <div class="col mb-3">
-                                        <label>Description:</label>
+                                        <label>Description: <span style="color:red">*</span></label>
                                         <textarea class="form-control" placeholder="Enter the description"
                                             name="productDescription" type="text"></textarea>
                                     </div>
                                     <div class="mb-3">
-                                        <label>Images:</label>
+                                        <label>Images: <span style="color:red">*</span></label>
                                         <div class="mb-2" id="img-preview"></div>
                                         <input class="form-control mb-1" type="file" accept="image/*"
                                             name="productImages" id="imageInput" multiple required />

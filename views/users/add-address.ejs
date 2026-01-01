@@ -18,40 +18,40 @@
                     <% } %>
                         <% if(!addressData) { %>
                             <div class="col mb-3">
-                                <label>House Name/No:</label>
+                                <label>House Name/No: <span style="color:red">*</span></label>
                                 <input class="form-control" placeholder="Enter the house name/no" name="house"
                                     type="text">
                             </div>
                             <div class="col mb-3">
-                                <label>Street Name:</label>
+                                <label>Street Name: <span style="color:red">*</span></label>
                                 <input class="form-control" placeholder="Enter the street name" name="street"
                                     type="text">
                             </div>
                             <div class="col mb-3">
-                                <label>Post:</label>
+                                <label>Post: <span style="color:red">*</span></label>
                                 <input class="form-control" placeholder="Enter the post office name" name="post"
                                     type="text">
                             </div>
                             <div class="col mb-3">
-                                <label>City:</label>
+                                <label>City: <span style="color:red">*</span></label>
                                 <input class="form-control" placeholder="Enter the city name" name="city" type="text">
                             </div>
                             <div class="col mb-3">
-                                <label>District:</label>
+                                <label>District: <span style="color:red">*</span></label>
                                 <input class="form-control" placeholder="Enter the district name" name="district"
                                     type="text">
                             </div>
                             <div class="col mb-3">
-                                <label>State:</label>
+                                <label>State: <span style="color:red">*</span></label>
                                 <input class="form-control" placeholder="Enter the state" name="state" type="text">
                             </div>
                             <div class="mb-3">
-                                <label>Pincode:</label>
+                                <label>Pincode: <span style="color:red">*</span></label>
                                 <input class="form-control" type="number" name="pincode"
                                     placeholder="Enter the pincode" />
                             </div>
                             <div class="mb-3">
-                                <label>Mobile: (Eg:-9809112233)</label>
+                                <label>Mobile: (Eg:-9809112233) <span style="color:red">*</span></label>
                                 <div style="display: flex; justify-content: space-between;">
                                     <input class="form-control w-75" type="tel" id="mobile" pattern="[0-9]{10}"
                                         name="mobile"  data-user-mobile="<%= user[0].mobile %>" placeholder="Mobile number" />
@@ -67,42 +67,42 @@
                             </div>
                             <% } else { %>
                                 <div class="col mb-3">
-                                    <label>House Name/No:</label>
+                                    <label>House Name/No: <span style="color:red">*</span></label>
                                     <input class="form-control" value="<%= addressData.house %>"
-                                        placeholder="Enter the house name/no" name="house" type="text">
+                                        placeholder="Enter the house name/no" name="house" type="text" required>
                                 </div>
                                 <div class="col mb-3">
-                                    <label>Street Name:</label>
+                                    <label>Street Name: <span style="color:red">*</span></label>
                                     <input class="form-control" value="<%= addressData.street %>"
                                         placeholder="Enter the street name" name="street" type="text">
                                 </div>
                                 <div class="col mb-3">
-                                    <label>Post:</label>
+                                    <label>Post: <span style="color:red">*</span></label>
                                     <input class="form-control" value="<%= addressData.post %>"
                                         placeholder="Enter the post office name" name="post" type="text">
                                 </div>
                                 <div class="col mb-3">
-                                    <label>City:</label>
+                                    <label>City: <span style="color:red">*</span></label>
                                     <input class="form-control" value="<%= addressData.city %>"
                                         placeholder="Enter the city name" name="city" type="text">
                                 </div>
                                 <div class="col mb-3">
-                                    <label>District:</label>
+                                    <label>District: <span style="color:red">*</span></label>
                                     <input class="form-control" value="<%= addressData.district %>"
                                         placeholder="Enter the district name" name="district" type="text">
                                 </div>
                                 <div class="col mb-3">
-                                    <label>State:</label>
+                                    <label>State: <span style="color:red">*</span></label>
                                     <input class="form-control" value="<%= addressData.state %>"
                                         placeholder="Enter the state" name="state" type="text">
                                 </div>
                                 <div class="mb-3">
-                                    <label>Pincode:</label>
+                                    <label>Pincode: <span style="color:red">*</span></label>
                                     <input class="form-control" value="<%= addressData.pincode %>" type="number"
                                         name="pincode" placeholder="Enter the pincode" />
                                 </div>
                                 <div class="mb-3">
-                                    <label>Mobile: (Eg:-9809112233)</label>
+                                    <label>Mobile: (Eg:-9809112233) <span style="color:red">*</span></label>
                                     <div style="display: flex; justify-content: space-between;">
                                         <input class="form-control w-75" id="mobile" value="<%= addressData.mobile %>" type="tel"
                                             pattern="[0-9]{10}" data-user-mobile="<%= user[0].mobile %>" name="mobile" placeholder="Mobile number" />

@@ -16,29 +16,29 @@
                     <% if (newUser) { %>
                         <div class="row">
                             <div class="col mb-3">
-                                <label>First name:</label>
+                                <label>First name: <span style="color:red">*</span></label>
                                 <input class="form-control" placeholder="First name" name="fname"
                                     value="<%= newUser.fname %>" required type="text">
                             </div>
                             <div class="col mb-3">
-                                <label>Last name:</label>
+                                <label>Last name: <span style="color:red">*</span></label>
                                 <input class="form-control" placeholder="Last name" name="lname"
                                     value="<%= newUser.lname %>" required type="text">
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label>Email:</label>
+                            <label>Email: <span style="color:red">*</span></label>
                             <input class="form-control" required type="email" name="email" value="<%= newUser.email %>"
                                 placeholder="Email" />
                         </div>
                         <div class="mb-3">
-                            <label>Mobile: (Eg:-9809112233)</label>
+                            <label>Mobile: (Eg:-9809112233) <span style="color:red">*</span></label>
                             <input class="form-control" required type="tel" pattern="[0-9]{10}" name="mobile"
                                 value="<%= newUser.mobile %>" placeholder="Mobile number" />
                         </div>
                         <div class="mb-3">
                             <div>
-                                <label>Password:</label>
+                                <label>Password: <span style="color:red">*</span></label>
                                 <div class="row">
                                     <div class="" style="width: 70%">
                                         <input class="form-control" id="password" required type="password"
@@ -53,35 +53,35 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label>Re-enter password:</label>
+                            <label>Re-enter password: <span style="color:red">*</span></label>
                             <input class="form-control" required type="password" name="password2"
                                 value="<%= newUser.password2 %>" placeholder="Re-enter password" />
                         </div>
                         <% } else { %>
                             <div class="row">
                                 <div class="col mb-3">
-                                    <label>First name:</label>
+                                    <label>First name: <span style="color:red">*</span></label>
                                     <input class="form-control" placeholder="First name" name="fname" required
                                         type="text">
                                 </div>
                                 <div class="col mb-3">
-                                    <label>Last name:</label>
+                                    <label>Last name: <span style="color:red">*</span></label>
                                     <input class="form-control" placeholder="Last name" name="lname" required
                                         type="text">
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label>Email:</label>
+                                <label>Email: <span style="color:red">*</span></label>
                                 <input class="form-control" required type="email" name="email" placeholder="Email" />
                             </div>
                             <div class="mb-3">
-                                <label>Mobile: (Eg:-9809112233)</label>
+                                <label>Mobile: (Eg:-9809112233) <span style="color:red">*</span></label>
                                 <input class="form-control" required type="tel" pattern="[0-9]{10}" name="mobile"
                                     placeholder="Mobile number" />
                             </div>
                             <div class="mb-3">
                                 <div>
-                                    <label>Password:</label>
+                                    <label>Password: <span style="color:red">*</span></label>
                                     <div class="row">
                                         <div class="" style="width: 70%">
                                             <input class="form-control" id="password" required type="password"
@@ -96,7 +96,7 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label>Re-enter password:</label>
+                                <label>Re-enter password: <span style="color:red">*</span></label>
                                 <input class="form-control" id="password2" required type="password" name="password2"
                                     placeholder="Re-enter password" />
                             </div>

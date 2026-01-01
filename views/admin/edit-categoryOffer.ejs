@@ -27,17 +27,17 @@
                         value="<%= offerData._id %>" readonly>
                 </div>
                 <div class="mb-3 text-start">
-                    <label for="product-discount" class="form-label">Discount Percentage (%)</label>
+                    <label for="product-discount" class="form-label">Discount Percentage (%) <span style="color:red">*</span></label>
                     <input required type="number" name="discount" id="product-discount" class="form-control"
                     value="<%= offerData.discountPrecentage %>">
                 </div>
                 <div class="mb-3 text-start">
-                    <label for="product-max-limit" class="form-label">Maximum Limit</label>
+                    <label for="product-max-limit" class="form-label">Maximum Limit <span style="color:red">*</span></label>
                     <input required type="number" name="maxLimit" id="product-max-limit"
                         class="form-control" value="<%= offerData.maxDiscount %>">
                 </div>
                 <div class="mb-3 text-start">
-                    <label for="product-expiry" class="form-label">Expiry Date</label>
+                    <label for="product-expiry" class="form-label">Expiry Date <span style="color:red">*</span></label>
                     <input required type="date" name="expiryDate" id="product-expiry" class="form-control"
                     value="<%= offerData.expiryDate.toISOString().split('T')[0] %>">
                 </div>

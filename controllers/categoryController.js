@@ -20,7 +20,10 @@ exports.categoryList = async (req, res) => {
 let status = "";
 
 //add category page
-exports.addCategory = (req, res) => {
+exports.addCategory = async (req, res) => {
+
+  
+
   if (req.session.categoryExist) {
     req.session.categoryExist = false;
     res.render("admin/add-category", {
@@ -34,11 +37,22 @@ exports.addCategory = (req, res) => {
 
 // submit new category details to db
 exports.submitCategory = async (req, res) => {
-  let categoryName = req.body.categoryName;
+
+  let categoryName = req.body.categoryName.trim();
+
+  categoryName = categoryName.split(" ").map(val=>{
+    let newVal = val.split("");
+    newVal[0] = newVal[0].toUpperCase();
+    newVal = newVal.join("");
+    return newVal;
+  });
+
+  categoryName = categoryName.join(" ");
 
   let categories = await categoryDB.getCategories({
     categoryName: categoryName
   });
+
   if (categories.length) {
     req.session.categoryExist = true;
     fs.unlink("./" + req.file.path, (err) => {
@@ -66,16 +80,27 @@ let oldCategory;
 // update category
 exports.updateCategory = async (req, res) => {
   oldCategory = oldCategory ? oldCategory : queriedCategory[0].categoryName;
-  let newcategory = req.body.categoryName;
+  let newcategory = req.body.categoryName.trim();
+
+  newcategory = newcategory.split(" ").map(val=>{
+    let newVal = val.split("");
+    newVal[0] = newVal[0].toUpperCase();
+    newVal = newVal.join("");
+    return newVal;
+  });
+
+  newcategory = newcategory.join(" ");
+  
 
   let categories = await categoryDB.getCategories({
     categoryName: newcategory
   });
-
-  console.log("**Test: " + oldCategory,newcategory);
   
 
   if (oldCategory != newcategory && categories.length > 0) {
+    Object.assign(queriedCategory[0],req.body);
+    res.render("admin/edit-category", { queriedCategory, warning: "Category already exist", status: "" });
+  } else if(newcategory.toUpperCase() == categories[0].categoryName.toUpperCase()) {
     Object.assign(queriedCategory[0],req.body);
     res.render("admin/edit-category", { queriedCategory, warning: "Category already exist", status: "" });
   } else {

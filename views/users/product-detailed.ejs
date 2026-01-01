@@ -275,14 +275,32 @@
             zoomCircle.style.display = 'none';
         });
 
-        // Buy Now button click event handling
+        // Buy Now button event handling
         let buyNow = document.querySelectorAll('.buyNow');
         buyNow.forEach(button => {
             button.addEventListener('click', (event) => {
                 event.preventDefault();
                 event.stopPropagation();
                 const productCode = button.getAttribute('data-product-code');
-                window.location.href = `/add-to-cart/${productCode}`;
+
+                fetch(`/add-to-cart/${productCode}`,{
+                    method:"GET",
+                    headers:{'Content-Type':'application/json'}
+                })
+                .then(response=>response.json())
+                .then(data=>{
+                    if(data.success) {
+                        toastr.info('Success !');
+                        setTimeout(() => {
+                            window.location.href = `/cart`;
+                        }, 1000);
+                    } else {
+                        toastr.warning(data.message);
+                    }
+                })
+                .catch(err=>{
+                    console.log("There is an Error: " + err);
+                })
             });
         });
 
